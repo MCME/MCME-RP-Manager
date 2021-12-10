@@ -17,29 +17,32 @@
 
 package com.mcmiddleearth.rpmanager.model;
 
-import com.google.gson.annotations.JsonAdapter;
-import com.mcmiddleearth.rpmanager.json.adapters.ListOrObjectJsonAdapter;
+public class Display {
+    private float[] rotation;
+    private float[] translation;
+    private float[] scale;
 
-import java.util.List;
-
-public class Case {
-    private When when;
-    @JsonAdapter(ListOrObjectJsonAdapter.Factory.class)
-    private List<Model> apply;
-
-    public When getWhen() {
-        return when;
+    public float[] getRotation() {
+        return rotation;
     }
 
-    public void setWhen(When when) {
-        this.when = when;
+    public void setRotation(float[] rotation) {
+        this.rotation = rotation;
     }
 
-    public List<Model> getApply() {
-        return apply;
+    public float[] getTranslation() {
+        return translation;
     }
 
-    public void setApply(List<Model> apply) {
-        this.apply = apply;
+    public void setTranslation(float[] translation) {
+        this.translation = translation;
+    }
+
+    public float[] getScale() {
+        return scale;
+    }
+
+    public void setScale(float[] scale) {
+        this.scale = scale;
     }
 }

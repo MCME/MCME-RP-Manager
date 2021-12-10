@@ -17,29 +17,41 @@
 
 package com.mcmiddleearth.rpmanager.model;
 
-import com.google.gson.annotations.JsonAdapter;
-import com.mcmiddleearth.rpmanager.json.adapters.ListOrObjectJsonAdapter;
+public class Rotation {
+    private float[] origin;
+    private Axis axis;
+    private float[] angle;
+    private Boolean rescale;
 
-import java.util.List;
-
-public class Case {
-    private When when;
-    @JsonAdapter(ListOrObjectJsonAdapter.Factory.class)
-    private List<Model> apply;
-
-    public When getWhen() {
-        return when;
+    public float[] getOrigin() {
+        return origin;
     }
 
-    public void setWhen(When when) {
-        this.when = when;
+    public void setOrigin(float[] origin) {
+        this.origin = origin;
     }
 
-    public List<Model> getApply() {
-        return apply;
+    public Axis getAxis() {
+        return axis;
     }
 
-    public void setApply(List<Model> apply) {
-        this.apply = apply;
+    public void setAxis(Axis axis) {
+        this.axis = axis;
+    }
+
+    public float[] getAngle() {
+        return angle;
+    }
+
+    public void setAngle(float[] angle) {
+        this.angle = angle;
+    }
+
+    public Boolean getRescale() {
+        return rescale;
+    }
+
+    public void setRescale(Boolean rescale) {
+        this.rescale = rescale;
     }
 }
