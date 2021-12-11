@@ -17,14 +17,28 @@
 
 package com.mcmiddleearth.rpmanager.model;
 
-public class BlockModel extends BaseModel {
-    private Boolean ambientocclusion;
+import com.google.gson.annotations.SerializedName;
 
-    public Boolean getAmbientocclusion() {
-        return ambientocclusion;
+import java.util.List;
+
+public class ItemModel extends BaseModel {
+    @SerializedName("gui_light")
+    private GuiLight guiLight;
+    private List<Override> overrides;
+
+    public GuiLight getGuiLight() {
+        return guiLight;
     }
 
-    public void setAmbientocclusion(Boolean ambientocclusion) {
-        this.ambientocclusion = ambientocclusion;
+    public void setGuiLight(GuiLight guiLight) {
+        this.guiLight = guiLight;
+    }
+
+    public List<Override> getOverrides() {
+        return overrides;
+    }
+
+    public void setOverrides(List<Override> overrides) {
+        this.overrides = overrides;
     }
 }

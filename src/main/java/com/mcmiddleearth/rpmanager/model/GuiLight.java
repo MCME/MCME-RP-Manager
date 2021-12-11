@@ -17,14 +17,9 @@
 
 package com.mcmiddleearth.rpmanager.model;
 
-public class BlockModel extends BaseModel {
-    private Boolean ambientocclusion;
+import com.google.gson.annotations.SerializedName;
 
-    public Boolean getAmbientocclusion() {
-        return ambientocclusion;
-    }
-
-    public void setAmbientocclusion(Boolean ambientocclusion) {
-        this.ambientocclusion = ambientocclusion;
-    }
+public enum GuiLight {
+    @SerializedName("front") FRONT,
+    @SerializedName("side") SIDE,
 }

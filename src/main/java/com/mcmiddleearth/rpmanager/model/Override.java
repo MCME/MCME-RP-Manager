@@ -17,14 +17,23 @@
 
 package com.mcmiddleearth.rpmanager.model;
 
-public class BlockModel extends BaseModel {
-    private Boolean ambientocclusion;
+public class Override {
+    private Predicate predicate;
+    private String model;
 
-    public Boolean getAmbientocclusion() {
-        return ambientocclusion;
+    public Predicate getPredicate() {
+        return predicate;
     }
 
-    public void setAmbientocclusion(Boolean ambientocclusion) {
-        this.ambientocclusion = ambientocclusion;
+    public void setPredicate(Predicate predicate) {
+        this.predicate = predicate;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
     }
 }

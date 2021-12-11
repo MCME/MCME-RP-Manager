@@ -17,14 +17,21 @@
 
 package com.mcmiddleearth.rpmanager.model;
 
-public class BlockModel extends BaseModel {
-    private Boolean ambientocclusion;
+import com.google.gson.Gson;
+import org.junit.jupiter.api.Test;
 
-    public Boolean getAmbientocclusion() {
-        return ambientocclusion;
-    }
+import java.io.InputStreamReader;
+import java.io.Reader;
 
-    public void setAmbientocclusion(Boolean ambientocclusion) {
-        this.ambientocclusion = ambientocclusion;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public class ItemModelTest {
+    @Test
+    public void testParseItemModel() {
+        Gson gson = new Gson();
+        Reader reader = new InputStreamReader(
+                ItemModelTest.class.getResourceAsStream("/models/item/golden_helmet.json"));
+        ItemModel goldenHelmet = gson.fromJson(reader, ItemModel.class);
+        assertNotNull(goldenHelmet);
     }
 }
