@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2021 MCME
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.mcmiddleearth.rpmanager.utils;
 
 import com.google.gson.Gson;
@@ -5,12 +22,17 @@ import com.google.gson.GsonBuilder;
 import com.mcmiddleearth.rpmanager.model.BlockModel;
 import com.mcmiddleearth.rpmanager.model.BlockState;
 import com.mcmiddleearth.rpmanager.model.ItemModel;
+import com.mcmiddleearth.rpmanager.model.Model;
 import com.mcmiddleearth.rpmanager.model.internal.Layer;
+import com.mcmiddleearth.rpmanager.model.wrappers.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
+import java.util.function.BinaryOperator;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -20,6 +42,7 @@ public class ResourcePackUtils {
     private static final String BLOCK_MODEL_DIR = "assets/minecraft/models/block";
     private static final String MODEL_DIR = "assets/minecraft/models";
     private static final String TEXTURES_DIR = "assets/minecraft/textures";
+    private static final String MINECRAFT_PREFIX = "minecraft:";
 
     private static final Function<InputStream, BlockState, IOException> BLOCK_STATE_READER =
             gsonReader(BlockState.class);
@@ -40,6 +63,138 @@ public class ResourcePackUtils {
         } else {
             throw new IllegalArgumentException("Invalid resource pack path");
         }
+    }
+
+    public static ResourcePackData getStructure(Layer current, Layer urps, Layer vanilla) {
+        Set<String> texturePaths = new TreeSet<>(current.getTextures().keySet());
+        texturePaths.addAll(urps.getTextures().keySet());
+        texturePaths.addAll(vanilla.getTextures().keySet());
+        Map<String, TextureWrapper> textureWrappers = texturePaths.stream().collect(Collectors.toMap(
+                java.util.function.Function.identity(),
+                s -> new TextureWrapper(s, current.getTextures().get(s), urps.getTextures().get(s),
+                        vanilla.getTextures().get(s)), throwingMerger(), TreeMap::new));
+
+        Set<String> blockModelPaths = new TreeSet<>(current.getBlockModels().keySet());
+        blockModelPaths.addAll(urps.getBlockModels().keySet());
+        blockModelPaths.addAll(vanilla.getBlockModels().keySet());
+        Map<String, BlockModelWrapper> blockModelWrappers = blockModelPaths.stream().collect(Collectors.toMap(
+                java.util.function.Function.identity(),
+                s -> wrapBlockModel(current, urps, vanilla, s, textureWrappers), throwingMerger(), TreeMap::new));
+
+        Set<String> itemModelPaths = new TreeSet<>(current.getItemModels().keySet());
+        itemModelPaths.addAll(urps.getItemModels().keySet());
+        itemModelPaths.addAll(vanilla.getItemModels().keySet());
+        Map<String, ItemModelWrapper> itemModelWrappers = itemModelPaths.stream().collect(Collectors.toMap(
+                java.util.function.Function.identity(),
+                s -> wrapItemModel(current, urps, vanilla, s, textureWrappers), throwingMerger(), TreeMap::new));
+        fillParents(Stream.concat(blockModelWrappers.entrySet().stream(), itemModelWrappers.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+
+        Set<String> blockStatePaths = new TreeSet<>(current.getBlockStates().keySet());
+        blockStatePaths.addAll(urps.getBlockStates().keySet());
+        blockStatePaths.addAll(vanilla.getBlockStates().keySet());
+        List<BlockStateWrapper> blockStateWrappers = blockStatePaths.stream()
+                .map(s -> wrapBlockState(current, urps, vanilla, s, blockModelWrappers)).collect(Collectors.toList());
+
+        ResourcePackData resourcePackData = new ResourcePackData();
+        resourcePackData.setBlockStates(blockStateWrappers);
+        resourcePackData.setItemModels(new ArrayList<>(itemModelWrappers.values()));
+        return resourcePackData;
+    }
+
+    private static BlockModelWrapper wrapBlockModel(Layer current, Layer urps, Layer vanilla, String filePath,
+                                                    Map<String, TextureWrapper> textureWrappers) {
+        return new BlockModelWrapper(filePath,
+                wrapBlockModel(current, filePath, textureWrappers),
+                wrapBlockModel(urps, filePath, textureWrappers),
+                wrapBlockModel(vanilla, filePath, textureWrappers));
+    }
+
+    private static ItemModelWrapper wrapItemModel(Layer current, Layer urps, Layer vanilla, String filePath,
+                                                  Map<String, TextureWrapper> textureWrappers) {
+        return new ItemModelWrapper(filePath,
+                wrapItemModel(current, filePath, textureWrappers),
+                wrapItemModel(urps, filePath, textureWrappers),
+                wrapItemModel(vanilla, filePath, textureWrappers));
+    }
+
+    private static BlockStateWrapper wrapBlockState(Layer current, Layer urps, Layer vanilla, String filePath,
+                                                    Map<String, BlockModelWrapper> blockModelWrappers) {
+        return new BlockStateWrapper(filePath,
+                wrapBlockState(current, filePath, blockModelWrappers),
+                wrapBlockState(urps, filePath, blockModelWrappers),
+                wrapBlockState(vanilla, filePath, blockModelWrappers));
+    }
+
+    private static BlockModelData wrapBlockModel(Layer layer, String filePath,
+                                                 Map<String, TextureWrapper> textureWrappers) {
+        BlockModel blockModel = layer.getBlockModels().get(filePath);
+        if (blockModel == null) {
+            return null;
+        }
+        BlockModelData blockModelData = new BlockModelData();
+        blockModelData.setModel(blockModel);
+        blockModelData.setTextures(Optional.ofNullable(blockModel.getTextures()).orElse(Collections.emptyMap())
+                .values().stream()
+                .filter(s -> !s.startsWith("#"))
+                .distinct()
+                .map(s -> textureWrappers.get(TEXTURES_DIR + "/" + removePrefix(s)))
+                .collect(Collectors.toList()));
+        return blockModelData;
+    }
+
+    private static ItemModelData wrapItemModel(Layer layer, String filePath,
+                                               Map<String, TextureWrapper> textureWrappers) {
+        ItemModel itemModel = layer.getItemModels().get(filePath);
+        if (itemModel == null) {
+            return null;
+        }
+        ItemModelData itemModelData = new ItemModelData();
+        itemModelData.setModel(itemModel);
+        itemModelData.setTextures(Optional.ofNullable(itemModel.getTextures()).orElse(Collections.emptyMap())
+                .values().stream()
+                .filter(s -> !s.startsWith("#"))
+                .distinct()
+                .map(s -> textureWrappers.get(TEXTURES_DIR + "/" + removePrefix(s)))
+                .collect(Collectors.toList()));
+        return itemModelData;
+    }
+
+    private static BlockStateData wrapBlockState(Layer layer, String filePath,
+                                                 Map<String, BlockModelWrapper> blockModelWrappers) {
+        BlockState blockState = layer.getBlockStates().get(filePath);
+        if (blockState == null) {
+            return null;
+        }
+        BlockStateData blockStateData = new BlockStateData();
+        blockStateData.setBlockState(blockState);
+        blockStateData.setBlockModels(
+                Optional.ofNullable(blockState.getVariants())
+                        .map(v -> v.values().stream().flatMap(l -> l.stream().map(Model::getModel)))
+                        .orElseGet(() -> blockState.getMultipart().stream().flatMap(
+                                c -> c.getApply().stream().map(Model::getModel)))
+                        .distinct()
+                        .map(s -> blockModelWrappers.get(MODEL_DIR + "/" + removePrefix(s)))
+                        .collect(Collectors.toList()));
+        return blockStateData;
+    }
+
+    private static void fillParents(Map<String, ModelWrapper<?>> models) {
+        for (ModelWrapper<?> modelWrapper : models.values()) {
+            fillParent(modelWrapper.getCurrent(), models);
+            fillParent(modelWrapper.getUrps(), models);
+            fillParent(modelWrapper.getVanilla(), models);
+        }
+    }
+
+    private static void fillParent(ModelData<?> modelData, Map<String, ModelWrapper<?>> models) {
+        if (modelData != null && modelData.getModel().getParent() != null) {
+            modelData.setParent(models.get(MODEL_DIR + "/" + modelData.getModel().getParent()));
+        }
+    }
+
+    private static String removePrefix(String path) {
+        return path.replace(MINECRAFT_PREFIX, "");
     }
 
     private static Layer loadLayerFromDirectory(File directory) throws IOException {
@@ -151,5 +306,11 @@ public class ResourcePackUtils {
         return writer.toString()
                 .replaceAll(",(\\s+})", "$1")
                 .replaceAll(",(\\s+])", "$1");
+    }
+
+    private static <T> BinaryOperator<T> throwingMerger() {
+        return (u, v) -> {
+            throw new IllegalStateException(String.format("Duplicate key %s", u));
+        };
     }
 }

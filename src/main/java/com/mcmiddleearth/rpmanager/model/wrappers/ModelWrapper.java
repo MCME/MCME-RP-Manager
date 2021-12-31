@@ -15,9 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.mcmiddleearth.rpmanager.utils;
+package com.mcmiddleearth.rpmanager.model.wrappers;
 
-@FunctionalInterface
-public interface Function<T, R, E extends Throwable> {
-    R apply(T arg) throws E;
+import com.mcmiddleearth.rpmanager.model.BaseModel;
+
+public abstract class ModelWrapper<T extends BaseModel> extends Wrapper<ModelData<T>> {
+    public ModelWrapper(String filePath, ModelData<T> current, ModelData<T> urps, ModelData<T> vanilla) {
+        super(filePath, current, urps, vanilla);
+    }
 }

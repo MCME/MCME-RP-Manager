@@ -15,9 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.mcmiddleearth.rpmanager.utils;
+package com.mcmiddleearth.rpmanager.model.wrappers;
 
-@FunctionalInterface
-public interface Function<T, R, E extends Throwable> {
-    R apply(T arg) throws E;
+public class BlockStateWrapper extends Wrapper<BlockStateData> {
+    public BlockStateWrapper(String filePath, BlockStateData current, BlockStateData urps, BlockStateData vanilla) {
+        super(filePath, current, urps, vanilla);
+    }
 }

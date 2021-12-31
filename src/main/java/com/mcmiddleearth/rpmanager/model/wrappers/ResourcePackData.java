@@ -15,9 +15,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.mcmiddleearth.rpmanager.utils;
+package com.mcmiddleearth.rpmanager.model.wrappers;
 
-@FunctionalInterface
-public interface Function<T, R, E extends Throwable> {
-    R apply(T arg) throws E;
+import java.util.List;
+
+public class ResourcePackData {
+    private List<BlockStateWrapper> blockStates;
+    private List<ItemModelWrapper> itemModels;
+
+    public List<BlockStateWrapper> getBlockStates() {
+        return blockStates;
+    }
+
+    public void setBlockStates(List<BlockStateWrapper> blockStates) {
+        this.blockStates = blockStates;
+    }
+
+    public List<ItemModelWrapper> getItemModels() {
+        return itemModels;
+    }
+
+    public void setItemModels(List<ItemModelWrapper> itemModels) {
+        this.itemModels = itemModels;
+    }
 }

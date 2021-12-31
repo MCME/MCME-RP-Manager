@@ -15,9 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.mcmiddleearth.rpmanager.utils;
+package com.mcmiddleearth.rpmanager.model.wrappers;
 
-@FunctionalInterface
-public interface Function<T, R, E extends Throwable> {
-    R apply(T arg) throws E;
+import java.awt.image.BufferedImage;
+
+public class TextureWrapper extends Wrapper<BufferedImage> {
+    public TextureWrapper(String filePath, BufferedImage current, BufferedImage urps, BufferedImage vanilla) {
+        super(filePath, current, urps, vanilla);
+    }
 }
