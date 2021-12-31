@@ -24,18 +24,9 @@ import java.util.List;
 import java.util.Map;
 
 public class BlockState {
-    private String filePath;
     @JsonAdapter(VariantsJsonAdapter.Factory.class)
     private Map<String, List<Model>> variants;
     private List<Case> multipart;
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
 
     public Map<String, List<Model>> getVariants() {
         return variants;

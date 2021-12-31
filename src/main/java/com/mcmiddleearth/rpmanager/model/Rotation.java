@@ -20,7 +20,7 @@ package com.mcmiddleearth.rpmanager.model;
 public class Rotation {
     private float[] origin;
     private Axis axis;
-    private float[] angle;
+    private Float angle;
     private Boolean rescale;
 
     public float[] getOrigin() {
@@ -39,11 +39,11 @@ public class Rotation {
         this.axis = axis;
     }
 
-    public float[] getAngle() {
+    public Float getAngle() {
         return angle;
     }
 
-    public void setAngle(float[] angle) {
+    public void setAngle(Float angle) {
         this.angle = angle;
     }
 
