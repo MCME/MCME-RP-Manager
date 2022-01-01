@@ -138,7 +138,7 @@ public class ResourcePackUtils {
                 .values().stream()
                 .filter(s -> !s.startsWith("#"))
                 .distinct()
-                .map(s -> textureWrappers.get(TEXTURES_DIR + "/" + removePrefix(s)))
+                .map(s -> textureWrappers.get(TEXTURES_DIR + "/" + removePrefix(s) + ".png"))
                 .collect(Collectors.toList()));
         return blockModelData;
     }
@@ -155,7 +155,7 @@ public class ResourcePackUtils {
                 .values().stream()
                 .filter(s -> !s.startsWith("#"))
                 .distinct()
-                .map(s -> textureWrappers.get(TEXTURES_DIR + "/" + removePrefix(s)))
+                .map(s -> textureWrappers.get(TEXTURES_DIR + "/" + removePrefix(s) + ".png"))
                 .collect(Collectors.toList()));
         return itemModelData;
     }
@@ -174,7 +174,7 @@ public class ResourcePackUtils {
                         .orElseGet(() -> blockState.getMultipart().stream().flatMap(
                                 c -> c.getApply().stream().map(Model::getModel)))
                         .distinct()
-                        .map(s -> blockModelWrappers.get(MODEL_DIR + "/" + removePrefix(s)))
+                        .map(s -> blockModelWrappers.get(MODEL_DIR + "/" + removePrefix(s) + ".json"))
                         .collect(Collectors.toList()));
         return blockStateData;
     }
@@ -189,7 +189,7 @@ public class ResourcePackUtils {
 
     private static void fillParent(ModelData<?> modelData, Map<String, ModelWrapper<?>> models) {
         if (modelData != null && modelData.getModel().getParent() != null) {
-            modelData.setParent(models.get(MODEL_DIR + "/" + modelData.getModel().getParent()));
+            modelData.setParent(models.get(MODEL_DIR + "/" + removePrefix(modelData.getModel().getParent()) + ".json"));
         }
     }
 
