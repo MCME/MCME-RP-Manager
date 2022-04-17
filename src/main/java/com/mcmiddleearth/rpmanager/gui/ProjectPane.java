@@ -1,6 +1,5 @@
 package com.mcmiddleearth.rpmanager.gui;
 
-import com.mcmiddleearth.rpmanager.gui.components.tree.JarTreeFactory;
 import com.mcmiddleearth.rpmanager.model.project.Project;
 
 import javax.swing.*;
@@ -14,7 +13,23 @@ public class ProjectPane extends JPanel {
         this.project = project;
 
         setLayout(new BorderLayout());
-        add(new JLabel(project.getName()), BorderLayout.PAGE_START);
-        add(new JTree(JarTreeFactory.createRootNode(project.getLayers().get(0))));
+
+        ProjectFilesPane treesPane = new ProjectFilesPane(project);
+
+        JSplitPane innerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
+                new JScrollPane(treesPane),
+                new FileEditPane());
+        innerSplitPane.setDividerSize(1);
+        innerSplitPane.setOneTouchExpandable(false);
+        innerSplitPane.setResizeWeight(0.5);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
+                innerSplitPane,
+                new JPanel());
+        splitPane.setDividerSize(1);
+        splitPane.setOneTouchExpandable(false);
+        splitPane.setResizeWeight(0.66);
+
+        add(splitPane, BorderLayout.CENTER);
     }
 }
