@@ -1,6 +1,7 @@
 package com.mcmiddleearth.rpmanager.gui;
 
 import com.mcmiddleearth.rpmanager.gui.actions.Actions;
+import com.mcmiddleearth.rpmanager.gui.panes.ProjectsPane;
 import com.mcmiddleearth.rpmanager.model.project.Session;
 import com.mcmiddleearth.rpmanager.model.wrappers.ResourcePackData;
 

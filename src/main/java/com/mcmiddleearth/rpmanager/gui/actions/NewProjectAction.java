@@ -1,6 +1,6 @@
 package com.mcmiddleearth.rpmanager.gui.actions;
 
-import com.mcmiddleearth.rpmanager.gui.Icons;
+import com.mcmiddleearth.rpmanager.gui.constants.Icons;
 import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.modals.NewProjectModal;
 
