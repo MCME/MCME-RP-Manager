@@ -1,0 +1,1981 @@
+minecraft:air: ~
+minecraft:stone: ~
+minecraft:granite: ~
+minecraft:polished_granite: ~
+minecraft:diorite: ~
+minecraft:polished_diorite: ~
+minecraft:andesite: ~
+minecraft:polished_andesite: ~
+minecraft:deepslate:
+  axis: [x,y,z]
+minecraft:cobbled_deepslate: ~
+minecraft:polished_deepslate: ~
+minecraft:calcite: ~
+minecraft:tuff: ~
+minecraft:dripstone_block: ~
+minecraft:grass_block:
+  snowy: [true,false]
+minecraft:dirt: ~
+minecraft:coarse_dirt: ~
+minecraft:podzol:
+  snowy: [true,false]
+minecraft:rooted_dirt: ~
+minecraft:crimson_nylium: ~
+minecraft:warped_nylium: ~
+minecraft:cobblestone: ~
+minecraft:oak_planks: ~
+minecraft:spruce_planks: ~
+minecraft:birch_planks: ~
+minecraft:jungle_planks: ~
+minecraft:acacia_planks: ~
+minecraft:dark_oak_planks: ~
+minecraft:crimson_planks: ~
+minecraft:warped_planks: ~
+minecraft:oak_sapling:
+  stage: [0,1]
+minecraft:spruce_sapling:
+  stage: [0,1]
+minecraft:birch_sapling:
+  stage: [0,1]
+minecraft:jungle_sapling:
+  stage: [0,1]
+minecraft:acacia_sapling:
+  stage: [0,1]
+minecraft:dark_oak_sapling:
+  stage: [0,1]
+minecraft:bedrock: ~
+minecraft:sand: ~
+minecraft:red_sand: ~
+minecraft:gravel: ~
+minecraft:coal_ore: ~
+minecraft:deepslate_coal_ore: ~
+minecraft:iron_ore: ~
+minecraft:deepslate_iron_ore: ~
+minecraft:copper_ore: ~
+minecraft:deepslate_copper_ore: ~
+minecraft:gold_ore: ~
+minecraft:deepslate_gold_ore: ~
+minecraft:redstone_ore:
+  lit: [true,false]
+minecraft:deepslate_redstone_ore:
+  lit: [true,false]
+minecraft:emerald_ore: ~
+minecraft:deepslate_emerald_ore: ~
+minecraft:lapis_ore: ~
+minecraft:deepslate_lapis_ore: ~
+minecraft:diamond_ore: ~
+minecraft:deepslate_diamond_ore: ~
+minecraft:nether_gold_ore: ~
+minecraft:nether_quartz_ore: ~
+minecraft:ancient_debris: ~
+minecraft:coal_block: ~
+minecraft:raw_iron_block: ~
+minecraft:raw_copper_block: ~
+minecraft:raw_gold_block: ~
+minecraft:amethyst_block: ~
+minecraft:budding_amethyst: ~
+minecraft:iron_block: ~
+minecraft:copper_block: ~
+minecraft:gold_block: ~
+minecraft:diamond_block: ~
+minecraft:netherite_block: ~
+minecraft:exposed_copper: ~
+minecraft:weathered_copper: ~
+minecraft:oxidized_copper: ~
+minecraft:cut_copper: ~
+minecraft:exposed_cut_copper: ~
+minecraft:weathered_cut_copper: ~
+minecraft:oxidized_cut_copper: ~
+minecraft:cut_copper_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:exposed_cut_copper_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:weathered_cut_copper_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:oxidized_cut_copper_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:cut_copper_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:exposed_cut_copper_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:weathered_cut_copper_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:oxidized_cut_copper_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:waxed_copper_block: ~
+minecraft:waxed_exposed_copper: ~
+minecraft:waxed_weathered_copper: ~
+minecraft:waxed_oxidized_copper: ~
+minecraft:waxed_cut_copper: ~
+minecraft:waxed_exposed_cut_copper: ~
+minecraft:waxed_weathered_cut_copper: ~
+minecraft:waxed_oxidized_cut_copper: ~
+minecraft:waxed_cut_copper_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:waxed_exposed_cut_copper_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:waxed_weathered_cut_copper_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:waxed_oxidized_cut_copper_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:waxed_cut_copper_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:waxed_exposed_cut_copper_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:waxed_weathered_cut_copper_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:waxed_oxidized_cut_copper_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:oak_log:
+  axis: [x,y,z]
+minecraft:spruce_log:
+  axis: [x,y,z]
+minecraft:birch_log:
+  axis: [x,y,z]
+minecraft:jungle_log:
+  axis: [x,y,z]
+minecraft:acacia_log:
+  axis: [x,y,z]
+minecraft:dark_oak_log:
+  axis: [x,y,z]
+minecraft:crimson_stem:
+  axis: [x,y,z]
+minecraft:warped_stem:
+  axis: [x,y,z]
+minecraft:stripped_oak_log:
+  axis: [x,y,z]
+minecraft:stripped_spruce_log:
+  axis: [x,y,z]
+minecraft:stripped_birch_log:
+  axis: [x,y,z]
+minecraft:stripped_jungle_log:
+  axis: [x,y,z]
+minecraft:stripped_acacia_log:
+  axis: [x,y,z]
+minecraft:stripped_dark_oak_log:
+  axis: [x,y,z]
+minecraft:stripped_crimson_stem:
+  axis: [x,y,z]
+minecraft:stripped_warped_stem:
+  axis: [x,y,z]
+minecraft:stripped_oak_wood:
+  axis: [x,y,z]
+minecraft:stripped_spruce_wood:
+  axis: [x,y,z]
+minecraft:stripped_birch_wood:
+  axis: [x,y,z]
+minecraft:stripped_jungle_wood:
+  axis: [x,y,z]
+minecraft:stripped_acacia_wood:
+  axis: [x,y,z]
+minecraft:stripped_dark_oak_wood:
+  axis: [x,y,z]
+minecraft:stripped_crimson_hyphae:
+  axis: [x,y,z]
+minecraft:stripped_warped_hyphae:
+  axis: [x,y,z]
+minecraft:oak_wood:
+  axis: [x,y,z]
+minecraft:spruce_wood:
+  axis: [x,y,z]
+minecraft:birch_wood:
+  axis: [x,y,z]
+minecraft:jungle_wood:
+  axis: [x,y,z]
+minecraft:acacia_wood:
+  axis: [x,y,z]
+minecraft:dark_oak_wood:
+  axis: [x,y,z]
+minecraft:crimson_hyphae:
+  axis: [x,y,z]
+minecraft:warped_hyphae:
+  axis: [x,y,z]
+minecraft:oak_leaves:
+  persistent: [true,false]
+minecraft:spruce_leaves:
+  persistent: [true,false]
+minecraft:birch_leaves:
+  persistent: [true,false]
+minecraft:jungle_leaves:
+  persistent: [true,false]
+minecraft:acacia_leaves:
+  persistent: [true,false]
+minecraft:dark_oak_leaves:
+  persistent: [true,false]
+minecraft:azalea_leaves:
+  persistent: [true,false]
+minecraft:flowering_azalea_leaves:
+  persistent: [true,false]
+minecraft:sponge: ~
+minecraft:wet_sponge: ~
+minecraft:glass: ~
+minecraft:tinted_glass: ~
+minecraft:lapis_block: ~
+minecraft:sandstone: ~
+minecraft:chiseled_sandstone: ~
+minecraft:cut_sandstone: ~
+minecraft:cobweb: ~
+minecraft:grass: ~
+minecraft:fern: ~
+minecraft:azalea: ~
+minecraft:flowering_azalea: ~
+minecraft:dead_bush: ~
+minecraft:seagrass: ~
+minecraft:sea_pickle:
+  pickles: [1,2,3,4]
+  waterlogged: [true,false]
+minecraft:white_wool: ~
+minecraft:orange_wool: ~
+minecraft:magenta_wool: ~
+minecraft:light_blue_wool: ~
+minecraft:yellow_wool: ~
+minecraft:lime_wool: ~
+minecraft:pink_wool: ~
+minecraft:gray_wool: ~
+minecraft:light_gray_wool: ~
+minecraft:cyan_wool: ~
+minecraft:purple_wool: ~
+minecraft:blue_wool: ~
+minecraft:brown_wool: ~
+minecraft:green_wool: ~
+minecraft:red_wool: ~
+minecraft:black_wool: ~
+minecraft:dandelion: ~
+minecraft:poppy: ~
+minecraft:blue_orchid: ~
+minecraft:allium: ~
+minecraft:azure_bluet: ~
+minecraft:red_tulip: ~
+minecraft:orange_tulip: ~
+minecraft:white_tulip: ~
+minecraft:pink_tulip: ~
+minecraft:oxeye_daisy: ~
+minecraft:cornflower: ~
+minecraft:lily_of_the_valley: ~
+minecraft:wither_rose: ~
+minecraft:spore_blossom: ~
+minecraft:brown_mushroom: ~
+minecraft:red_mushroom: ~
+minecraft:crimson_fungus: ~
+minecraft:warped_fungus: ~
+minecraft:crimson_roots: ~
+minecraft:warped_roots: ~
+minecraft:nether_sprouts: ~
+minecraft:weeping_vines:
+  age: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25]
+minecraft:twisting_vines:
+  age: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25]
+minecraft:sugar_cane:
+  age: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+minecraft:kelp:
+  age: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25]
+minecraft:moss_carpet: ~
+minecraft:moss_block: ~
+minecraft:hanging_roots:
+  waterlogged: [true,false]
+minecraft:big_dripleaf:
+  tilt: [none,unstable,partial,full]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:small_dripleaf:
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:bamboo:
+  leaves: [none,small,large]
+  age: [0,1]
+  stage: [0,1]
+minecraft:oak_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:spruce_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:birch_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:jungle_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:acacia_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:dark_oak_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:crimson_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:warped_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:stone_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:smooth_stone_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:sandstone_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:cut_sandstone_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:petrified_oak_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:cobblestone_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:brick_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:stone_brick_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:nether_brick_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:quartz_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:red_sandstone_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:cut_red_sandstone_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:purpur_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:prismarine_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:prismarine_brick_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:dark_prismarine_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:smooth_quartz: ~
+minecraft:smooth_red_sandstone: ~
+minecraft:smooth_sandstone: ~
+minecraft:smooth_stone: ~
+minecraft:bricks: ~
+minecraft:bookshelf: ~
+minecraft:mossy_cobblestone: ~
+minecraft:obsidian: ~
+minecraft:torch: ~
+minecraft:end_rod:
+  facing: [north,east,south,west,up,down]
+minecraft:chorus_plant: ~
+minecraft:chorus_flower:
+  age: [0,1,2,3,4,5]
+minecraft:purpur_block: ~
+minecraft:purpur_pillar:
+  axis: [x,y,z]
+minecraft:purpur_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:spawner: ~
+minecraft:oak_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:chest:
+  type: [single,left,right]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:crafting_table: ~
+minecraft:farmland:
+  moisture: [0,1,2,3,4,5,6,7]
+minecraft:furnace:
+  facing: [north,south,west,east]
+  lit: [true,false]
+minecraft:ladder:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:cobblestone_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:snow:
+  layers: [1,2,3,4,5,6,7,8]
+minecraft:ice: ~
+minecraft:snow_block: ~
+minecraft:cactus:
+  age: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+minecraft:clay: ~
+minecraft:jukebox: ~
+minecraft:oak_fence:
+  waterlogged: [true,false]
+minecraft:spruce_fence:
+  waterlogged: [true,false]
+minecraft:birch_fence:
+  waterlogged: [true,false]
+minecraft:jungle_fence:
+  waterlogged: [true,false]
+minecraft:acacia_fence:
+  waterlogged: [true,false]
+minecraft:dark_oak_fence:
+  waterlogged: [true,false]
+minecraft:crimson_fence:
+  waterlogged: [true,false]
+minecraft:warped_fence:
+  waterlogged: [true,false]
+minecraft:pumpkin: ~
+minecraft:carved_pumpkin:
+  facing: [north,south,west,east]
+minecraft:jack_o_lantern:
+  facing: [north,south,west,east]
+minecraft:netherrack: ~
+minecraft:soul_sand: ~
+minecraft:soul_soil: ~
+minecraft:basalt:
+  axis: [x,y,z]
+minecraft:polished_basalt:
+  axis: [x,y,z]
+minecraft:smooth_basalt: ~
+minecraft:soul_torch: ~
+minecraft:glowstone: ~
+minecraft:infested_stone: ~
+minecraft:infested_cobblestone: ~
+minecraft:infested_stone_bricks: ~
+minecraft:infested_mossy_stone_bricks: ~
+minecraft:infested_cracked_stone_bricks: ~
+minecraft:infested_chiseled_stone_bricks: ~
+minecraft:infested_deepslate:
+  axis: [x,y,z]
+minecraft:stone_bricks: ~
+minecraft:mossy_stone_bricks: ~
+minecraft:cracked_stone_bricks: ~
+minecraft:chiseled_stone_bricks: ~
+minecraft:deepslate_bricks: ~
+minecraft:cracked_deepslate_bricks: ~
+minecraft:deepslate_tiles: ~
+minecraft:cracked_deepslate_tiles: ~
+minecraft:chiseled_deepslate: ~
+minecraft:brown_mushroom_block: ~
+minecraft:red_mushroom_block: ~
+minecraft:mushroom_stem: ~
+minecraft:iron_bars:
+  waterlogged: [true,false]
+minecraft:chain:
+  axis: [x,y,z]
+  waterlogged: [true,false]
+minecraft:glass_pane:
+  waterlogged: [true,false]
+minecraft:melon: ~
+minecraft:vine: ~
+minecraft:glow_lichen:
+  waterlogged: [true,false]
+minecraft:brick_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:stone_brick_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:mycelium:
+  snowy: [true,false]
+minecraft:lily_pad: ~
+minecraft:nether_bricks: ~
+minecraft:cracked_nether_bricks: ~
+minecraft:chiseled_nether_bricks: ~
+minecraft:nether_brick_fence:
+  waterlogged: [true,false]
+minecraft:nether_brick_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:enchanting_table: ~
+minecraft:end_portal_frame:
+  facing: [north,south,west,east]
+minecraft:end_stone: ~
+minecraft:end_stone_bricks: ~
+minecraft:dragon_egg: ~
+minecraft:sandstone_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:ender_chest:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:emerald_block: ~
+minecraft:spruce_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:birch_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:jungle_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:crimson_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:warped_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:command_block:
+  conditional: [true,false]
+  facing: [north,east,south,west,up,down]
+minecraft:beacon: ~
+minecraft:cobblestone_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:mossy_cobblestone_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:brick_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:prismarine_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:red_sandstone_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:mossy_stone_brick_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:granite_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:stone_brick_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:nether_brick_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:andesite_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:red_nether_brick_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:sandstone_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:end_stone_brick_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:diorite_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:blackstone_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:polished_blackstone_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:polished_blackstone_brick_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:cobbled_deepslate_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:polished_deepslate_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:deepslate_brick_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:deepslate_tile_wall:
+  up: [true,false]
+  height: [none,low,tall]
+  waterlogged: [true,false]
+minecraft:anvil:
+  facing: [north,south,west,east]
+minecraft:chipped_anvil:
+  facing: [north,south,west,east]
+minecraft:damaged_anvil:
+  facing: [north,south,west,east]
+minecraft:chiseled_quartz_block: ~
+minecraft:quartz_block: ~
+minecraft:quartz_bricks: ~
+minecraft:quartz_pillar:
+  axis: [x,y,z]
+minecraft:quartz_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:white_terracotta: ~
+minecraft:orange_terracotta: ~
+minecraft:magenta_terracotta: ~
+minecraft:light_blue_terracotta: ~
+minecraft:yellow_terracotta: ~
+minecraft:lime_terracotta: ~
+minecraft:pink_terracotta: ~
+minecraft:gray_terracotta: ~
+minecraft:light_gray_terracotta: ~
+minecraft:cyan_terracotta: ~
+minecraft:purple_terracotta: ~
+minecraft:blue_terracotta: ~
+minecraft:brown_terracotta: ~
+minecraft:green_terracotta: ~
+minecraft:red_terracotta: ~
+minecraft:black_terracotta: ~
+minecraft:barrier: ~
+minecraft:light:
+  level: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+  waterlogged: [true,false]
+minecraft:hay_block:
+  axis: [x,y,z]
+minecraft:white_carpet: ~
+minecraft:orange_carpet: ~
+minecraft:magenta_carpet: ~
+minecraft:light_blue_carpet: ~
+minecraft:yellow_carpet: ~
+minecraft:lime_carpet: ~
+minecraft:pink_carpet: ~
+minecraft:gray_carpet: ~
+minecraft:light_gray_carpet: ~
+minecraft:cyan_carpet: ~
+minecraft:purple_carpet: ~
+minecraft:blue_carpet: ~
+minecraft:brown_carpet: ~
+minecraft:green_carpet: ~
+minecraft:red_carpet: ~
+minecraft:black_carpet: ~
+minecraft:terracotta: ~
+minecraft:packed_ice: ~
+minecraft:acacia_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:dark_oak_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:dirt_path: ~
+minecraft:sunflower:
+  half: [top,bottom]
+minecraft:lilac:
+  half: [top,bottom]
+minecraft:rose_bush:
+  half: [top,bottom]
+minecraft:peony:
+  half: [top,bottom]
+minecraft:tall_grass:
+  half: [top,bottom]
+minecraft:large_fern:
+  half: [top,bottom]
+minecraft:white_stained_glass: ~
+minecraft:orange_stained_glass: ~
+minecraft:magenta_stained_glass: ~
+minecraft:light_blue_stained_glass: ~
+minecraft:yellow_stained_glass: ~
+minecraft:lime_stained_glass: ~
+minecraft:pink_stained_glass: ~
+minecraft:gray_stained_glass: ~
+minecraft:light_gray_stained_glass: ~
+minecraft:cyan_stained_glass: ~
+minecraft:purple_stained_glass: ~
+minecraft:blue_stained_glass: ~
+minecraft:brown_stained_glass: ~
+minecraft:green_stained_glass: ~
+minecraft:red_stained_glass: ~
+minecraft:black_stained_glass: ~
+minecraft:white_stained_glass_pane:
+  waterlogged: [true,false]
+minecraft:orange_stained_glass_pane:
+  waterlogged: [true,false]
+minecraft:magenta_stained_glass_pane:
+  waterlogged: [true,false]
+minecraft:light_blue_stained_glass_pane:
+  waterlogged: [true,false]
+minecraft:yellow_stained_glass_pane:
+  waterlogged: [true,false]
+minecraft:lime_stained_glass_pane:
+  waterlogged: [true,false]
+minecraft:pink_stained_glass_pane:
+  waterlogged: [true,false]
+minecraft:gray_stained_glass_pane:
+  waterlogged: [true,false]
+minecraft:light_gray_stained_glass_pane:
+  waterlogged: [true,false]
+minecraft:cyan_stained_glass_pane:
+  waterlogged: [true,false]
+minecraft:purple_stained_glass_pane:
+  waterlogged: [true,false]
+minecraft:blue_stained_glass_pane:
+  waterlogged: [true,false]
+minecraft:brown_stained_glass_pane:
+  waterlogged: [true,false]
+minecraft:green_stained_glass_pane:
+  waterlogged: [true,false]
+minecraft:red_stained_glass_pane:
+  waterlogged: [true,false]
+minecraft:black_stained_glass_pane:
+  waterlogged: [true,false]
+minecraft:prismarine: ~
+minecraft:prismarine_bricks: ~
+minecraft:dark_prismarine: ~
+minecraft:prismarine_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:prismarine_brick_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:dark_prismarine_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:sea_lantern: ~
+minecraft:red_sandstone: ~
+minecraft:chiseled_red_sandstone: ~
+minecraft:cut_red_sandstone: ~
+minecraft:red_sandstone_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:repeating_command_block:
+  conditional: [true,false]
+  facing: [north,east,south,west,up,down]
+minecraft:chain_command_block:
+  conditional: [true,false]
+  facing: [north,east,south,west,up,down]
+minecraft:magma_block: ~
+minecraft:nether_wart_block: ~
+minecraft:warped_wart_block: ~
+minecraft:red_nether_bricks: ~
+minecraft:bone_block:
+  axis: [x,y,z]
+minecraft:structure_void: ~
+minecraft:shulker_box:
+  facing: [north,east,south,west,up,down]
+minecraft:white_shulker_box:
+  facing: [north,east,south,west,up,down]
+minecraft:orange_shulker_box:
+  facing: [north,east,south,west,up,down]
+minecraft:magenta_shulker_box:
+  facing: [north,east,south,west,up,down]
+minecraft:light_blue_shulker_box:
+  facing: [north,east,south,west,up,down]
+minecraft:yellow_shulker_box:
+  facing: [north,east,south,west,up,down]
+minecraft:lime_shulker_box:
+  facing: [north,east,south,west,up,down]
+minecraft:pink_shulker_box:
+  facing: [north,east,south,west,up,down]
+minecraft:gray_shulker_box:
+  facing: [north,east,south,west,up,down]
+minecraft:light_gray_shulker_box:
+  facing: [north,east,south,west,up,down]
+minecraft:cyan_shulker_box:
+  facing: [north,east,south,west,up,down]
+minecraft:purple_shulker_box:
+  facing: [north,east,south,west,up,down]
+minecraft:blue_shulker_box:
+  facing: [north,east,south,west,up,down]
+minecraft:brown_shulker_box:
+  facing: [north,east,south,west,up,down]
+minecraft:green_shulker_box:
+  facing: [north,east,south,west,up,down]
+minecraft:red_shulker_box:
+  facing: [north,east,south,west,up,down]
+minecraft:black_shulker_box:
+  facing: [north,east,south,west,up,down]
+minecraft:white_glazed_terracotta:
+  facing: [north,south,west,east]
+minecraft:orange_glazed_terracotta:
+  facing: [north,south,west,east]
+minecraft:magenta_glazed_terracotta:
+  facing: [north,south,west,east]
+minecraft:light_blue_glazed_terracotta:
+  facing: [north,south,west,east]
+minecraft:yellow_glazed_terracotta:
+  facing: [north,south,west,east]
+minecraft:lime_glazed_terracotta:
+  facing: [north,south,west,east]
+minecraft:pink_glazed_terracotta:
+  facing: [north,south,west,east]
+minecraft:gray_glazed_terracotta:
+  facing: [north,south,west,east]
+minecraft:light_gray_glazed_terracotta:
+  facing: [north,south,west,east]
+minecraft:cyan_glazed_terracotta:
+  facing: [north,south,west,east]
+minecraft:purple_glazed_terracotta:
+  facing: [north,south,west,east]
+minecraft:blue_glazed_terracotta:
+  facing: [north,south,west,east]
+minecraft:brown_glazed_terracotta:
+  facing: [north,south,west,east]
+minecraft:green_glazed_terracotta:
+  facing: [north,south,west,east]
+minecraft:red_glazed_terracotta:
+  facing: [north,south,west,east]
+minecraft:black_glazed_terracotta:
+  facing: [north,south,west,east]
+minecraft:white_concrete: ~
+minecraft:orange_concrete: ~
+minecraft:magenta_concrete: ~
+minecraft:light_blue_concrete: ~
+minecraft:yellow_concrete: ~
+minecraft:lime_concrete: ~
+minecraft:pink_concrete: ~
+minecraft:gray_concrete: ~
+minecraft:light_gray_concrete: ~
+minecraft:cyan_concrete: ~
+minecraft:purple_concrete: ~
+minecraft:blue_concrete: ~
+minecraft:brown_concrete: ~
+minecraft:green_concrete: ~
+minecraft:red_concrete: ~
+minecraft:black_concrete: ~
+minecraft:white_concrete_powder: ~
+minecraft:orange_concrete_powder: ~
+minecraft:magenta_concrete_powder: ~
+minecraft:light_blue_concrete_powder: ~
+minecraft:yellow_concrete_powder: ~
+minecraft:lime_concrete_powder: ~
+minecraft:pink_concrete_powder: ~
+minecraft:gray_concrete_powder: ~
+minecraft:light_gray_concrete_powder: ~
+minecraft:cyan_concrete_powder: ~
+minecraft:purple_concrete_powder: ~
+minecraft:blue_concrete_powder: ~
+minecraft:brown_concrete_powder: ~
+minecraft:green_concrete_powder: ~
+minecraft:red_concrete_powder: ~
+minecraft:black_concrete_powder: ~
+minecraft:turtle_egg:
+  eggs: [1,2,3,4]
+  hatch: [0,1,2]
+minecraft:dead_tube_coral_block: ~
+minecraft:dead_brain_coral_block: ~
+minecraft:dead_bubble_coral_block: ~
+minecraft:dead_fire_coral_block: ~
+minecraft:dead_horn_coral_block: ~
+minecraft:tube_coral_block: ~
+minecraft:brain_coral_block: ~
+minecraft:bubble_coral_block: ~
+minecraft:fire_coral_block: ~
+minecraft:horn_coral_block: ~
+minecraft:tube_coral:
+  waterlogged: [true,false]
+minecraft:brain_coral:
+  waterlogged: [true,false]
+minecraft:bubble_coral:
+  waterlogged: [true,false]
+minecraft:fire_coral:
+  waterlogged: [true,false]
+minecraft:horn_coral:
+  waterlogged: [true,false]
+minecraft:dead_brain_coral:
+  waterlogged: [true,false]
+minecraft:dead_bubble_coral:
+  waterlogged: [true,false]
+minecraft:dead_fire_coral:
+  waterlogged: [true,false]
+minecraft:dead_horn_coral:
+  waterlogged: [true,false]
+minecraft:dead_tube_coral:
+  waterlogged: [true,false]
+minecraft:tube_coral_fan:
+  waterlogged: [true,false]
+minecraft:brain_coral_fan:
+  waterlogged: [true,false]
+minecraft:bubble_coral_fan:
+  waterlogged: [true,false]
+minecraft:fire_coral_fan:
+  waterlogged: [true,false]
+minecraft:horn_coral_fan:
+  waterlogged: [true,false]
+minecraft:dead_tube_coral_fan:
+  waterlogged: [true,false]
+minecraft:dead_brain_coral_fan:
+  waterlogged: [true,false]
+minecraft:dead_bubble_coral_fan:
+  waterlogged: [true,false]
+minecraft:dead_fire_coral_fan:
+  waterlogged: [true,false]
+minecraft:dead_horn_coral_fan:
+  waterlogged: [true,false]
+minecraft:blue_ice: ~
+minecraft:conduit:
+  waterlogged: [true,false]
+minecraft:polished_granite_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:smooth_red_sandstone_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:mossy_stone_brick_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:polished_diorite_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:mossy_cobblestone_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:end_stone_brick_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:stone_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:smooth_sandstone_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:smooth_quartz_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:granite_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:andesite_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:red_nether_brick_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:polished_andesite_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:diorite_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:cobbled_deepslate_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:polished_deepslate_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:deepslate_brick_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:deepslate_tile_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:polished_granite_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:smooth_red_sandstone_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:mossy_stone_brick_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:polished_diorite_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:mossy_cobblestone_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:end_stone_brick_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:smooth_sandstone_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:smooth_quartz_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:granite_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:andesite_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:red_nether_brick_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:polished_andesite_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:diorite_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:cobbled_deepslate_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:polished_deepslate_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:deepslate_brick_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:deepslate_tile_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:scaffolding:
+  bottom: [true,false]
+  waterlogged: [true,false]
+minecraft:redstone_torch:
+  lit: [true,false]
+minecraft:redstone_block: ~
+minecraft:repeater:
+  delay: [1,2,3,4]
+  locked: [true,false]
+  facing: [north,south,west,east]
+  powered: [true,false]
+minecraft:comparator:
+  mode: [compare,subtract]
+  facing: [north,south,west,east]
+  powered: [true,false]
+minecraft:piston:
+  extended: [true,false]
+  facing: [north,east,south,west,up,down]
+minecraft:sticky_piston:
+  extended: [true,false]
+  facing: [north,east,south,west,up,down]
+minecraft:slime_block: ~
+minecraft:honey_block: ~
+minecraft:observer:
+  facing: [north,east,south,west,up,down]
+  powered: [true,false]
+minecraft:hopper:
+  enabled: [true,false]
+  facing: [down,north,south,west,east]
+minecraft:dispenser:
+  triggered: [true,false]
+  facing: [north,east,south,west,up,down]
+minecraft:dropper:
+  triggered: [true,false]
+  facing: [north,east,south,west,up,down]
+minecraft:lectern:
+  facing: [north,south,west,east]
+  powered: [true,false]
+minecraft:target:
+  power: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+minecraft:lever:
+  face: [floor,wall,ceiling]
+  facing: [north,south,west,east]
+  attached_face: [floor,wall,ceiling]
+  powered: [true,false]
+minecraft:lightning_rod:
+  facing: [north,east,south,west,up,down]
+  powered: [true,false]
+  waterlogged: [true,false]
+minecraft:daylight_detector:
+  inverted: [true,false]
+  power: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+minecraft:sculk_sensor:
+  phase: [inactive,active,cooldown]
+  power: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+  waterlogged: [true,false]
+minecraft:tripwire_hook:
+  attached: [true,false]
+  facing: [north,south,west,east]
+  powered: [true,false]
+minecraft:trapped_chest:
+  type: [single,left,right]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:tnt:
+  unstable: [true,false]
+minecraft:redstone_lamp:
+  lit: [true,false]
+minecraft:note_block:
+  instrument: [piano,bass_drum,snare_drum,sticks,bass_guitar,flute,bell,guitar,chime,xylophone,iron_xylophone,cow_bell,didgeridoo,bit,banjo,pling]
+  note: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
+  powered: [true,false]
+minecraft:stone_button:
+  face: [floor,wall,ceiling]
+  facing: [north,south,west,east]
+  attached_face: [floor,wall,ceiling]
+  powered: [true,false]
+minecraft:polished_blackstone_button:
+  face: [floor,wall,ceiling]
+  facing: [north,south,west,east]
+  attached_face: [floor,wall,ceiling]
+  powered: [true,false]
+minecraft:oak_button:
+  face: [floor,wall,ceiling]
+  facing: [north,south,west,east]
+  attached_face: [floor,wall,ceiling]
+  powered: [true,false]
+minecraft:spruce_button:
+  face: [floor,wall,ceiling]
+  facing: [north,south,west,east]
+  attached_face: [floor,wall,ceiling]
+  powered: [true,false]
+minecraft:birch_button:
+  face: [floor,wall,ceiling]
+  facing: [north,south,west,east]
+  attached_face: [floor,wall,ceiling]
+  powered: [true,false]
+minecraft:jungle_button:
+  face: [floor,wall,ceiling]
+  facing: [north,south,west,east]
+  attached_face: [floor,wall,ceiling]
+  powered: [true,false]
+minecraft:acacia_button:
+  face: [floor,wall,ceiling]
+  facing: [north,south,west,east]
+  attached_face: [floor,wall,ceiling]
+  powered: [true,false]
+minecraft:dark_oak_button:
+  face: [floor,wall,ceiling]
+  facing: [north,south,west,east]
+  attached_face: [floor,wall,ceiling]
+  powered: [true,false]
+minecraft:crimson_button:
+  face: [floor,wall,ceiling]
+  facing: [north,south,west,east]
+  attached_face: [floor,wall,ceiling]
+  powered: [true,false]
+minecraft:warped_button:
+  face: [floor,wall,ceiling]
+  facing: [north,south,west,east]
+  attached_face: [floor,wall,ceiling]
+  powered: [true,false]
+minecraft:stone_pressure_plate:
+  powered: [true,false]
+minecraft:polished_blackstone_pressure_plate:
+  powered: [true,false]
+minecraft:light_weighted_pressure_plate:
+  power: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+minecraft:heavy_weighted_pressure_plate:
+  power: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+minecraft:oak_pressure_plate:
+  powered: [true,false]
+minecraft:spruce_pressure_plate:
+  powered: [true,false]
+minecraft:birch_pressure_plate:
+  powered: [true,false]
+minecraft:jungle_pressure_plate:
+  powered: [true,false]
+minecraft:acacia_pressure_plate:
+  powered: [true,false]
+minecraft:dark_oak_pressure_plate:
+  powered: [true,false]
+minecraft:crimson_pressure_plate:
+  powered: [true,false]
+minecraft:warped_pressure_plate:
+  powered: [true,false]
+minecraft:iron_door:
+  hinge: [left,right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+minecraft:oak_door:
+  hinge: [left,right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+minecraft:spruce_door:
+  hinge: [left,right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+minecraft:birch_door:
+  hinge: [left,right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+minecraft:jungle_door:
+  hinge: [left,right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+minecraft:acacia_door:
+  hinge: [left,right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+minecraft:dark_oak_door:
+  hinge: [left,right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+minecraft:crimson_door:
+  hinge: [left,right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+minecraft:warped_door:
+  hinge: [left,right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+minecraft:iron_trapdoor:
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+  waterlogged: [true,false]
+minecraft:oak_trapdoor:
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+  waterlogged: [true,false]
+minecraft:spruce_trapdoor:
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+  waterlogged: [true,false]
+minecraft:birch_trapdoor:
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+  waterlogged: [true,false]
+minecraft:jungle_trapdoor:
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+  waterlogged: [true,false]
+minecraft:acacia_trapdoor:
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+  waterlogged: [true,false]
+minecraft:dark_oak_trapdoor:
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+  waterlogged: [true,false]
+minecraft:crimson_trapdoor:
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+  waterlogged: [true,false]
+minecraft:warped_trapdoor:
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+  waterlogged: [true,false]
+minecraft:oak_fence_gate:
+  in_wall: [true,false]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+minecraft:spruce_fence_gate:
+  in_wall: [true,false]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+minecraft:birch_fence_gate:
+  in_wall: [true,false]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+minecraft:jungle_fence_gate:
+  in_wall: [true,false]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+minecraft:acacia_fence_gate:
+  in_wall: [true,false]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+minecraft:dark_oak_fence_gate:
+  in_wall: [true,false]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+minecraft:crimson_fence_gate:
+  in_wall: [true,false]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+minecraft:warped_fence_gate:
+  in_wall: [true,false]
+  facing: [north,south,west,east]
+  open: [true,false]
+  powered: [true,false]
+minecraft:powered_rail:
+  powered: [true,false]
+  shape: [north_south,east_west,ascending_east,ascending_west,ascending_north,ascending_south]
+  waterlogged: [true,false]
+minecraft:detector_rail:
+  powered: [true,false]
+  shape: [north_south,east_west,ascending_east,ascending_west,ascending_north,ascending_south]
+  waterlogged: [true,false]
+minecraft:rail:
+  shape: [north_south,east_west,ascending_east,ascending_west,ascending_north,ascending_south,south_east,south_west,north_west,north_east]
+  waterlogged: [true,false]
+minecraft:activator_rail:
+  powered: [true,false]
+  shape: [north_south,east_west,ascending_east,ascending_west,ascending_north,ascending_south]
+  waterlogged: [true,false]
+minecraft:structure_block:
+  mode: [save,load,corner,data]
+minecraft:jigsaw:
+  orientation: [down_east,down_north,down_south,down_west,up_east,up_north,up_south,up_west,west_up,east_up,north_up,south_up]
+minecraft:wheat:
+  age: [0,1,2,3,4,5,6,7]
+minecraft:oak_sign:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+  waterlogged: [true,false]
+minecraft:spruce_sign:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+  waterlogged: [true,false]
+minecraft:birch_sign:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+  waterlogged: [true,false]
+minecraft:jungle_sign:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+  waterlogged: [true,false]
+minecraft:acacia_sign:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+  waterlogged: [true,false]
+minecraft:dark_oak_sign:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+  waterlogged: [true,false]
+minecraft:crimson_sign:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+  waterlogged: [true,false]
+minecraft:warped_sign:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+  waterlogged: [true,false]
+minecraft:dried_kelp_block: ~
+minecraft:cake:
+  bites: [0,1,2,3,4,5,6]
+minecraft:white_bed:
+  part: [head,foot]
+  occupied: [true,false]
+  facing: [north,south,west,east]
+minecraft:orange_bed:
+  part: [head,foot]
+  occupied: [true,false]
+  facing: [north,south,west,east]
+minecraft:magenta_bed:
+  part: [head,foot]
+  occupied: [true,false]
+  facing: [north,south,west,east]
+minecraft:light_blue_bed:
+  part: [head,foot]
+  occupied: [true,false]
+  facing: [north,south,west,east]
+minecraft:yellow_bed:
+  part: [head,foot]
+  occupied: [true,false]
+  facing: [north,south,west,east]
+minecraft:lime_bed:
+  part: [head,foot]
+  occupied: [true,false]
+  facing: [north,south,west,east]
+minecraft:pink_bed:
+  part: [head,foot]
+  occupied: [true,false]
+  facing: [north,south,west,east]
+minecraft:gray_bed:
+  part: [head,foot]
+  occupied: [true,false]
+  facing: [north,south,west,east]
+minecraft:light_gray_bed:
+  part: [head,foot]
+  occupied: [true,false]
+  facing: [north,south,west,east]
+minecraft:cyan_bed:
+  part: [head,foot]
+  occupied: [true,false]
+  facing: [north,south,west,east]
+minecraft:purple_bed:
+  part: [head,foot]
+  occupied: [true,false]
+  facing: [north,south,west,east]
+minecraft:blue_bed:
+  part: [head,foot]
+  occupied: [true,false]
+  facing: [north,south,west,east]
+minecraft:brown_bed:
+  part: [head,foot]
+  occupied: [true,false]
+  facing: [north,south,west,east]
+minecraft:green_bed:
+  part: [head,foot]
+  occupied: [true,false]
+  facing: [north,south,west,east]
+minecraft:red_bed:
+  part: [head,foot]
+  occupied: [true,false]
+  facing: [north,south,west,east]
+minecraft:black_bed:
+  part: [head,foot]
+  occupied: [true,false]
+  facing: [north,south,west,east]
+minecraft:nether_wart:
+  age: [0,1,2,3]
+minecraft:brewing_stand: ~
+minecraft:cauldron: ~
+minecraft:flower_pot: ~
+minecraft:skeleton_skull:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:wither_skeleton_skull:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:player_head:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:zombie_head:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:creeper_head:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:dragon_head:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:white_banner:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:orange_banner:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:magenta_banner:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:light_blue_banner:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:yellow_banner:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:lime_banner:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:pink_banner:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:gray_banner:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:light_gray_banner:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:cyan_banner:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:purple_banner:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:blue_banner:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:brown_banner:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:green_banner:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:red_banner:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:black_banner:
+  rotation: [north,east,south,west,up,down,north_east,north_west,south_east,south_west,west_north_west,north_north_west,north_north_east,east_north_east,east_south_east,south_south_east,south_south_west,west_south_west,self]
+minecraft:loom:
+  facing: [north,south,west,east]
+minecraft:composter:
+  level: [0,1,2,3,4,5,6,7,8]
+minecraft:barrel:
+  facing: [north,east,south,west,up,down]
+minecraft:smoker:
+  facing: [north,south,west,east]
+  lit: [true,false]
+minecraft:blast_furnace:
+  facing: [north,south,west,east]
+  lit: [true,false]
+minecraft:cartography_table: ~
+minecraft:fletching_table: ~
+minecraft:grindstone:
+  facing: [north,south,west,east]
+  attached_face: [floor,wall,ceiling]
+minecraft:smithing_table: ~
+minecraft:stonecutter:
+  facing: [north,south,west,east]
+minecraft:bell:
+  attachment: [floor,ceiling,single_wall,double_wall]
+  facing: [north,south,west,east]
+  powered: [true,false]
+minecraft:lantern:
+  hanging: [true,false]
+  waterlogged: [true,false]
+minecraft:soul_lantern:
+  hanging: [true,false]
+  waterlogged: [true,false]
+minecraft:campfire:
+  signal_fire: [true,false]
+  facing: [north,south,west,east]
+  lit: [true,false]
+  waterlogged: [true,false]
+minecraft:soul_campfire:
+  signal_fire: [true,false]
+  facing: [north,south,west,east]
+  lit: [true,false]
+  waterlogged: [true,false]
+minecraft:shroomlight: ~
+minecraft:bee_nest:
+  honey_level: [0,1,2,3,4,5]
+  facing: [north,south,west,east]
+minecraft:beehive:
+  honey_level: [0,1,2,3,4,5]
+  facing: [north,south,west,east]
+minecraft:honeycomb_block: ~
+minecraft:lodestone: ~
+minecraft:crying_obsidian: ~
+minecraft:blackstone: ~
+minecraft:blackstone_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:blackstone_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:gilded_blackstone: ~
+minecraft:polished_blackstone: ~
+minecraft:polished_blackstone_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:polished_blackstone_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:chiseled_polished_blackstone: ~
+minecraft:polished_blackstone_bricks: ~
+minecraft:polished_blackstone_brick_slab:
+  type: [top,bottom,double]
+  waterlogged: [true,false]
+minecraft:polished_blackstone_brick_stairs:
+  shape: [straight,inner_left,inner_right,outer_left,outer_right]
+  half: [top,bottom]
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:cracked_polished_blackstone_bricks: ~
+minecraft:respawn_anchor:
+  charges: [0,1,2,3,4]
+minecraft:candle:
+  candles: [0,1,2,3,4]
+  lit: [true,false]
+  waterlogged: [true,false]
+minecraft:white_candle:
+  candles: [0,1,2,3,4]
+  lit: [true,false]
+  waterlogged: [true,false]
+minecraft:orange_candle:
+  candles: [0,1,2,3,4]
+  lit: [true,false]
+  waterlogged: [true,false]
+minecraft:magenta_candle:
+  candles: [0,1,2,3,4]
+  lit: [true,false]
+  waterlogged: [true,false]
+minecraft:light_blue_candle:
+  candles: [0,1,2,3,4]
+  lit: [true,false]
+  waterlogged: [true,false]
+minecraft:yellow_candle:
+  candles: [0,1,2,3,4]
+  lit: [true,false]
+  waterlogged: [true,false]
+minecraft:lime_candle:
+  candles: [0,1,2,3,4]
+  lit: [true,false]
+  waterlogged: [true,false]
+minecraft:pink_candle:
+  candles: [0,1,2,3,4]
+  lit: [true,false]
+  waterlogged: [true,false]
+minecraft:gray_candle:
+  candles: [0,1,2,3,4]
+  lit: [true,false]
+  waterlogged: [true,false]
+minecraft:light_gray_candle:
+  candles: [0,1,2,3,4]
+  lit: [true,false]
+  waterlogged: [true,false]
+minecraft:cyan_candle:
+  candles: [0,1,2,3,4]
+  lit: [true,false]
+  waterlogged: [true,false]
+minecraft:purple_candle:
+  candles: [0,1,2,3,4]
+  lit: [true,false]
+  waterlogged: [true,false]
+minecraft:blue_candle:
+  candles: [0,1,2,3,4]
+  lit: [true,false]
+  waterlogged: [true,false]
+minecraft:brown_candle:
+  candles: [0,1,2,3,4]
+  lit: [true,false]
+  waterlogged: [true,false]
+minecraft:green_candle:
+  candles: [0,1,2,3,4]
+  lit: [true,false]
+  waterlogged: [true,false]
+minecraft:red_candle:
+  candles: [0,1,2,3,4]
+  lit: [true,false]
+  waterlogged: [true,false]
+minecraft:black_candle:
+  candles: [0,1,2,3,4]
+  lit: [true,false]
+  waterlogged: [true,false]
+minecraft:small_amethyst_bud:
+  facing: [north,east,south,west,up,down]
+  waterlogged: [true,false]
+minecraft:medium_amethyst_bud:
+  facing: [north,east,south,west,up,down]
+  waterlogged: [true,false]
+minecraft:large_amethyst_bud:
+  facing: [north,east,south,west,up,down]
+  waterlogged: [true,false]
+minecraft:amethyst_cluster:
+  facing: [north,east,south,west,up,down]
+  waterlogged: [true,false]
+minecraft:pointed_dripstone:
+  vertical_direction: [up,down]
+  thickness: [tip_merge,tip,frustum,middle,base]
+  waterlogged: [true,false]
+minecraft:water:
+  level: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+minecraft:lava:
+  level: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+minecraft:tall_seagrass:
+  half: [top,bottom]
+minecraft:piston_head:
+  short: [true,false]
+  type: [normal,sticky]
+  facing: [north,east,south,west,up,down]
+minecraft:moving_piston:
+  type: [normal,sticky]
+  facing: [north,east,south,west,up,down]
+minecraft:wall_torch:
+  facing: [north,south,west,east]
+minecraft:fire:
+  age: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+minecraft:soul_fire: ~
+minecraft:redstone_wire:
+  face: [up,side,none]
+  power: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+minecraft:oak_wall_sign:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:spruce_wall_sign:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:birch_wall_sign:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:acacia_wall_sign:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:jungle_wall_sign:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:dark_oak_wall_sign:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:redstone_wall_torch:
+  facing: [north,south,west,east]
+  lit: [true,false]
+minecraft:soul_wall_torch:
+  facing: [north,south,west,east]
+minecraft:nether_portal:
+  axis: [x,y,z]
+minecraft:attached_pumpkin_stem:
+  facing: [north,south,west,east]
+minecraft:attached_melon_stem:
+  facing: [north,south,west,east]
+minecraft:pumpkin_stem:
+  age: [0,1,2,3,4,5,6,7]
+minecraft:melon_stem:
+  age: [0,1,2,3,4,5,6,7]
+minecraft:water_cauldron:
+  level: [0,1,2,3]
+minecraft:lava_cauldron: ~
+minecraft:powder_snow_cauldron:
+  level: [0,1,2,3]
+minecraft:end_portal: ~
+minecraft:cocoa:
+  age: [0,1,2]
+  facing: [north,south,west,east]
+minecraft:tripwire:
+  disarmed: [true,false]
+  attached: [true,false]
+  powered: [true,false]
+minecraft:potted_oak_sapling: ~
+minecraft:potted_spruce_sapling: ~
+minecraft:potted_birch_sapling: ~
+minecraft:potted_jungle_sapling: ~
+minecraft:potted_acacia_sapling: ~
+minecraft:potted_dark_oak_sapling: ~
+minecraft:potted_fern: ~
+minecraft:potted_dandelion: ~
+minecraft:potted_poppy: ~
+minecraft:potted_blue_orchid: ~
+minecraft:potted_allium: ~
+minecraft:potted_azure_bluet: ~
+minecraft:potted_red_tulip: ~
+minecraft:potted_orange_tulip: ~
+minecraft:potted_white_tulip: ~
+minecraft:potted_pink_tulip: ~
+minecraft:potted_oxeye_daisy: ~
+minecraft:potted_cornflower: ~
+minecraft:potted_lily_of_the_valley: ~
+minecraft:potted_wither_rose: ~
+minecraft:potted_red_mushroom: ~
+minecraft:potted_brown_mushroom: ~
+minecraft:potted_dead_bush: ~
+minecraft:potted_cactus: ~
+minecraft:carrots:
+  age: [0,1,2,3,4,5,6,7]
+minecraft:potatoes:
+  age: [0,1,2,3,4,5,6,7]
+minecraft:skeleton_wall_skull:
+  facing: [north,south,west,east]
+minecraft:wither_skeleton_wall_skull:
+  facing: [north,south,west,east]
+minecraft:zombie_wall_head:
+  facing: [north,south,west,east]
+minecraft:player_wall_head:
+  facing: [north,south,west,east]
+minecraft:creeper_wall_head:
+  facing: [north,south,west,east]
+minecraft:dragon_wall_head:
+  facing: [north,south,west,east]
+minecraft:white_wall_banner:
+  facing: [north,south,west,east]
+minecraft:orange_wall_banner:
+  facing: [north,south,west,east]
+minecraft:magenta_wall_banner:
+  facing: [north,south,west,east]
+minecraft:light_blue_wall_banner:
+  facing: [north,south,west,east]
+minecraft:yellow_wall_banner:
+  facing: [north,south,west,east]
+minecraft:lime_wall_banner:
+  facing: [north,south,west,east]
+minecraft:pink_wall_banner:
+  facing: [north,south,west,east]
+minecraft:gray_wall_banner:
+  facing: [north,south,west,east]
+minecraft:light_gray_wall_banner:
+  facing: [north,south,west,east]
+minecraft:cyan_wall_banner:
+  facing: [north,south,west,east]
+minecraft:purple_wall_banner:
+  facing: [north,south,west,east]
+minecraft:blue_wall_banner:
+  facing: [north,south,west,east]
+minecraft:brown_wall_banner:
+  facing: [north,south,west,east]
+minecraft:green_wall_banner:
+  facing: [north,south,west,east]
+minecraft:red_wall_banner:
+  facing: [north,south,west,east]
+minecraft:black_wall_banner:
+  facing: [north,south,west,east]
+minecraft:beetroots:
+  age: [0,1,2,3]
+minecraft:end_gateway: ~
+minecraft:frosted_ice:
+  age: [0,1,2,3]
+minecraft:kelp_plant: ~
+minecraft:dead_tube_coral_wall_fan:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:dead_brain_coral_wall_fan:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:dead_bubble_coral_wall_fan:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:dead_fire_coral_wall_fan:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:dead_horn_coral_wall_fan:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:tube_coral_wall_fan:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:brain_coral_wall_fan:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:bubble_coral_wall_fan:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:fire_coral_wall_fan:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:horn_coral_wall_fan:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:bamboo_sapling: ~
+minecraft:potted_bamboo: ~
+minecraft:void_air: ~
+minecraft:cave_air: ~
+minecraft:bubble_column:
+  drag: [true,false]
+minecraft:sweet_berry_bush:
+  age: [0,1,2,3]
+minecraft:weeping_vines_plant: ~
+minecraft:twisting_vines_plant: ~
+minecraft:crimson_wall_sign:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:warped_wall_sign:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:potted_crimson_fungus: ~
+minecraft:potted_warped_fungus: ~
+minecraft:potted_crimson_roots: ~
+minecraft:potted_warped_roots: ~
+minecraft:candle_cake:
+  lit: [true,false]
+minecraft:white_candle_cake:
+  lit: [true,false]
+minecraft:orange_candle_cake:
+  lit: [true,false]
+minecraft:magenta_candle_cake:
+  lit: [true,false]
+minecraft:light_blue_candle_cake:
+  lit: [true,false]
+minecraft:yellow_candle_cake:
+  lit: [true,false]
+minecraft:lime_candle_cake:
+  lit: [true,false]
+minecraft:pink_candle_cake:
+  lit: [true,false]
+minecraft:gray_candle_cake:
+  lit: [true,false]
+minecraft:light_gray_candle_cake:
+  lit: [true,false]
+minecraft:cyan_candle_cake:
+  lit: [true,false]
+minecraft:purple_candle_cake:
+  lit: [true,false]
+minecraft:blue_candle_cake:
+  lit: [true,false]
+minecraft:brown_candle_cake:
+  lit: [true,false]
+minecraft:green_candle_cake:
+  lit: [true,false]
+minecraft:red_candle_cake:
+  lit: [true,false]
+minecraft:black_candle_cake:
+  lit: [true,false]
+minecraft:powder_snow: ~
+minecraft:cave_vines:
+  age: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25]
+  berries: [true,false]
+minecraft:cave_vines_plant:
+  berries: [true,false]
+minecraft:big_dripleaf_stem:
+  facing: [north,south,west,east]
+  waterlogged: [true,false]
+minecraft:potted_azalea_bush: ~
+minecraft:potted_flowering_azalea_bush: ~

@@ -17,6 +17,9 @@
 
 package com.mcmiddleearth.rpmanager.gui.panes;
 
+import com.mcmiddleearth.rpmanager.model.BlockModel;
+import com.mcmiddleearth.rpmanager.model.BlockState;
+import com.mcmiddleearth.rpmanager.model.ItemModel;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 import com.mcmiddleearth.rpmanager.utils.JsonFileLoader;
 
@@ -25,15 +28,15 @@ import java.awt.*;
 import java.io.IOException;
 
 public class FileEditPane extends JPanel {
-    private final JLabel tmpLabel;
+    private final JPanel editPane;
 
     public FileEditPane() {
         setLayout(new BorderLayout());
 
-        JPanel editPane = new JPanel();
+        this.editPane = new JPanel();
+        this.editPane.setLayout(new BorderLayout());
         JPanel previewPane = new JPanel();
-
-        editPane.add(this.tmpLabel = new JLabel());
+        previewPane.setLayout(new BorderLayout());
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true,
                 editPane,
@@ -46,17 +49,28 @@ public class FileEditPane extends JPanel {
     }
 
     public void setSelectedFile(Layer layer, Object[] path) {
-        String pathStr = "";
         try {
             Object fileData = JsonFileLoader.load(layer, path);
-            if (fileData != null) {
-                pathStr = fileData.getClass().getCanonicalName();
-            }
+            setData(fileData);
         } catch (IOException e) {
             //TODO show error dialog
         }
-        tmpLabel.setText(pathStr);
-        tmpLabel.revalidate();
-        tmpLabel.repaint();
+    }
+
+    private void setData(Object data) {
+        editPane.removeAll();
+        if (data instanceof BlockState) {
+            JScrollPane scrollPane = new JScrollPane(new BlockstateFileEditPane((BlockState) data));
+            editPane.add(scrollPane, BorderLayout.CENTER);
+        } else if (data instanceof BlockModel) {
+            //TODO
+        } else if (data instanceof ItemModel) {
+            //TODO
+        } else {
+            JLabel label = new JLabel("No file selected, or no editor available for selected file.");
+            editPane.add(label, BorderLayout.CENTER);
+        }
+        editPane.revalidate();
+        editPane.repaint();
     }
 }
