@@ -20,6 +20,7 @@ package com.mcmiddleearth.rpmanager.gui.panes;
 import com.mcmiddleearth.rpmanager.model.BlockModel;
 import com.mcmiddleearth.rpmanager.model.BlockState;
 import com.mcmiddleearth.rpmanager.model.ItemModel;
+import com.mcmiddleearth.rpmanager.model.internal.SelectedFileData;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 import com.mcmiddleearth.rpmanager.utils.JsonFileLoader;
 
@@ -50,21 +51,21 @@ public class FileEditPane extends JPanel {
 
     public void setSelectedFile(Layer layer, Object[] path) {
         try {
-            Object fileData = JsonFileLoader.load(layer, path);
+            SelectedFileData fileData = JsonFileLoader.load(layer, path);
             setData(fileData);
         } catch (IOException e) {
             //TODO show error dialog
         }
     }
 
-    private void setData(Object data) {
+    private void setData(SelectedFileData data) {
         editPane.removeAll();
-        if (data instanceof BlockState) {
-            JScrollPane scrollPane = new JScrollPane(new BlockstateFileEditPane((BlockState) data));
+        if (data.getData() instanceof BlockState) {
+            JScrollPane scrollPane = new JScrollPane(new BlockstateFileEditPane(data.getName(), (BlockState) data.getData()));
             editPane.add(scrollPane, BorderLayout.CENTER);
-        } else if (data instanceof BlockModel) {
+        } else if (data.getData() instanceof BlockModel) {
             //TODO
-        } else if (data instanceof ItemModel) {
+        } else if (data.getData() instanceof ItemModel) {
             //TODO
         } else {
             JLabel label = new JLabel("No file selected, or no editor available for selected file.");

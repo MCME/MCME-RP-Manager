@@ -17,44 +17,100 @@
 
 package com.mcmiddleearth.rpmanager.gui.panes;
 
+import com.mcmiddleearth.rpmanager.gui.MainWindow;
+import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.CollapsibleSection;
+import com.mcmiddleearth.rpmanager.gui.components.VerticalBox;
+import com.mcmiddleearth.rpmanager.gui.modals.AddBlockstateModal;
 import com.mcmiddleearth.rpmanager.model.BlockState;
 import com.mcmiddleearth.rpmanager.model.Model;
+import com.mcmiddleearth.rpmanager.utils.BlockStateUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class BlockstateFileEditPane extends JPanel {
+public class BlockstateFileEditPane extends VerticalBox {
+    private final String fileName;
     private final BlockState blockState;
 
-    public BlockstateFileEditPane(BlockState blockState) {
+    public BlockstateFileEditPane(String fileName, BlockState blockState) {
+        this.fileName = fileName;
         this.blockState = blockState;
 
-        this.setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 0;
-        c.weighty = 0.0;
-        c.weightx = 1.0;
-
         if (!blockState.getVariants().isEmpty()) {
+            JButton addSection = new JButton(new Action("Add section", "Add new block state section") {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    addSection();
+                }
+            });
+            this.add(addSection);
             boolean collapsed = blockState.getVariants().size() != 1;
             for (Map.Entry<String, List<Model>> variant : blockState.getVariants().entrySet()) {
                 VariantEditPane variantEditPane = new VariantEditPane(variant.getKey(), variant.getValue());
-                this.add(new CollapsibleSection(variant.getKey(), variantEditPane, collapsed), c);
-                c.gridy++;
-                this.add(new JSeparator(), c);
-                c.gridy++;
+                this.add(new CollapsibleSection(variant.getKey(), variantEditPane, collapsed,
+                        removeSectionButton(variant.getKey())));
+                this.add(new JSeparator());
             }
         } else {
             //TODO
         }
+    }
 
-        c.fill = GridBagConstraints.VERTICAL;
-        c.weighty = 1.0;
-        this.add(Box.createVerticalGlue(), c);
+    private void addSection() {
+        Map<String, List<String>> possibleStates = BlockStateUtils.getPossibleStates(fileName);
+        if (possibleStates == null || possibleStates.isEmpty()) {
+            doAddSection("");
+        } else {
+            new AddBlockstateModal(MainWindow.getInstance(), possibleStates, new Action("Accept", "Accept") {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    doAddSection(actionEvent.getActionCommand());
+                }
+            });
+        }
+    }
+
+    private void doAddSection(String key) {
+        List<Model> models = new LinkedList<>();
+        models.add(new Model());
+        doAddSection(key, models);
+    }
+
+    private void doAddSection(String key, List<Model> models) {
+        blockState.getVariants().put(key, models);
+        VariantEditPane variantEditPane = new VariantEditPane(key, models);
+        add(new CollapsibleSection(key, variantEditPane, false, removeSectionButton(key)));
+        add(new JSeparator());
+        revalidate();
+        repaint();
+    }
+
+    private JButton removeSectionButton(String key) {
+        return new JButton(new Action("-", "Remove section") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                doRemoveSection(key);
+            }
+        });
+    }
+
+    private void doRemoveSection(String key) {
+        blockState.getVariants().remove(key);
+        for (int i = getComponentCount() - 1; i >= 0; --i) {
+            Component component = getComponent(i);
+            if (component instanceof CollapsibleSection section &&
+                    section.getContent() instanceof VariantEditPane variantEditPane &&
+                    variantEditPane.getVariant().equals(key)) {
+                remove(i+1);
+                remove(i);
+            }
+        }
+        revalidate();
+        repaint();
     }
 }

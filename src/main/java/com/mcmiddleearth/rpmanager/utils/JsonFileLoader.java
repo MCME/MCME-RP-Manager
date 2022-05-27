@@ -17,6 +17,7 @@
 
 package com.mcmiddleearth.rpmanager.utils;
 
+import com.mcmiddleearth.rpmanager.model.internal.SelectedFileData;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 import com.mcmiddleearth.rpmanager.utils.loaders.BlockModelFileLoader;
 import com.mcmiddleearth.rpmanager.utils.loaders.BlockstateFileLoader;
@@ -33,10 +34,12 @@ public interface JsonFileLoader {
     Object loadFile(Layer layer, Object[] path) throws IOException;
     boolean canLoad(Layer layer, Object[] path);
 
-    static Object load(Layer layer, Object[] path) throws IOException {
+    static SelectedFileData load(Layer layer, Object[] path) throws IOException {
         for (JsonFileLoader loader : LOADERS) {
             if (loader.canLoad(layer, path)) {
-                return loader.loadFile(layer, path);
+                String fileName = path[path.length-1].toString();
+                return new SelectedFileData(
+                        loader.loadFile(layer, path), fileName.substring(0, fileName.lastIndexOf(".")));
             }
         }
         return null;

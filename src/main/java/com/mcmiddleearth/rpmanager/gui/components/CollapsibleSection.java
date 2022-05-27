@@ -29,7 +29,7 @@ public class CollapsibleSection extends JPanel {
     private boolean collapsed;
     private boolean contentPresent = false;
 
-    public CollapsibleSection(String title, JPanel content, boolean collapsed) {
+    public CollapsibleSection(String title, JPanel content, boolean collapsed, Component... toolbarContent) {
         this.content = content;
         this.collapsed = collapsed;
         this.setLayout(new BorderLayout());
@@ -38,12 +38,23 @@ public class CollapsibleSection extends JPanel {
         this.title = new JLabel(title);
         this.title.setFont(new Font(this.title.getFont().getName(), Font.BOLD, this.title.getFont().getSize()));
 
+        JPanel toolbar = new JPanel();
+        toolbar.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
+        for (Component component : toolbarContent) {
+            toolbar.add(component);
+        }
+
         this.titlePanel = new JPanel();
         titlePanel.setLayout(new BorderLayout());
         titlePanel.add(expandButton, BorderLayout.LINE_START);
         titlePanel.add(this.title, BorderLayout.CENTER);
+        titlePanel.add(toolbar, BorderLayout.LINE_END);
         this.add(titlePanel, BorderLayout.PAGE_START);
         updateState();
+    }
+
+    public JPanel getContent() {
+        return content;
     }
 
     private void switchState() {

@@ -56,4 +56,8 @@ public class VariantEditPane extends JPanel {
         c.weighty = 1.0;
         this.add(Box.createVerticalGlue(), c);
     }
+
+    public String getVariant() {
+        return variant;
+    }
 }
