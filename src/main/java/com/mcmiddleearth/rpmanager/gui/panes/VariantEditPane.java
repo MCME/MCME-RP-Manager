@@ -17,6 +17,9 @@
 
 package com.mcmiddleearth.rpmanager.gui.panes;
 
+import com.mcmiddleearth.rpmanager.events.ChangeEvent;
+import com.mcmiddleearth.rpmanager.events.EventDispatcher;
+import com.mcmiddleearth.rpmanager.events.EventListener;
 import com.mcmiddleearth.rpmanager.gui.components.CollapsibleSection;
 import com.mcmiddleearth.rpmanager.model.Model;
 
@@ -28,6 +31,7 @@ import java.util.List;
 public class VariantEditPane extends JPanel {
     private final String variant;
     private final List<Model> models;
+    private final EventDispatcher eventDispatcher = new EventDispatcher();
 
     public VariantEditPane(String variant, List<Model> models) {
         this.variant = variant;
@@ -46,6 +50,7 @@ public class VariantEditPane extends JPanel {
         int label = 1;
         for (Model model : models) {
             VariantModelEditPane variantModelEditPane = new VariantModelEditPane(model);
+            variantModelEditPane.addChangeListener(this::onChange);
             this.add(new CollapsibleSection(Integer.toString(label++), variantModelEditPane, collapsed), c);
             c.gridy++;
             this.add(new JSeparator(), c);
@@ -59,5 +64,13 @@ public class VariantEditPane extends JPanel {
 
     public String getVariant() {
         return variant;
+    }
+
+    private void onChange(ChangeEvent changeEvent) {
+        eventDispatcher.dispatchEvent(changeEvent);
+    }
+
+    public void addChangeListener(EventListener<ChangeEvent> listener) {
+        eventDispatcher.addEventListener(listener, ChangeEvent.class);
     }
 }

@@ -17,6 +17,9 @@
 
 package com.mcmiddleearth.rpmanager.gui.panes;
 
+import com.mcmiddleearth.rpmanager.events.ChangeEvent;
+import com.mcmiddleearth.rpmanager.events.EventDispatcher;
+import com.mcmiddleearth.rpmanager.events.EventListener;
 import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.CollapsibleSection;
@@ -36,6 +39,7 @@ import java.util.Map;
 public class BlockstateFileEditPane extends VerticalBox {
     private final String fileName;
     private final BlockState blockState;
+    private final EventDispatcher eventDispatcher = new EventDispatcher();
 
     public BlockstateFileEditPane(String fileName, BlockState blockState) {
         this.fileName = fileName;
@@ -52,6 +56,7 @@ public class BlockstateFileEditPane extends VerticalBox {
             boolean collapsed = blockState.getVariants().size() != 1;
             for (Map.Entry<String, List<Model>> variant : blockState.getVariants().entrySet()) {
                 VariantEditPane variantEditPane = new VariantEditPane(variant.getKey(), variant.getValue());
+                variantEditPane.addChangeListener(event -> onChange());
                 this.add(new CollapsibleSection(variant.getKey(), variantEditPane, collapsed,
                         removeSectionButton(variant.getKey())));
                 this.add(new JSeparator());
@@ -84,10 +89,12 @@ public class BlockstateFileEditPane extends VerticalBox {
     private void doAddSection(String key, List<Model> models) {
         blockState.getVariants().put(key, models);
         VariantEditPane variantEditPane = new VariantEditPane(key, models);
+        variantEditPane.addChangeListener(event -> onChange());
         add(new CollapsibleSection(key, variantEditPane, false, removeSectionButton(key)));
         add(new JSeparator());
         revalidate();
         repaint();
+        onChange();
     }
 
     private JButton removeSectionButton(String key) {
@@ -112,5 +119,14 @@ public class BlockstateFileEditPane extends VerticalBox {
         }
         revalidate();
         repaint();
+        onChange();
+    }
+
+    private void onChange() {
+        eventDispatcher.dispatchEvent(new ChangeEvent(this, blockState));
+    }
+
+    public void addChangeListener(EventListener<ChangeEvent> listener) {
+        eventDispatcher.addEventListener(listener, ChangeEvent.class);
     }
 }

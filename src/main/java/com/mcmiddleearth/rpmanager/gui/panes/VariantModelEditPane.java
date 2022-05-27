@@ -17,10 +17,17 @@
 
 package com.mcmiddleearth.rpmanager.gui.panes;
 
+import com.mcmiddleearth.rpmanager.events.ChangeEvent;
+import com.mcmiddleearth.rpmanager.events.EventDispatcher;
+import com.mcmiddleearth.rpmanager.events.EventListener;
 import com.mcmiddleearth.rpmanager.model.Model;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 public class VariantModelEditPane extends JPanel {
     private final Model model;
@@ -29,22 +36,72 @@ public class VariantModelEditPane extends JPanel {
     private final JComboBox<Integer> yInput;
     private final JCheckBox uvLockInput;
     private final JSpinner weightInput;
+    private final EventDispatcher eventDispatcher = new EventDispatcher();
 
     public VariantModelEditPane(Model model) {
         this.model = model;
 
         setLayout(new GridBagLayout());
 
-        //TODO change listeners
         modelNameInput = new JTextField(model.getModel());
+        modelNameInput.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent documentEvent) {
+                model.setModel(modelNameInput.getText());
+                onChange();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent documentEvent) {
+                model.setModel(modelNameInput.getText());
+                onChange();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent documentEvent) {
+                model.setModel(modelNameInput.getText());
+                onChange();
+            }
+        });
         xInput = new JComboBox<>(new Integer[] { null, 90, 180, 270 });
         xInput.setSelectedItem(model.getX());
+        xInput.addItemListener(itemEvent -> {
+            model.setX((Integer) xInput.getSelectedItem());
+            onChange();
+        });
         yInput = new JComboBox<>(new Integer[] { null, 90, 180, 270 });
         yInput.setSelectedItem(model.getY());
+        yInput.addItemListener(itemEvent -> {
+            model.setY((Integer) yInput.getSelectedItem());
+            onChange();
+        });
         uvLockInput = new JCheckBox();
         uvLockInput.setSelected(Boolean.TRUE.equals(model.getUvlock()));
+        uvLockInput.addItemListener(itemEvent -> {
+            model.setUvlock(uvLockInput.isSelected());
+            onChange();
+        });
         weightInput = new JSpinner(
                 new SpinnerNumberModel(model.getWeight() == null ? 1 : model.getWeight(), 1, Integer.MAX_VALUE, 1));
+        ((JSpinner.DefaultEditor) weightInput.getEditor()).getTextField().getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent documentEvent) {
+                model.setWeight(weightInput.getValue() == null ? null : ((Number) weightInput.getValue()).intValue());
+                onChange();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent documentEvent) {
+                model.setWeight(weightInput.getValue() == null ? null : ((Number) weightInput.getValue()).intValue());
+                onChange();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent documentEvent) {
+                model.setWeight(weightInput.getValue() == null ? null : ((Number) weightInput.getValue()).intValue());
+                onChange();
+            }
+        });
 
         add(new JLabel("Model"), label(0));
         add(modelNameInput, input(0));
@@ -68,5 +125,13 @@ public class VariantModelEditPane extends JPanel {
         return new GridBagConstraints(1, y, 1, 1, 0.0, 0.0,
                 GridBagConstraints.LINE_START, GridBagConstraints.HORIZONTAL,
                 new Insets(0, 0, 0, 0), 0, 0);
+    }
+
+    public void addChangeListener(EventListener<ChangeEvent> listener) {
+        eventDispatcher.addEventListener(listener, ChangeEvent.class);
+    }
+
+    private void onChange() {
+        eventDispatcher.dispatchEvent(new ChangeEvent(this, model));
     }
 }

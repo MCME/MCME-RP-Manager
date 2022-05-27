@@ -17,6 +17,9 @@
 
 package com.mcmiddleearth.rpmanager.gui.panes;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.mcmiddleearth.rpmanager.events.ChangeEvent;
 import com.mcmiddleearth.rpmanager.model.BlockModel;
 import com.mcmiddleearth.rpmanager.model.BlockState;
 import com.mcmiddleearth.rpmanager.model.ItemModel;
@@ -29,19 +32,27 @@ import java.awt.*;
 import java.io.IOException;
 
 public class FileEditPane extends JPanel {
+    private static final Gson GSON = new GsonBuilder().setLenient().setPrettyPrinting().create();
     private final JPanel editPane;
+    private final JTextArea previewArea;
 
     public FileEditPane() {
         setLayout(new BorderLayout());
 
         this.editPane = new JPanel();
         this.editPane.setLayout(new BorderLayout());
+
+        this.previewArea = new JTextArea(0, 0);
+        this.previewArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        this.previewArea.setEditable(false);
+
         JPanel previewPane = new JPanel();
         previewPane.setLayout(new BorderLayout());
+        previewPane.add(previewArea, BorderLayout.CENTER);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true,
                 editPane,
-                previewPane);
+                new JScrollPane(previewPane));
         splitPane.setDividerSize(1);
         splitPane.setOneTouchExpandable(false);
         splitPane.setResizeWeight(0.5);
@@ -61,7 +72,11 @@ public class FileEditPane extends JPanel {
     private void setData(SelectedFileData data) {
         editPane.removeAll();
         if (data.getData() instanceof BlockState) {
-            JScrollPane scrollPane = new JScrollPane(new BlockstateFileEditPane(data.getName(), (BlockState) data.getData()));
+            updatePreview(data.getData());
+            BlockstateFileEditPane blockstateFileEditPane =
+                    new BlockstateFileEditPane(data.getName(), (BlockState) data.getData());
+            blockstateFileEditPane.addChangeListener(this::onChange);
+            JScrollPane scrollPane = new JScrollPane(blockstateFileEditPane);
             editPane.add(scrollPane, BorderLayout.CENTER);
         } else if (data.getData() instanceof BlockModel) {
             //TODO
@@ -73,5 +88,13 @@ public class FileEditPane extends JPanel {
         }
         editPane.revalidate();
         editPane.repaint();
+    }
+
+    private void onChange(ChangeEvent changeEvent) {
+        updatePreview(changeEvent.getObject());
+    }
+
+    private void updatePreview(Object o) {
+        previewArea.setText(GSON.toJson(o));
     }
 }

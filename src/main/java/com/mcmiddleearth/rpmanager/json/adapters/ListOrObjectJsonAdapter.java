@@ -56,9 +56,7 @@ public class ListOrObjectJsonAdapter<E> extends TypeAdapter<List<E>> {
     @Override
     public void write(JsonWriter out, List<E> value) throws IOException {
         if (value.size() == 1) {
-            out.beginObject();
             adapter.write(out, value.get(0));
-            out.endObject();
         } else {
             out.beginArray();
             for (E e : value) {
