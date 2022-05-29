@@ -80,4 +80,10 @@ public class CollapsibleSection extends JPanel {
             getParent().repaint();
         }
     }
+
+    public void setTitle(String title) {
+        this.title.setText(title);
+        revalidate();
+        repaint();
+    }
 }

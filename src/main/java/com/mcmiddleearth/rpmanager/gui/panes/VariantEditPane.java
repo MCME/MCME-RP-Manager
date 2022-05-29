@@ -20,15 +20,18 @@ package com.mcmiddleearth.rpmanager.gui.panes;
 import com.mcmiddleearth.rpmanager.events.ChangeEvent;
 import com.mcmiddleearth.rpmanager.events.EventDispatcher;
 import com.mcmiddleearth.rpmanager.events.EventListener;
+import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.CollapsibleSection;
+import com.mcmiddleearth.rpmanager.gui.components.VerticalBox;
 import com.mcmiddleearth.rpmanager.model.Model;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.List;
 
-public class VariantEditPane extends JPanel {
+public class VariantEditPane extends VerticalBox {
     private final String variant;
     private final List<Model> models;
     private final EventDispatcher eventDispatcher = new EventDispatcher();
@@ -38,28 +41,23 @@ public class VariantEditPane extends JPanel {
         this.models = models;
 
         setBorder(new EmptyBorder(0, 10, 0, 0));
-        this.setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 0;
-        c.weighty = 0.0;
-        c.weightx = 1.0;
+
+        this.add(new JButton(new Action("Add model", "Add new model to this variant") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                addModel();
+            }
+        }));
 
         boolean collapsed = models.size() != 1;
         int label = 1;
         for (Model model : models) {
             VariantModelEditPane variantModelEditPane = new VariantModelEditPane(model);
             variantModelEditPane.addChangeListener(this::onChange);
-            this.add(new CollapsibleSection(Integer.toString(label++), variantModelEditPane, collapsed), c);
-            c.gridy++;
-            this.add(new JSeparator(), c);
-            c.gridy++;
+            this.add(new CollapsibleSection(
+                    Integer.toString(label++), variantModelEditPane, collapsed, removeModelButton(model)));
+            this.add(new JSeparator());
         }
-
-        c.fill = GridBagConstraints.VERTICAL;
-        c.weighty = 1.0;
-        this.add(Box.createVerticalGlue(), c);
     }
 
     public String getVariant() {
@@ -72,5 +70,58 @@ public class VariantEditPane extends JPanel {
 
     public void addChangeListener(EventListener<ChangeEvent> listener) {
         eventDispatcher.addEventListener(listener, ChangeEvent.class);
+    }
+
+    private JButton removeModelButton(Model model) {
+        return new JButton(new Action("-", "Remove model") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                removeModel(model);
+            }
+        });
+    }
+
+    private void addModel() {
+        Model model = new Model();
+        models.add(model);
+
+        VariantModelEditPane variantModelEditPane = new VariantModelEditPane(model);
+        variantModelEditPane.addChangeListener(this::onChange);
+        this.add(new CollapsibleSection(
+                Integer.toString(models.size()), variantModelEditPane, false, removeModelButton(model)));
+        this.add(new JSeparator());
+
+        revalidate();
+        repaint();
+
+        eventDispatcher.dispatchEvent(new ChangeEvent(this, model));
+    }
+
+    private void removeModel(Model model) {
+        for (int i = getComponentCount() - 1; i >= 0; --i) {
+            if (getComponent(i) instanceof CollapsibleSection section &&
+                    section.getContent() instanceof VariantModelEditPane variantModelEditPane &&
+                    variantModelEditPane.getModel() == model) {
+                remove(i+1);
+                remove(i);
+            }
+        }
+
+        models.remove(model);
+        updateLabels();
+
+        revalidate();
+        repaint();
+
+        eventDispatcher.dispatchEvent(new ChangeEvent(this, model));
+    }
+
+    private void updateLabels() {
+        int label = 1;
+        for (int i = 0; i < getComponentCount(); ++i) {
+            if (getComponent(i) instanceof CollapsibleSection section) {
+                section.setTitle(Integer.toString(label++));
+            }
+        }
     }
 }

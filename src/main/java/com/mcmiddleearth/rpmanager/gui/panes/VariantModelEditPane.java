@@ -134,4 +134,8 @@ public class VariantModelEditPane extends JPanel {
     private void onChange() {
         eventDispatcher.dispatchEvent(new ChangeEvent(this, model));
     }
+
+    public Model getModel() {
+        return model;
+    }
 }

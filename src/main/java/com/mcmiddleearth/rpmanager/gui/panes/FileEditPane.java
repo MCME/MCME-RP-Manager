@@ -28,6 +28,7 @@ import com.mcmiddleearth.rpmanager.model.project.Layer;
 import com.mcmiddleearth.rpmanager.utils.JsonFileLoader;
 
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.io.IOException;
 
@@ -45,6 +46,7 @@ public class FileEditPane extends JPanel {
         this.previewArea = new JTextArea(0, 0);
         this.previewArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         this.previewArea.setEditable(false);
+        ((DefaultCaret) this.previewArea.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 
         JPanel previewPane = new JPanel();
         previewPane.setLayout(new BorderLayout());
