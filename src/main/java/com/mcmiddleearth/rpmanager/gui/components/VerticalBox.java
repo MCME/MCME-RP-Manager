@@ -26,9 +26,13 @@ public class VerticalBox extends JPanel {
     private final GridBagConstraints gridBagConstraints;
 
     public VerticalBox() {
+        this(GridBagConstraints.HORIZONTAL);
+    }
+
+    public VerticalBox(int fill) {
         this.setLayout(new GridBagLayout());
         this.gridBagConstraints = new GridBagConstraints();
-        this.gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        this.gridBagConstraints.fill = fill;
         this.gridBagConstraints.gridx = 0;
         this.gridBagConstraints.gridy = 0;
         this.gridBagConstraints.weighty = 0.0;

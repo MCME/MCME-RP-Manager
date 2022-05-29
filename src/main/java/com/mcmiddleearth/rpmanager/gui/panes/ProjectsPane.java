@@ -34,6 +34,8 @@ public class ProjectsPane extends JTabbedPane {
 
         session.addProjectAddedListener(this::onProjectAdded);
         session.addProjectRemovedListener(this::onProjectClosed);
+
+        insertTab("+", null, new EmptyProjectPane(), "New/open project", 0);
     }
 
     @SuppressWarnings("unchecked")
@@ -41,6 +43,7 @@ public class ProjectsPane extends JTabbedPane {
         Project project = (Project) event.getItem();
         try {
             insertTab(project.getName(), null, new ProjectPane(project), project.getName(), event.getIndex());
+            setSelectedIndex(event.getIndex());
         } catch (IOException e) {
             ((List<Project>) event.getSource()).remove(event.getIndex());
             //TODO error dialog
@@ -49,5 +52,10 @@ public class ProjectsPane extends JTabbedPane {
 
     private void onProjectClosed(ListItemRemovedEvent event) {
         remove(event.getIndex());
+    }
+
+    public Project getCurrentProject() {
+        int index = getSelectedIndex();
+        return index >= session.getProjects().size() ? null : session.getProjects().get(index);
     }
 }

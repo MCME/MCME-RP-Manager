@@ -1,7 +1,25 @@
+/*
+ * Copyright (C) 2022 MCME
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.mcmiddleearth.rpmanager.gui;
 
 import com.mcmiddleearth.rpmanager.gui.actions.Actions;
 import com.mcmiddleearth.rpmanager.gui.panes.ProjectsPane;
+import com.mcmiddleearth.rpmanager.model.project.Project;
 import com.mcmiddleearth.rpmanager.model.project.Session;
 import com.mcmiddleearth.rpmanager.model.wrappers.ResourcePackData;
 
@@ -14,6 +32,7 @@ public class MainWindow extends JFrame {
     private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
     private ResourcePackData resourcePackData = null;
     private final Session session = new Session();
+    private final ProjectsPane projectsPane;
 
     public MainWindow() {
         INSTANCE = this;
@@ -22,7 +41,7 @@ public class MainWindow extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
         setLayout(new BorderLayout());
-        add(new ProjectsPane(session), BorderLayout.CENTER);
+        add(this.projectsPane = new ProjectsPane(session), BorderLayout.CENTER);
         setVisible(true);
     }
 
@@ -32,6 +51,8 @@ public class MainWindow extends JFrame {
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic('F');
         fileMenu.add(Actions.NEW_PROJECT);
+        fileMenu.add(Actions.OPEN_PROJECT);
+        fileMenu.add(Actions.SAVE_PROJECT);
         menuBar.add(fileMenu);
 
         setJMenuBar(menuBar);
@@ -49,6 +70,10 @@ public class MainWindow extends JFrame {
 
     public Session getSession() {
         return session;
+    }
+
+    public Project getCurrentProject() {
+        return projectsPane.getCurrentProject();
     }
 
     public static MainWindow getInstance() {

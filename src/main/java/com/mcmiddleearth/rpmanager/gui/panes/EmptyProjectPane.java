@@ -15,29 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.mcmiddleearth.rpmanager.events;
+package com.mcmiddleearth.rpmanager.gui.panes;
 
-public class ListItemRemovedEvent implements Event {
-    private final Object source;
-    private final Object item;
-    private final int index;
+import com.mcmiddleearth.rpmanager.gui.actions.Actions;
+import com.mcmiddleearth.rpmanager.gui.components.VerticalBox;
 
-    public ListItemRemovedEvent(Object source, Object item, int index) {
-        this.source = source;
-        this.item = item;
-        this.index = index;
-    }
+import javax.swing.*;
+import java.awt.*;
 
-    @Override
-    public Object getSource() {
-        return source;
-    }
+public class EmptyProjectPane extends JPanel {
+    public EmptyProjectPane() {
+        setLayout(new BorderLayout());
 
-    public Object getItem() {
-        return item;
-    }
-
-    public int getIndex() {
-        return index;
+        VerticalBox internal = new VerticalBox(GridBagConstraints.NONE);
+        internal.add(Box.createVerticalGlue());
+        internal.add(new JMenuItem(Actions.NEW_PROJECT));
+        internal.add(new JMenuItem(Actions.OPEN_PROJECT));
+        add(internal, BorderLayout.CENTER);
     }
 }

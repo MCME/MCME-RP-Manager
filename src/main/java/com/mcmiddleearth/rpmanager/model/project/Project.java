@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2022 MCME
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.mcmiddleearth.rpmanager.model.project;
 
 import com.mcmiddleearth.rpmanager.events.EventDispatcher;
@@ -11,10 +28,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Project implements Serializable {
-    private final List<Layer> layers = new LinkedList<>();
+    private List<Layer> layers = new LinkedList<>();
     private String name;
-    private File location;
-    private final EventDispatcher eventDispatcher = new EventDispatcher();
+    private transient File location;
+    private transient final EventDispatcher eventDispatcher = new EventDispatcher();
 
     public Project() {}
 
@@ -26,6 +43,10 @@ public class Project implements Serializable {
 
     public List<Layer> getLayers() {
         return layers;
+    }
+
+    public void setLayers(List<Layer> layers) {
+        this.layers = layers;
     }
 
     public String getName() {
