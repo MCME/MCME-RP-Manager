@@ -19,6 +19,8 @@ package com.mcmiddleearth.rpmanager.gui.panes;
 
 import com.mcmiddleearth.rpmanager.gui.components.tree.JarTreeFactory;
 import com.mcmiddleearth.rpmanager.gui.components.tree.ResourcePackTreeFactory;
+import com.mcmiddleearth.rpmanager.gui.components.tree.actions.TreeCopyAction;
+import com.mcmiddleearth.rpmanager.gui.components.tree.actions.TreePasteAction;
 import com.mcmiddleearth.rpmanager.gui.listeners.LayerTreeSelectionListener;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 
@@ -42,10 +44,31 @@ public class LayerFilesPane extends JPanel {
 
     private static JTree createTree(File file) throws IOException {
         if (file.getName().endsWith(".jar")) {
-            return new JTree(JarTreeFactory.createRootNode(file));
+            JTree tree = new JTree(JarTreeFactory.createRootNode(file));
+            tree.setComponentPopupMenu(createPopupMenu(tree, false));
+            return tree;
         } else {
-            return new JTree(ResourcePackTreeFactory.createRootNode(file));
+            JTree tree = new JTree(ResourcePackTreeFactory.createRootNode(file));
+            tree.setComponentPopupMenu(createPopupMenu(tree, true));
+            return tree;
         }
+    }
+
+    private static JPopupMenu createPopupMenu(JTree tree, boolean pasteAvailable) {
+        Action copyAction = new TreeCopyAction(tree);
+        tree.getActionMap().put(copyAction.getValue(Action.NAME), copyAction);
+        tree.getInputMap().put(
+                (KeyStroke) copyAction.getValue(Action.ACCELERATOR_KEY), copyAction.getValue(Action.NAME));
+
+        Action pasteAction = new TreePasteAction(tree);
+        pasteAction.setEnabled(pasteAvailable);
+        tree.getActionMap().put(pasteAction.getValue(Action.NAME), pasteAction);
+        tree.getInputMap().put(
+                (KeyStroke) pasteAction.getValue(Action.ACCELERATOR_KEY), pasteAction.getValue(Action.NAME));
+        JPopupMenu menu = new JPopupMenu();
+        menu.add(copyAction);
+        menu.add(pasteAction);
+        return menu;
     }
 
     public Layer getLayer() {

@@ -19,6 +19,7 @@ package com.mcmiddleearth.rpmanager.gui.components.tree;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
 
 public class ResourcePackTreeFactory {
@@ -28,10 +29,12 @@ public class ResourcePackTreeFactory {
         return createNode(null, resourcePackMeta.getParentFile());
     }
 
-    private static StaticTreeNode createNode(StaticTreeNode parent, File file) {
-        StaticTreeNode node = new StaticTreeNode(parent, file.getName(), new LinkedList<>());
+    public static StaticTreeNode createNode(StaticTreeNode parent, File file) {
+        StaticTreeNode node = new StaticTreeNode(parent, file.getName(), file, file.isDirectory(), new LinkedList<>());
         if (file.isDirectory()) {
-            Arrays.stream(file.listFiles()).forEach(f -> node.getChildren().add(createNode(node, f)));
+            Arrays.stream(file.listFiles())
+                    .sorted(Comparator.comparing(File::getName))
+                    .forEach(f -> node.getChildren().add(createNode(node, f)));
         }
         return node;
     }

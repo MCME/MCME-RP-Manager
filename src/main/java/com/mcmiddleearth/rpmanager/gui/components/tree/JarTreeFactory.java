@@ -18,9 +18,13 @@
 package com.mcmiddleearth.rpmanager.gui.components.tree;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class JarTreeFactory {
@@ -28,34 +32,70 @@ public class JarTreeFactory {
 
     public static StaticTreeNode createRootNode(File jarFile) throws IOException {
         String filter = "assets/minecraft/";
-        StaticTreeNode staticTreeNode = new StaticTreeNode(null, "assets", new LinkedList<>());
-        staticTreeNode.getChildren().add(new StaticTreeNode(staticTreeNode, "minecraft", new LinkedList<>()));
-        new ZipFile(jarFile).stream()
+        File f = Files.createTempDirectory("mcme-rp-manager-vanilla-rp").toFile();
+        File assets = new File(f, "assets");
+        assets.mkdir();
+        File minecraft = new File(assets, "minecraft");
+        minecraft.mkdir();
+        StaticTreeNode staticTreeNode = new StaticTreeNode(null, "assets", assets, true, new LinkedList<>());
+        staticTreeNode.getChildren().add(new StaticTreeNode(staticTreeNode, "minecraft", minecraft, true, new LinkedList<>()));
+        ZipFile zipFile = new ZipFile(jarFile);
+        zipFile.stream()
                 .filter(entry -> entry.getName().startsWith(filter))
-                .filter(entry -> !entry.isDirectory())
-                .forEach(entry -> addEntry(staticTreeNode, entry.getName()));
+                .forEach(entry -> addEntry(staticTreeNode, zipFile, entry, minecraft, entry.isDirectory()));
         sortNodes(staticTreeNode);
         return staticTreeNode;
     }
 
-    private static void addEntry(StaticTreeNode node, String entryName) {
-        addEntry(node, entryName.split("/"), 1);
+    private static void addEntry(StaticTreeNode node, ZipFile zipFile, ZipEntry entry, File parentFile,
+                                 boolean isDirectory) {
+        if (isDirectory) {
+            addEntry(node, entry.getName().split("/"), parentFile, null, isDirectory, 1);
+        } else {
+            try (InputStream inputStream = zipFile.getInputStream(entry)) {
+                addEntry(node, entry.getName().split("/"), parentFile, inputStream, isDirectory, 1);
+            } catch (IOException e) {
+                //TODO error dialog
+                e.printStackTrace();
+            }
+        }
     }
 
-    private static void addEntry(StaticTreeNode node, String[] nameParts, int offset) {
+    private static void addEntry(StaticTreeNode node, String[] nameParts, File parentFile, InputStream inputStream,
+                                 boolean isDirectory, int offset) {
+        String name = nameParts[offset];
         if (offset == nameParts.length - 1) {
-            node.getChildren().add(new StaticTreeNode(node, nameParts[offset], new LinkedList<>()));
+            File f = isDirectory ? createDirectory(parentFile, name) : createFile(parentFile, name, inputStream);
+            node.getChildren().add(new StaticTreeNode(node, name, f, isDirectory, new LinkedList<>()));
         } else {
             StaticTreeNode childNode = node.getChildren().stream()
-                    .filter(n -> n.getName().equals(nameParts[offset]))
+                    .filter(n -> n.getName().equals(name))
                     .findFirst()
                     .orElseGet(() -> {
-                        StaticTreeNode child = new StaticTreeNode(node, nameParts[offset], new LinkedList<>());
+                        StaticTreeNode child = new StaticTreeNode(
+                                node, name, createDirectory(parentFile, name), true, new LinkedList<>());
                         node.getChildren().add(child);
                         return child;
                     });
-            addEntry(childNode, nameParts, offset + 1);
+            addEntry(childNode, nameParts, childNode.getFile(), inputStream, isDirectory, offset + 1);
         }
+    }
+
+    private static File createDirectory(File parent, String name) {
+        File f = new File(parent, name);
+        f.mkdir();
+        return f;
+    }
+
+    private static File createFile(File parent, String name, InputStream inputStream) {
+        File f = new File(parent, name);
+        try (FileOutputStream outputStream = new FileOutputStream(f)) {
+            outputStream.write(inputStream.readAllBytes());
+        } catch (IOException e) {
+            //TODO error dialog
+            e.printStackTrace();
+        }
+        return f;
     }
 
     private static void sortNodes(StaticTreeNode node) {

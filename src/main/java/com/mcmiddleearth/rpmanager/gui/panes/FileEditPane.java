@@ -73,7 +73,10 @@ public class FileEditPane extends JPanel {
 
     private void setData(SelectedFileData data) {
         editPane.removeAll();
-        if (data.getData() instanceof BlockState) {
+        if (data == null) {
+            JLabel label = new JLabel("No file selected, or no editor available for selected file.");
+            editPane.add(label, BorderLayout.CENTER);
+        } else if (data.getData() instanceof BlockState) {
             updatePreview(data.getData());
             BlockstateFileEditPane blockstateFileEditPane =
                     new BlockstateFileEditPane(data.getName(), (BlockState) data.getData());

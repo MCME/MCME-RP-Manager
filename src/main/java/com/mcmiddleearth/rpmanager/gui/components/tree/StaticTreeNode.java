@@ -18,6 +18,7 @@
 package com.mcmiddleearth.rpmanager.gui.components.tree;
 
 import javax.swing.tree.TreeNode;
+import java.io.File;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -25,11 +26,15 @@ import java.util.List;
 public class StaticTreeNode implements TreeNode {
     private TreeNode parent;
     private final String name;
+    private final File file;
+    private final boolean directory;
     private final List<StaticTreeNode> children;
 
-    public StaticTreeNode(TreeNode parent, String name, List<StaticTreeNode> children) {
+    public StaticTreeNode(TreeNode parent, String name, File file, boolean directory, List<StaticTreeNode> children) {
         this.parent = parent;
         this.name = name;
+        this.file = file;
+        this.directory = directory;
         this.children = children;
     }
 
@@ -39,6 +44,14 @@ public class StaticTreeNode implements TreeNode {
 
     public List<StaticTreeNode> getChildren() {
         return children;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public boolean isDirectory() {
+        return directory;
     }
 
     @Override
