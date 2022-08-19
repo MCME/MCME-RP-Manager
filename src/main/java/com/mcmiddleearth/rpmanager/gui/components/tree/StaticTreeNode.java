@@ -25,8 +25,8 @@ import java.util.List;
 
 public class StaticTreeNode implements TreeNode {
     private TreeNode parent;
-    private final String name;
-    private final File file;
+    private String name;
+    private File file;
     private final boolean directory;
     private final List<StaticTreeNode> children;
 
@@ -42,12 +42,20 @@ public class StaticTreeNode implements TreeNode {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public List<StaticTreeNode> getChildren() {
         return children;
     }
 
     public File getFile() {
         return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 
     public boolean isDirectory() {

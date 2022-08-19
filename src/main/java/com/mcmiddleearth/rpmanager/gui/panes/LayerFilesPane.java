@@ -21,6 +21,7 @@ import com.mcmiddleearth.rpmanager.gui.components.tree.JarTreeFactory;
 import com.mcmiddleearth.rpmanager.gui.components.tree.ResourcePackTreeFactory;
 import com.mcmiddleearth.rpmanager.gui.components.tree.actions.TreeCopyAction;
 import com.mcmiddleearth.rpmanager.gui.components.tree.actions.TreePasteAction;
+import com.mcmiddleearth.rpmanager.gui.components.tree.actions.TreeRenameAction;
 import com.mcmiddleearth.rpmanager.gui.listeners.LayerTreeSelectionListener;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 
@@ -54,20 +55,21 @@ public class LayerFilesPane extends JPanel {
         }
     }
 
-    private static JPopupMenu createPopupMenu(JTree tree, boolean pasteAvailable) {
+    private static JPopupMenu createPopupMenu(JTree tree, boolean editable) {
         Action copyAction = new TreeCopyAction(tree);
-        tree.getActionMap().put(copyAction.getValue(Action.NAME), copyAction);
-        tree.getInputMap().put(
-                (KeyStroke) copyAction.getValue(Action.ACCELERATOR_KEY), copyAction.getValue(Action.NAME));
-
         Action pasteAction = new TreePasteAction(tree);
-        pasteAction.setEnabled(pasteAvailable);
-        tree.getActionMap().put(pasteAction.getValue(Action.NAME), pasteAction);
-        tree.getInputMap().put(
-                (KeyStroke) pasteAction.getValue(Action.ACCELERATOR_KEY), pasteAction.getValue(Action.NAME));
+        pasteAction.setEnabled(editable);
+        Action renameAction = new TreeRenameAction(tree);
+        renameAction.setEnabled(editable);
+        Action[] actions = new Action[]{ copyAction, pasteAction, renameAction };
+
         JPopupMenu menu = new JPopupMenu();
-        menu.add(copyAction);
-        menu.add(pasteAction);
+        for (Action action : actions) {
+            tree.getActionMap().put(action.getValue(Action.NAME), action);
+            tree.getInputMap().put(
+                    (KeyStroke) action.getValue(Action.ACCELERATOR_KEY), action.getValue(Action.NAME));
+            menu.add(action);
+        }
         return menu;
     }
 
