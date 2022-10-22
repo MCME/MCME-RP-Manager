@@ -33,7 +33,8 @@ import java.awt.*;
 import java.io.IOException;
 
 public class FileEditPane extends JPanel {
-    private static final Gson GSON = new GsonBuilder().setLenient().setPrettyPrinting().create();
+    private static final Gson GSON = new GsonBuilder()
+            .setLenient().setPrettyPrinting().enableComplexMapKeySerialization().create();
     private final JPanel editPane;
     private final JTextArea previewArea;
 
@@ -76,15 +77,18 @@ public class FileEditPane extends JPanel {
         if (data == null) {
             JLabel label = new JLabel("No file selected, or no editor available for selected file.");
             editPane.add(label, BorderLayout.CENTER);
-        } else if (data.getData() instanceof BlockState) {
+        } else if (data.getData() instanceof BlockState blockState) {
             updatePreview(data.getData());
-            BlockstateFileEditPane blockstateFileEditPane =
-                    new BlockstateFileEditPane(data.getName(), (BlockState) data.getData());
+            BlockstateFileEditPane blockstateFileEditPane = new BlockstateFileEditPane(data.getName(), blockState);
             blockstateFileEditPane.addChangeListener(this::onChange);
             JScrollPane scrollPane = new JScrollPane(blockstateFileEditPane);
             editPane.add(scrollPane, BorderLayout.CENTER);
-        } else if (data.getData() instanceof BlockModel) {
-            //TODO
+        } else if (data.getData() instanceof BlockModel blockModel) {
+            updatePreview(data.getData());
+            BlockModelFileEditPane blockModelFileEditPane = new BlockModelFileEditPane(data.getName(), blockModel);
+            blockModelFileEditPane.addChangeListener(this::onChange);
+            JScrollPane scrollPane = new JScrollPane(blockModelFileEditPane);
+            editPane.add(scrollPane, BorderLayout.CENTER);
         } else if (data.getData() instanceof ItemModel) {
             //TODO
         } else {

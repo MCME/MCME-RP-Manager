@@ -45,7 +45,7 @@ public class BlockstateFileEditPane extends VerticalBox {
         this.fileName = fileName;
         this.blockState = blockState;
 
-        if (!blockState.getVariants().isEmpty()) {
+        if (blockState.getVariants() != null && !blockState.getVariants().isEmpty()) {
             JButton addSection = new JButton(new Action("Add section", "Add new block state section") {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {

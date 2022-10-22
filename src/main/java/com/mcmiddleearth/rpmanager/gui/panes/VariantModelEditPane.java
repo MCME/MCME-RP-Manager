@@ -20,22 +20,18 @@ package com.mcmiddleearth.rpmanager.gui.panes;
 import com.mcmiddleearth.rpmanager.events.ChangeEvent;
 import com.mcmiddleearth.rpmanager.events.EventDispatcher;
 import com.mcmiddleearth.rpmanager.events.EventListener;
+import com.mcmiddleearth.rpmanager.gui.components.NumericStepper;
+import com.mcmiddleearth.rpmanager.gui.components.TextInput;
 import com.mcmiddleearth.rpmanager.model.Model;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 public class VariantModelEditPane extends JPanel {
     private final Model model;
-    private final JTextField modelNameInput;
     private final JComboBox<Integer> xInput;
     private final JComboBox<Integer> yInput;
     private final JCheckBox uvLockInput;
-    private final JSpinner weightInput;
     private final EventDispatcher eventDispatcher = new EventDispatcher();
 
     public VariantModelEditPane(Model model) {
@@ -43,26 +39,7 @@ public class VariantModelEditPane extends JPanel {
 
         setLayout(new GridBagLayout());
 
-        modelNameInput = new JTextField(model.getModel());
-        modelNameInput.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent documentEvent) {
-                model.setModel(modelNameInput.getText());
-                onChange();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent documentEvent) {
-                model.setModel(modelNameInput.getText());
-                onChange();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent documentEvent) {
-                model.setModel(modelNameInput.getText());
-                onChange();
-            }
-        });
+        TextInput modelNameInput = new TextInput(model.getModel(), model::setModel, i -> onChange());
         xInput = new JComboBox<>(new Integer[] { null, 90, 180, 270 });
         xInput.setSelectedItem(model.getX());
         xInput.addItemListener(itemEvent -> {
@@ -81,27 +58,9 @@ public class VariantModelEditPane extends JPanel {
             model.setUvlock(uvLockInput.isSelected());
             onChange();
         });
-        weightInput = new JSpinner(
-                new SpinnerNumberModel(model.getWeight() == null ? 1 : model.getWeight(), 1, Integer.MAX_VALUE, 1));
-        ((JSpinner.DefaultEditor) weightInput.getEditor()).getTextField().getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent documentEvent) {
-                model.setWeight(weightInput.getValue() == null ? null : ((Number) weightInput.getValue()).intValue());
-                onChange();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent documentEvent) {
-                model.setWeight(weightInput.getValue() == null ? null : ((Number) weightInput.getValue()).intValue());
-                onChange();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent documentEvent) {
-                model.setWeight(weightInput.getValue() == null ? null : ((Number) weightInput.getValue()).intValue());
-                onChange();
-            }
-        });
+        NumericStepper weightInput = new NumericStepper(
+                model.getWeight() == null ? 1 : model.getWeight(), 1, Integer.MAX_VALUE,
+                model::setWeight, e -> onChange());
 
         add(new JLabel("Model"), label(0));
         add(modelNameInput, input(0));
