@@ -17,7 +17,6 @@
 
 package com.mcmiddleearth.rpmanager.gui.panes;
 
-import com.google.gson.annotations.SerializedName;
 import com.mcmiddleearth.rpmanager.events.ChangeEvent;
 import com.mcmiddleearth.rpmanager.events.EventDispatcher;
 import com.mcmiddleearth.rpmanager.events.EventListener;
@@ -25,12 +24,12 @@ import com.mcmiddleearth.rpmanager.gui.components.NumberInput;
 import com.mcmiddleearth.rpmanager.gui.components.NumericStepper;
 import com.mcmiddleearth.rpmanager.gui.components.TextInput;
 import com.mcmiddleearth.rpmanager.gui.components.VerticalBox;
+import com.mcmiddleearth.rpmanager.gui.components.renderers.EnumListCellRenderer;
 import com.mcmiddleearth.rpmanager.model.Face;
 import com.mcmiddleearth.rpmanager.model.FaceDefinition;
 import com.mcmiddleearth.rpmanager.utils.Pair;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -46,7 +45,7 @@ public class FaceEditPane extends VerticalBox {
         facePanel.setLayout(new BoxLayout(facePanel, BoxLayout.X_AXIS));
         facePanel.add(new JLabel("Face: "));
         JComboBox<Face> faceInput = new JComboBox<>(Face.values());
-        faceInput.setRenderer(new FaceRenderer());
+        faceInput.setRenderer(new EnumListCellRenderer<Face>());
         faceInput.setSelectedItem(entry.getLeft());
         faceInput.addItemListener(e -> {
             entry.setLeft((Face) faceInput.getSelectedItem());
@@ -68,7 +67,7 @@ public class FaceEditPane extends VerticalBox {
         cullfacePanel.setLayout(new BoxLayout(cullfacePanel, BoxLayout.X_AXIS));
         cullfacePanel.add(new JLabel("Cullface: "));
         JComboBox<Face> cullfaceInput = new JComboBox<>(Face.values());
-        cullfaceInput.setRenderer(new FaceRenderer());
+        cullfaceInput.setRenderer(new EnumListCellRenderer<Face>());
         cullfaceInput.setSelectedItem(entry.getRight().getCullface());
         cullfaceInput.addItemListener(e -> {
             entry.getRight().setCullface((Face) cullfaceInput.getSelectedItem());
@@ -113,29 +112,6 @@ public class FaceEditPane extends VerticalBox {
         panel.add(new JLabel("y2:"));
         panel.add(new NumberInput(getY2(getter.get()), setY2(getter, setter), e -> onChange()));
         return panel;
-    }
-
-    private static class FaceRenderer extends DefaultListCellRenderer {
-        @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-                                                      boolean cellHasFocus) {
-            Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            ((DefaultListCellRenderer) c).setText(getLabel((Face) value));
-            return c;
-        }
-
-        private static String getLabel(Face face) {
-            if (face == null) {
-                return "";
-            } else {
-                try {
-                    return face.getClass().getField(face.name()).getAnnotation(SerializedName.class).value();
-                } catch (NoSuchFieldException e) {
-                    // should never happen
-                    return "";
-                }
-            }
-        }
     }
 
     private void onChange() {

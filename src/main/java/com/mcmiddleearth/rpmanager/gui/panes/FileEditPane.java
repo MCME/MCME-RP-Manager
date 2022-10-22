@@ -89,8 +89,12 @@ public class FileEditPane extends JPanel {
             blockModelFileEditPane.addChangeListener(this::onChange);
             JScrollPane scrollPane = new JScrollPane(blockModelFileEditPane);
             editPane.add(scrollPane, BorderLayout.CENTER);
-        } else if (data.getData() instanceof ItemModel) {
-            //TODO
+        } else if (data.getData() instanceof ItemModel itemModel) {
+            updatePreview(data.getData());
+            ItemModelFileEditPane itemModelFileEditPane = new ItemModelFileEditPane(data.getName(), itemModel);
+            itemModelFileEditPane.addChangeListener(this::onChange);
+            JScrollPane scrollPane = new JScrollPane(itemModelFileEditPane);
+            editPane.add(scrollPane, BorderLayout.CENTER);
         } else {
             JLabel label = new JLabel("No file selected, or no editor available for selected file.");
             editPane.add(label, BorderLayout.CENTER);

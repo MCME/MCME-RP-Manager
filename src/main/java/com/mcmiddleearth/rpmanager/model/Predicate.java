@@ -35,6 +35,9 @@ public class Predicate {
     private Integer throwing;
     private Float time;
     @SerializedName("custom_model_data") private Integer customModelData;
+    private Float level;
+    private Float filled;
+    private Integer tooting;
 
     public Float getAngle() {
         return angle;
@@ -154,5 +157,29 @@ public class Predicate {
 
     public void setCustomModelData(Integer customModelData) {
         this.customModelData = customModelData;
+    }
+
+    public Float getLevel() {
+        return level;
+    }
+
+    public void setLevel(Float level) {
+        this.level = level;
+    }
+
+    public Float getFilled() {
+        return filled;
+    }
+
+    public void setFilled(Float filled) {
+        this.filled = filled;
+    }
+
+    public Integer getTooting() {
+        return tooting;
+    }
+
+    public void setTooting(Integer tooting) {
+        this.tooting = tooting;
     }
 }

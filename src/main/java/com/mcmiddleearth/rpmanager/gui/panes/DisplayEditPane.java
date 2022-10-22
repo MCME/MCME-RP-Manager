@@ -17,18 +17,17 @@
 
 package com.mcmiddleearth.rpmanager.gui.panes;
 
-import com.google.gson.annotations.SerializedName;
 import com.mcmiddleearth.rpmanager.events.ChangeEvent;
 import com.mcmiddleearth.rpmanager.events.EventDispatcher;
 import com.mcmiddleearth.rpmanager.events.EventListener;
 import com.mcmiddleearth.rpmanager.gui.components.NumberInput;
 import com.mcmiddleearth.rpmanager.gui.components.VerticalBox;
+import com.mcmiddleearth.rpmanager.gui.components.renderers.EnumListCellRenderer;
 import com.mcmiddleearth.rpmanager.model.Display;
 import com.mcmiddleearth.rpmanager.model.Position;
 import com.mcmiddleearth.rpmanager.utils.Pair;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -44,7 +43,7 @@ public class DisplayEditPane extends VerticalBox {
         positionPanel.setLayout(new BoxLayout(positionPanel, BoxLayout.X_AXIS));
         positionPanel.add(new JLabel("Position: "));
         JComboBox<Position> positionInput = new JComboBox<>(Position.values());
-        positionInput.setRenderer(new PositionRenderer());
+        positionInput.setRenderer(new EnumListCellRenderer<Position>());
         positionInput.setSelectedItem(entry.getLeft());
         positionInput.addItemListener(e -> {
             entry.setLeft((Position) positionInput.getSelectedItem());
@@ -70,29 +69,6 @@ public class DisplayEditPane extends VerticalBox {
         panel.add(new JLabel("z:"));
         panel.add(new NumberInput(getZ(getter.get()), setZ(getter, setter), e -> onChange()));
         return panel;
-    }
-
-    private static class PositionRenderer extends DefaultListCellRenderer {
-        @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-                                                      boolean cellHasFocus) {
-            Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            ((DefaultListCellRenderer) c).setText(getLabel((Position) value));
-            return c;
-        }
-
-        private static String getLabel(Position position) {
-            if (position == null) {
-                return "";
-            } else {
-                try {
-                    return position.getClass().getField(position.name()).getAnnotation(SerializedName.class).value();
-                } catch (NoSuchFieldException e) {
-                    // should never happen
-                    return "";
-                }
-            }
-        }
     }
 
     private void onChange() {

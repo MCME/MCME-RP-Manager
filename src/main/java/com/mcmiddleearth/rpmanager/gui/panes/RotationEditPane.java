@@ -17,18 +17,15 @@
 
 package com.mcmiddleearth.rpmanager.gui.panes;
 
-import com.google.gson.annotations.SerializedName;
 import com.mcmiddleearth.rpmanager.events.ChangeEvent;
 import com.mcmiddleearth.rpmanager.events.EventDispatcher;
 import com.mcmiddleearth.rpmanager.events.EventListener;
 import com.mcmiddleearth.rpmanager.gui.components.NumberInput;
 import com.mcmiddleearth.rpmanager.gui.components.VerticalBox;
+import com.mcmiddleearth.rpmanager.gui.components.renderers.EnumListCellRenderer;
 import com.mcmiddleearth.rpmanager.model.*;
-import com.mcmiddleearth.rpmanager.utils.Pair;
 
 import javax.swing.*;
-import java.awt.*;
-import java.lang.Override;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -48,7 +45,7 @@ public class RotationEditPane extends VerticalBox {
         axisPanel.setLayout(new BoxLayout(axisPanel, BoxLayout.X_AXIS));
         axisPanel.add(new JLabel("Axis: "));
         JComboBox<Axis> axisInput = new JComboBox<>(Axis.values());
-        axisInput.setRenderer(new AxisRenderer());
+        axisInput.setRenderer(new EnumListCellRenderer<Axis>());
         axisInput.setSelectedItem(Optional.ofNullable(element.getRotation()).map(Rotation::getAxis).orElse(null));
         axisInput.addItemListener(e -> {
             getRotation().setAxis((Axis) axisInput.getSelectedItem());
@@ -90,29 +87,6 @@ public class RotationEditPane extends VerticalBox {
             element.setRotation(new Rotation());
         }
         return element.getRotation();
-    }
-
-    private static class AxisRenderer extends DefaultListCellRenderer {
-        @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-                                                      boolean cellHasFocus) {
-            Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            ((DefaultListCellRenderer) c).setText(getLabel((Axis) value));
-            return c;
-        }
-
-        private static String getLabel(Axis axis) {
-            if (axis == null) {
-                return "";
-            } else {
-                try {
-                    return axis.getClass().getField(axis.name()).getAnnotation(SerializedName.class).value();
-                } catch (NoSuchFieldException e) {
-                    // should never happen
-                    return "";
-                }
-            }
-        }
     }
 
     private void onChange() {
