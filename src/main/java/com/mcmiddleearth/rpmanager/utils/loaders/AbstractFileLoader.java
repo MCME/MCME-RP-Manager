@@ -23,7 +23,9 @@ import com.mcmiddleearth.rpmanager.utils.JsonFileLoader;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,6 +41,22 @@ public abstract class AbstractFileLoader implements JsonFileLoader {
              Reader reader = new InputStreamReader(is)) {
             return gson.fromJson(reader, resultClass);
         }
+    }
+
+    protected Object loadFile(File file, Class<?> resultClass) throws IOException {
+        byte[] content = loadBytesFromFile(file, Collections.emptyList());
+        try (InputStream is = new ByteArrayInputStream(content);
+             Reader reader = new InputStreamReader(is)) {
+            return gson.fromJson(reader, resultClass);
+        }
+    }
+
+    protected boolean contains(Path path, Path part) {
+        List<String> tokens = new LinkedList<>();
+        List<String> subTokens = new LinkedList<>();
+        path.toAbsolutePath().iterator().forEachRemaining(p -> tokens.add(p.toFile().getName()));
+        part.iterator().forEachRemaining(p -> subTokens.add(p.toFile().getName()));
+        return Collections.lastIndexOfSubList(tokens, subTokens) >= 0;
     }
 
     private byte[] loadBytes(Layer layer, Object[] path) throws IOException {

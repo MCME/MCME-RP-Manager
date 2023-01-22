@@ -20,7 +20,9 @@ package com.mcmiddleearth.rpmanager.utils.loaders;
 import com.mcmiddleearth.rpmanager.model.ItemModel;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -31,12 +33,23 @@ public class ItemModelFileLoader extends AbstractFileLoader {
     }
 
     @Override
+    public Object loadFile(File file) throws IOException {
+        return loadFile(file, ItemModel.class);
+    }
+
+    @Override
     public boolean canLoad(Layer layer, Object[] path) {
         return path != null && path.length > 0 && path[path.length - 1].toString().endsWith(".json") &&
                 isItemModelPath(Arrays.stream(path).map(Object::toString)
                         .skip(layer.getFile().getName().endsWith(".jar") ? 0L : 1L)
                         .limit(4L)
                         .collect(Collectors.joining("/")));
+    }
+
+    @Override
+    public boolean canLoad(File file) {
+        return contains(file.toPath(), Path.of("assets", "minecraft", "models")) &&
+                !contains(file.toPath(), Path.of("assets", "minecraft", "models", "block"));
     }
 
     private static boolean isItemModelPath(String path) {

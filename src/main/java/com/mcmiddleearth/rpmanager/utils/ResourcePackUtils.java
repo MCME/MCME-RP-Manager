@@ -29,6 +29,7 @@ import com.mcmiddleearth.rpmanager.model.wrappers.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
@@ -37,7 +38,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class ResourcePackUtils {
-    private static final Gson GSON = new GsonBuilder().setLenient().create();
+    private static final Gson GSON =
+            new GsonBuilder().setPrettyPrinting().setLenient().enableComplexMapKeySerialization().create();
     private static final String BLOCK_STATE_DIR = "assets/minecraft/blockstates";
     private static final String BLOCK_MODEL_DIR = "assets/minecraft/models/block";
     private static final String MODEL_DIR = "assets/minecraft/models";
@@ -100,6 +102,12 @@ public class ResourcePackUtils {
         resourcePackData.setBlockStates(blockStateWrappers);
         resourcePackData.setItemModels(new ArrayList<>(itemModelWrappers.values()));
         return resourcePackData;
+    }
+
+    public static void saveFile(Object data, File target) throws IOException {
+        try (FileOutputStream fileOutputStream = new FileOutputStream(target)) {
+            fileOutputStream.write(GSON.toJson(data).getBytes(StandardCharsets.UTF_8));
+        }
     }
 
     private static BlockModelWrapper wrapBlockModel(Layer current, Layer urps, Layer vanilla, String filePath,

@@ -17,9 +17,11 @@
 
 package com.mcmiddleearth.rpmanager.gui.panes;
 
+import com.mcmiddleearth.rpmanager.gui.components.tree.ExpansionStateAwareTreeModel;
 import com.mcmiddleearth.rpmanager.gui.components.tree.JarTreeFactory;
 import com.mcmiddleearth.rpmanager.gui.components.tree.ResourcePackTreeFactory;
 import com.mcmiddleearth.rpmanager.gui.components.tree.actions.TreeCopyAction;
+import com.mcmiddleearth.rpmanager.gui.components.tree.actions.TreeDuplicateAction;
 import com.mcmiddleearth.rpmanager.gui.components.tree.actions.TreePasteAction;
 import com.mcmiddleearth.rpmanager.gui.components.tree.actions.TreeRenameAction;
 import com.mcmiddleearth.rpmanager.gui.listeners.LayerTreeSelectionListener;
@@ -44,15 +46,19 @@ public class LayerFilesPane extends JPanel {
     }
 
     private static JTree createTree(File file) throws IOException {
+        ExpansionStateAwareTreeModel model;
+        boolean editable;
         if (file.getName().endsWith(".jar")) {
-            JTree tree = new JTree(JarTreeFactory.createRootNode(file));
-            tree.setComponentPopupMenu(createPopupMenu(tree, false));
-            return tree;
+            model = new ExpansionStateAwareTreeModel(JarTreeFactory.createRootNode(file));
+            editable = false;
         } else {
-            JTree tree = new JTree(ResourcePackTreeFactory.createRootNode(file));
-            tree.setComponentPopupMenu(createPopupMenu(tree, true));
-            return tree;
+            model = new ExpansionStateAwareTreeModel(ResourcePackTreeFactory.createRootNode(file));
+            editable = true;
         }
+        JTree tree = new JTree(model);
+        model.setTree(tree);
+        tree.setComponentPopupMenu(createPopupMenu(tree, editable));
+        return tree;
     }
 
     private static JPopupMenu createPopupMenu(JTree tree, boolean editable) {
@@ -61,7 +67,9 @@ public class LayerFilesPane extends JPanel {
         pasteAction.setEnabled(editable);
         Action renameAction = new TreeRenameAction(tree);
         renameAction.setEnabled(editable);
-        Action[] actions = new Action[]{ copyAction, pasteAction, renameAction };
+        Action duplicateAction = new TreeDuplicateAction(tree);
+        duplicateAction.setEnabled(editable);
+        Action[] actions = new Action[]{ copyAction, pasteAction, renameAction, duplicateAction };
 
         JPopupMenu menu = new JPopupMenu();
         for (Action action : actions) {

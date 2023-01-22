@@ -21,6 +21,7 @@ import com.mcmiddleearth.rpmanager.model.BlockState;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,11 @@ public class BlockstateFileLoader extends AbstractFileLoader {
     }
 
     @Override
+    public Object loadFile(File file) throws IOException {
+        return loadFile(file, BlockState.class);
+    }
+
+    @Override
     public boolean canLoad(Layer layer, Object[] path) {
         return path != null && path.length > 0 && path[path.length - 1].toString().endsWith(".json") &&
                 Arrays.stream(path).map(Object::toString)
@@ -38,5 +44,10 @@ public class BlockstateFileLoader extends AbstractFileLoader {
                         .limit(3L)
                         .collect(Collectors.joining("/"))
                         .equals("assets/minecraft/blockstates");
+    }
+
+    @Override
+    public boolean canLoad(File file) {
+        return file.toPath().endsWith(Path.of("assets", "minecraft", "blockstates", file.getName()));
     }
 }

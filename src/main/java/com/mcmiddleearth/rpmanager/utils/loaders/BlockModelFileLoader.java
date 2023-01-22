@@ -20,7 +20,9 @@ package com.mcmiddleearth.rpmanager.utils.loaders;
 import com.mcmiddleearth.rpmanager.model.BlockModel;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -31,6 +33,11 @@ public class BlockModelFileLoader extends AbstractFileLoader {
     }
 
     @Override
+    public Object loadFile(File file) throws IOException {
+        return loadFile(file, BlockModel.class);
+    }
+
+    @Override
     public boolean canLoad(Layer layer, Object[] path) {
         return path != null && path.length > 0 && path[path.length - 1].toString().endsWith(".json") &&
                 Arrays.stream(path).map(Object::toString)
@@ -38,5 +45,10 @@ public class BlockModelFileLoader extends AbstractFileLoader {
                         .limit(4L)
                         .collect(Collectors.joining("/"))
                         .equals("assets/minecraft/models/block");
+    }
+
+    @Override
+    public boolean canLoad(File file) {
+        return contains(file.toPath(), Path.of("assets", "minecraft", "models", "block"));
     }
 }

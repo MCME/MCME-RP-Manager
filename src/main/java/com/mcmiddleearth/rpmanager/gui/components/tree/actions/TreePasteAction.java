@@ -57,7 +57,7 @@ public class TreePasteAction extends Action {
                     java.util.List<File> files = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
                     if (files != null) {
                         for (File file : files) {
-                            node.getChildren().add(ResourcePackTreeFactory.createNode(node, file));
+                            node.addChild(ResourcePackTreeFactory.createNode(node, file));
                             if (file.isDirectory()) {
                                 FileUtils.copyDirectoryToDirectory(file, node.getFile());
                             } else {

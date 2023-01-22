@@ -23,6 +23,7 @@ import com.mcmiddleearth.rpmanager.utils.loaders.BlockModelFileLoader;
 import com.mcmiddleearth.rpmanager.utils.loaders.BlockstateFileLoader;
 import com.mcmiddleearth.rpmanager.utils.loaders.ItemModelFileLoader;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +33,9 @@ public interface JsonFileLoader {
             new BlockstateFileLoader(), new BlockModelFileLoader(), new ItemModelFileLoader());
 
     Object loadFile(Layer layer, Object[] path) throws IOException;
+    Object loadFile(File file) throws IOException;
     boolean canLoad(Layer layer, Object[] path);
+    boolean canLoad(File file) throws IOException;
 
     static SelectedFileData load(Layer layer, Object[] path) throws IOException {
         for (JsonFileLoader loader : LOADERS) {
@@ -40,6 +43,17 @@ public interface JsonFileLoader {
                 String fileName = path[path.length-1].toString();
                 return new SelectedFileData(
                         loader.loadFile(layer, path), fileName.substring(0, fileName.lastIndexOf(".")));
+            }
+        }
+        return null;
+    }
+
+    static SelectedFileData load(File file) throws IOException {
+        for (JsonFileLoader loader : LOADERS) {
+            if (loader.canLoad(file)) {
+                String fileName = file.getName();
+                return new SelectedFileData(
+                        loader.loadFile(file), fileName.substring(0, fileName.lastIndexOf(".")));
             }
         }
         return null;

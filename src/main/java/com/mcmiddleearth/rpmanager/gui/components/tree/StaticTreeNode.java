@@ -106,4 +106,9 @@ public class StaticTreeNode implements TreeNode {
     public String toString() {
         return name;
     }
+
+    public void addChild(StaticTreeNode child) {
+        int index = (int) getChildren().stream().filter(c -> c.getName().compareTo(child.getName()) <= 0).count();
+        getChildren().add(index, child);
+    }
 }
