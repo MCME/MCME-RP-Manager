@@ -18,6 +18,7 @@
 package com.mcmiddleearth.rpmanager.gui.modals;
 
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
+import com.mcmiddleearth.rpmanager.gui.components.FastScrollPane;
 import com.mcmiddleearth.rpmanager.gui.components.Form;
 import com.mcmiddleearth.rpmanager.gui.components.Grid;
 import com.mcmiddleearth.rpmanager.gui.components.VerticalBox;
@@ -57,7 +58,14 @@ public class DuplicateBlockStateModal extends JDialog {
         DuplicateBlockStateForm form = new DuplicateBlockStateForm();
         verticalBox.add(form);
         DuplicateBlockStateGrid grid = new DuplicateBlockStateGrid();
-        verticalBox.add(grid);
+        grid.setMinimumSize(new Dimension(300, 0));
+        grid.setPreferredSize(new Dimension(300, (int) grid.getPreferredSize().getHeight()));
+        grid.setMaximumSize(new Dimension(300, Integer.MAX_VALUE));
+        JScrollPane scrollPane = new FastScrollPane(grid);
+        scrollPane.setMaximumSize(new Dimension(350, 0));
+        scrollPane.setPreferredSize(new Dimension(350, 450));
+        scrollPane.setMaximumSize(new Dimension(350, 450));
+        verticalBox.add(scrollPane);
         add(verticalBox, BorderLayout.CENTER);
 
         JPanel buttonsPanel = new JPanel();
@@ -202,9 +210,15 @@ public class DuplicateBlockStateModal extends JDialog {
     private class DuplicateBlockStateGrid extends Grid {
         private final List<Supplier<Document>> documents = new LinkedList<>();
         private final List<Pair<String, Supplier<Pair<StaticTreeNode, String>>>> replacements = new LinkedList<>();
+        private final List<JCheckBox> checkBoxes = new LinkedList<>();
 
         private DuplicateBlockStateGrid() {
-            addLabel(0, 0, "Copy?");
+            JCheckBox selectAllCheckBox = new JCheckBox("Copy?", null, false);
+            selectAllCheckBox.addItemListener(event -> {
+                setAllSelected(selectAllCheckBox.isSelected());
+            });
+            selectAllCheckBox.setToolTipText("Select/unselect all");
+            addLabel(0, 0, selectAllCheckBox);
             addLabel(1, 0, "Old name");
             addLabel(2, 0, "New name");
             int y = 1;
@@ -216,6 +230,7 @@ public class DuplicateBlockStateModal extends JDialog {
                     documents.add(() -> checkBox.isSelected() ? textField.getDocument() : null);
                     replacements.add(new Pair<>(modelName, () -> checkBox.isSelected() ?
                             new Pair<>(node, textField.getText()) : null));
+                    checkBoxes.add(checkBox);
                 } else {
                     checkBox.setEnabled(false);
                     textField.setEditable(false);
@@ -227,13 +242,17 @@ public class DuplicateBlockStateModal extends JDialog {
             }
         }
 
+        public void setAllSelected(boolean selected) {
+            checkBoxes.forEach(cb -> cb.setSelected(selected));
+        }
+
         public List<Document> getDocuments() {
             return documents.stream().map(Supplier::get).filter(Objects::nonNull).toList();
         }
 
         public List<Triple<String, StaticTreeNode, String>> getReplacements() {
             return replacements.stream()
-                    .filter(r -> r.getRight() != null)
+                    .filter(r -> r.getRight().get() != null)
                     .map(r -> new Triple<>(r.getLeft(), r.getRight().get().getLeft(), r.getRight().get().getRight()))
                     .filter(p -> p.getRight() != null).toList();
         }

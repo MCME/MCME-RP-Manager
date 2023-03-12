@@ -30,13 +30,17 @@ public class BlockModelFileEditPane extends BaseModelFileEditPane {
 
         this.add(parentPanel);
 
-        JCheckBox ambientOcclusionInput = new JCheckBox(
-                "Ambient occlusion", Boolean.TRUE.equals(blockModel.getAmbientocclusion()));
+        JPanel ambientOcclusionPanel = new JPanel();
+        ambientOcclusionPanel.setLayout(new BoxLayout(ambientOcclusionPanel, BoxLayout.X_AXIS));
+        ambientOcclusionPanel.add(new JLabel("Ambient occlusion: "));
+        JComboBox<Boolean> ambientOcclusionInput = new JComboBox<>(new Boolean[] { null, false, true });
+        ambientOcclusionInput.setSelectedItem(blockModel.getAmbientocclusion());
         ambientOcclusionInput.addItemListener(event -> {
-            blockModel.setAmbientocclusion(ambientOcclusionInput.isSelected() ? true : null);
+            blockModel.setAmbientocclusion((Boolean) ambientOcclusionInput.getSelectedItem());
             onChange();
         });
-        this.add(ambientOcclusionInput);
+        ambientOcclusionPanel.add(ambientOcclusionInput);
+        this.add(ambientOcclusionPanel);
 
         this.add(displayPanel);
         this.add(texturesPanel);

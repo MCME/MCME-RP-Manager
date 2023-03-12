@@ -17,11 +17,14 @@
 
 package com.mcmiddleearth.rpmanager.gui.panes;
 
+import com.mcmiddleearth.rpmanager.gui.components.FastScrollPane;
+import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 import com.mcmiddleearth.rpmanager.model.project.Project;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
+import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.io.IOException;
 
@@ -39,7 +42,7 @@ public class ProjectPane extends JPanel {
         treesPane.addTreeSelectionListener(this::onTreeSelectionChanged);
 
         JSplitPane innerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
-                new JScrollPane(treesPane),
+                new FastScrollPane(treesPane),
                 this.fileEditPane);
         innerSplitPane.setDividerSize(1);
         innerSplitPane.setOneTouchExpandable(false);
@@ -56,7 +59,9 @@ public class ProjectPane extends JPanel {
     }
 
     public void onTreeSelectionChanged(Layer layer, TreeSelectionEvent event) {
+        TreePath newPath = event.getNewLeadSelectionPath();
         fileEditPane.setSelectedFile(layer,
-                event.getNewLeadSelectionPath() == null ? null : event.getNewLeadSelectionPath().getPath());
+                newPath == null ? null : newPath.getPath(),
+                newPath == null ? null : (StaticTreeNode) newPath.getLastPathComponent());
     }
 }

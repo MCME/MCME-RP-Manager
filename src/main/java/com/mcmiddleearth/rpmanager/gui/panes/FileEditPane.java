@@ -20,6 +20,8 @@ package com.mcmiddleearth.rpmanager.gui.panes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mcmiddleearth.rpmanager.events.ChangeEvent;
+import com.mcmiddleearth.rpmanager.gui.components.FastScrollPane;
+import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
 import com.mcmiddleearth.rpmanager.model.BlockModel;
 import com.mcmiddleearth.rpmanager.model.BlockState;
 import com.mcmiddleearth.rpmanager.model.ItemModel;
@@ -30,13 +32,16 @@ import com.mcmiddleearth.rpmanager.utils.JsonFileLoader;
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class FileEditPane extends JPanel {
     private static final Gson GSON = new GsonBuilder()
             .setLenient().setPrettyPrinting().enableComplexMapKeySerialization().create();
     private final JPanel editPane;
     private final JTextArea previewArea;
+    private StaticTreeNode currentNode = null;
 
     public FileEditPane() {
         setLayout(new BorderLayout());
@@ -55,7 +60,7 @@ public class FileEditPane extends JPanel {
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true,
                 editPane,
-                new JScrollPane(previewPane));
+                new FastScrollPane(previewPane));
         splitPane.setDividerSize(1);
         splitPane.setOneTouchExpandable(false);
         splitPane.setResizeWeight(0.5);
@@ -63,10 +68,12 @@ public class FileEditPane extends JPanel {
         add(splitPane, BorderLayout.CENTER);
     }
 
-    public void setSelectedFile(Layer layer, Object[] path) {
+    public void setSelectedFile(Layer layer, Object[] path, StaticTreeNode node) {
         try {
             SelectedFileData fileData = JsonFileLoader.load(layer, path);
+            this.currentNode = null;
             setData(fileData);
+            this.currentNode = node;
         } catch (IOException e) {
             //TODO show error dialog
         }
@@ -78,22 +85,22 @@ public class FileEditPane extends JPanel {
             JLabel label = new JLabel("No file selected, or no editor available for selected file.");
             editPane.add(label, BorderLayout.CENTER);
         } else if (data.getData() instanceof BlockState blockState) {
-            updatePreview(data.getData());
+            updatePreview(GSON.toJson(data.getData()));
             BlockstateFileEditPane blockstateFileEditPane = new BlockstateFileEditPane(data.getName(), blockState);
             blockstateFileEditPane.addChangeListener(this::onChange);
-            JScrollPane scrollPane = new JScrollPane(blockstateFileEditPane);
+            JScrollPane scrollPane = new FastScrollPane(blockstateFileEditPane);
             editPane.add(scrollPane, BorderLayout.CENTER);
         } else if (data.getData() instanceof BlockModel blockModel) {
-            updatePreview(data.getData());
+            updatePreview(GSON.toJson(data.getData()));
             BlockModelFileEditPane blockModelFileEditPane = new BlockModelFileEditPane(data.getName(), blockModel);
             blockModelFileEditPane.addChangeListener(this::onChange);
-            JScrollPane scrollPane = new JScrollPane(blockModelFileEditPane);
+            JScrollPane scrollPane = new FastScrollPane(blockModelFileEditPane);
             editPane.add(scrollPane, BorderLayout.CENTER);
         } else if (data.getData() instanceof ItemModel itemModel) {
-            updatePreview(data.getData());
+            updatePreview(GSON.toJson(data.getData()));
             ItemModelFileEditPane itemModelFileEditPane = new ItemModelFileEditPane(data.getName(), itemModel);
             itemModelFileEditPane.addChangeListener(this::onChange);
-            JScrollPane scrollPane = new JScrollPane(itemModelFileEditPane);
+            JScrollPane scrollPane = new FastScrollPane(itemModelFileEditPane);
             editPane.add(scrollPane, BorderLayout.CENTER);
         } else {
             JLabel label = new JLabel("No file selected, or no editor available for selected file.");
@@ -104,10 +111,22 @@ public class FileEditPane extends JPanel {
     }
 
     private void onChange(ChangeEvent changeEvent) {
-        updatePreview(changeEvent.getObject());
+        String newContent = GSON.toJson(changeEvent.getObject());
+        updatePreview(newContent);
+        updateFile(newContent);
     }
 
-    private void updatePreview(Object o) {
-        previewArea.setText(GSON.toJson(o));
+    private void updatePreview(String text) {
+        previewArea.setText(text);
+    }
+
+    private void updateFile(String text) {
+        if (currentNode != null) {
+            try (FileOutputStream outputStream = new FileOutputStream(this.currentNode.getFile())) {
+                outputStream.write(text.getBytes(StandardCharsets.UTF_8));
+            } catch (IOException e) {
+                //TODO display error dialog
+            }
+        }
     }
 }
