@@ -17,12 +17,25 @@
 
 package com.mcmiddleearth.rpmanager.gui.constants;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class Icons {
     public static final Icon NEW_PROJECT = UIManager.getIcon("FileView.fileIcon");
     public static final Icon OPEN_PROJECT = UIManager.getIcon("FileView.directoryIcon");
     public static final Icon SAVE_PROJECT = UIManager.getIcon("FileView.floppyDriveIcon");
+    public static final Icon DELETE_ICON;
+
+    static {
+        try {
+            BufferedImage deleteIcon = ImageIO.read(Icons.class.getResourceAsStream("/icons/delete.png"));
+            DELETE_ICON = new ImageIcon(deleteIcon);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private Icons() {}
 }

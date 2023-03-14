@@ -22,7 +22,9 @@ import com.mcmiddleearth.rpmanager.events.EventDispatcher;
 import com.mcmiddleearth.rpmanager.events.EventListener;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.CollapsibleSection;
+import com.mcmiddleearth.rpmanager.gui.components.IconButton;
 import com.mcmiddleearth.rpmanager.gui.components.VerticalBox;
+import com.mcmiddleearth.rpmanager.gui.constants.Icons;
 import com.mcmiddleearth.rpmanager.model.*;
 import com.mcmiddleearth.rpmanager.utils.Pair;
 
@@ -69,7 +71,7 @@ public class ElementFacesEditPane extends VerticalBox {
     }
 
     private JButton removeFaceButton(Pair<Face, FaceDefinition> entry) {
-        return new JButton(new Action("-", "Remove face") {
+        return new IconButton(new Action("-", Icons.DELETE_ICON, "Remove face") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 int index = faces.indexOf(entry);

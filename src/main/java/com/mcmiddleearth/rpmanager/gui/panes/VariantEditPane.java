@@ -22,7 +22,9 @@ import com.mcmiddleearth.rpmanager.events.EventDispatcher;
 import com.mcmiddleearth.rpmanager.events.EventListener;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.CollapsibleSection;
+import com.mcmiddleearth.rpmanager.gui.components.IconButton;
 import com.mcmiddleearth.rpmanager.gui.components.VerticalBox;
+import com.mcmiddleearth.rpmanager.gui.constants.Icons;
 import com.mcmiddleearth.rpmanager.model.Model;
 
 import javax.swing.*;
@@ -73,7 +75,7 @@ public class VariantEditPane extends VerticalBox {
     }
 
     private JButton removeModelButton(Model model) {
-        return new JButton(new Action("-", "Remove model") {
+        return new IconButton(new Action("-", Icons.DELETE_ICON, "Remove model") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 removeModel(model);

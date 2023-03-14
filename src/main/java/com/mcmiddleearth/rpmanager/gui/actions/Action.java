@@ -32,6 +32,14 @@ public abstract class Action extends AbstractAction {
         this.description = description;
     }
 
+    protected Action(String name, Icon icon, String description) {
+        super(name, icon);
+        putValue(SHORT_DESCRIPTION, description);
+
+        this.name = name;
+        this.description = description;
+    }
+
     protected Action(String name, Icon icon, String description, Integer mnemonic, Integer acceleratorKey) {
         super(name, icon);
         putValue(SHORT_DESCRIPTION, description);

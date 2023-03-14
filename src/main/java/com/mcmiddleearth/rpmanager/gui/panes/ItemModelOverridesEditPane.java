@@ -22,7 +22,9 @@ import com.mcmiddleearth.rpmanager.events.EventDispatcher;
 import com.mcmiddleearth.rpmanager.events.EventListener;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.CollapsibleSection;
+import com.mcmiddleearth.rpmanager.gui.components.IconButton;
 import com.mcmiddleearth.rpmanager.gui.components.VerticalBox;
+import com.mcmiddleearth.rpmanager.gui.constants.Icons;
 import com.mcmiddleearth.rpmanager.model.ItemModel;
 import com.mcmiddleearth.rpmanager.model.Override;
 
@@ -64,7 +66,7 @@ public class ItemModelOverridesEditPane extends VerticalBox {
     }
 
     private JButton removeOverrideButton(Override entry) {
-        return new JButton(new Action("-", "Remove override") {
+        return new IconButton(new Action("-", Icons.DELETE_ICON, "Remove override") {
             @java.lang.Override
             public void actionPerformed(ActionEvent actionEvent) {
                 int index = itemModel.getOverrides().indexOf(entry);

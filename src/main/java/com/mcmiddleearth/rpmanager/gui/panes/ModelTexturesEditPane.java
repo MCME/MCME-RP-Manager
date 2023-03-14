@@ -22,7 +22,9 @@ import com.mcmiddleearth.rpmanager.events.EventDispatcher;
 import com.mcmiddleearth.rpmanager.events.EventListener;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.CollapsibleSection;
+import com.mcmiddleearth.rpmanager.gui.components.IconButton;
 import com.mcmiddleearth.rpmanager.gui.components.VerticalBox;
+import com.mcmiddleearth.rpmanager.gui.constants.Icons;
 import com.mcmiddleearth.rpmanager.model.BaseModel;
 import com.mcmiddleearth.rpmanager.utils.Pair;
 
@@ -68,7 +70,7 @@ public class ModelTexturesEditPane extends VerticalBox {
     }
 
     private JButton removeTextureButton(Pair<String, String> entry) {
-        return new JButton(new Action("-", "Remove texture") {
+        return new IconButton(new Action("-", Icons.DELETE_ICON, "Remove texture") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 int index = textures.indexOf(entry);

@@ -22,7 +22,9 @@ import com.mcmiddleearth.rpmanager.events.EventDispatcher;
 import com.mcmiddleearth.rpmanager.events.EventListener;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.CollapsibleSection;
+import com.mcmiddleearth.rpmanager.gui.components.IconButton;
 import com.mcmiddleearth.rpmanager.gui.components.VerticalBox;
+import com.mcmiddleearth.rpmanager.gui.constants.Icons;
 import com.mcmiddleearth.rpmanager.model.BaseModel;
 import com.mcmiddleearth.rpmanager.model.Display;
 import com.mcmiddleearth.rpmanager.model.Position;
@@ -70,7 +72,7 @@ public class ModelDisplayEditPane extends VerticalBox {
     }
 
     private JButton removeDisplayButton(Pair<Position, Display> entry) {
-        return new JButton(new Action("-", "Remove display") {
+        return new IconButton(new Action("-", Icons.DELETE_ICON, "Remove display") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 int index = display.indexOf(entry);

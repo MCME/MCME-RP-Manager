@@ -23,7 +23,9 @@ import com.mcmiddleearth.rpmanager.events.EventListener;
 import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.CollapsibleSection;
+import com.mcmiddleearth.rpmanager.gui.components.IconButton;
 import com.mcmiddleearth.rpmanager.gui.components.VerticalBox;
+import com.mcmiddleearth.rpmanager.gui.constants.Icons;
 import com.mcmiddleearth.rpmanager.gui.modals.AddBlockstateModal;
 import com.mcmiddleearth.rpmanager.model.BlockState;
 import com.mcmiddleearth.rpmanager.model.Model;
@@ -98,7 +100,7 @@ public class BlockstateFileEditPane extends VerticalBox {
     }
 
     private JButton removeSectionButton(String key) {
-        return new JButton(new Action("-", "Remove section") {
+        return new IconButton(new Action("-", Icons.DELETE_ICON, "Remove section") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 doRemoveSection(key);
