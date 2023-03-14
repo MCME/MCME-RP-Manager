@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 MCME
+ * Copyright (C) 2023 MCME
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,19 @@
 
 package com.mcmiddleearth.rpmanager.gui.actions;
 
-public class Actions {
-    public static Action NEW_PROJECT = new NewProjectAction();
-    public static Action OPEN_PROJECT = new OpenProjectAction();
-    public static Action SAVE_PROJECT = new SaveProjectAction();
-    public static Action SETTINGS = new SettingsAction();
+import com.mcmiddleearth.rpmanager.gui.MainWindow;
+import com.mcmiddleearth.rpmanager.gui.modals.SettingsModal;
 
-    private Actions() {}
+import java.awt.event.ActionEvent;
+
+public class SettingsAction extends Action {
+    public SettingsAction() {
+        super("Settings...", "Editor settings");
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        MainWindow mainWindow = MainWindow.getInstance();
+        new SettingsModal(mainWindow, mainWindow.getSettings());
+    }
 }

@@ -17,6 +17,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.9'
     implementation 'org.yaml:snakeyaml:1.30'
     implementation 'commons-io:commons-io:2.11.0'
+    implementation 'org.pushing-pixels:radiance-theming:6.5.0'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
 }
 

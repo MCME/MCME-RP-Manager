@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 MCME
+ * Copyright (C) 2023 MCME
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,13 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.mcmiddleearth.rpmanager.gui.actions;
+package com.mcmiddleearth.rpmanager.model.internal;
 
-public class Actions {
-    public static Action NEW_PROJECT = new NewProjectAction();
-    public static Action OPEN_PROJECT = new OpenProjectAction();
-    public static Action SAVE_PROJECT = new SaveProjectAction();
-    public static Action SETTINGS = new SettingsAction();
+import javax.swing.*;
+import java.io.File;
 
-    private Actions() {}
+public class Settings {
+    public static File FILE = new File(System.getProperty("user.home"), "mcme-rp-manager-settings.json");
+
+    private String lookAndFeel = UIManager.getLookAndFeel().getName();
+
+    public String getLookAndFeel() {
+        return lookAndFeel;
+    }
+
+    public void setLookAndFeel(String lookAndFeel) {
+        this.lookAndFeel = lookAndFeel;
+    }
 }

@@ -19,6 +19,7 @@ package com.mcmiddleearth.rpmanager.gui;
 
 import com.mcmiddleearth.rpmanager.gui.actions.Actions;
 import com.mcmiddleearth.rpmanager.gui.panes.ProjectsPane;
+import com.mcmiddleearth.rpmanager.model.internal.Settings;
 import com.mcmiddleearth.rpmanager.model.project.Project;
 import com.mcmiddleearth.rpmanager.model.project.Session;
 import com.mcmiddleearth.rpmanager.model.wrappers.ResourcePackData;
@@ -26,6 +27,7 @@ import com.mcmiddleearth.rpmanager.model.wrappers.ResourcePackData;
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeSupport;
+import java.util.Arrays;
 
 public class MainWindow extends JFrame {
     private static MainWindow INSTANCE;
@@ -33,8 +35,10 @@ public class MainWindow extends JFrame {
     private ResourcePackData resourcePackData = null;
     private final Session session = new Session();
     private final ProjectsPane projectsPane;
+    private final Settings settings;
 
-    public MainWindow() {
+    public MainWindow(Settings settings) {
+        this.settings = settings;
         INSTANCE = this;
         createMenu();
         setTitle("MCME Resource Pack Manager");
@@ -43,6 +47,7 @@ public class MainWindow extends JFrame {
         setLayout(new BorderLayout());
         add(this.projectsPane = new ProjectsPane(session), BorderLayout.CENTER);
         setVisible(true);
+        updateSettings();
     }
 
     private void createMenu() {
@@ -53,6 +58,8 @@ public class MainWindow extends JFrame {
         fileMenu.add(Actions.NEW_PROJECT);
         fileMenu.add(Actions.OPEN_PROJECT);
         fileMenu.add(Actions.SAVE_PROJECT);
+        fileMenu.addSeparator();
+        fileMenu.add(Actions.SETTINGS);
         menuBar.add(fileMenu);
 
         setJMenuBar(menuBar);
@@ -74,6 +81,24 @@ public class MainWindow extends JFrame {
 
     public Project getCurrentProject() {
         return projectsPane.getCurrentProject();
+    }
+
+    public Settings getSettings() {
+        return settings;
+    }
+
+    public void updateSettings() {
+        try {
+            UIManager.setLookAndFeel(Arrays.stream(UIManager.getInstalledLookAndFeels())
+                    .filter(lf -> lf.getName().equals(settings.getLookAndFeel()))
+                    .findFirst().orElseThrow().getClassName());
+            SwingUtilities.updateComponentTreeUI(this);
+            pack();
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+                 UnsupportedLookAndFeelException e) {
+            //TODO show error dialog
+            throw new RuntimeException(e);
+        }
     }
 
     public static MainWindow getInstance() {
