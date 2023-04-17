@@ -31,7 +31,7 @@ public class TreeDuplicateAction extends Action {
     private final JTree tree;
 
     public TreeDuplicateAction(JTree tree) {
-        super("Duplicate...", null, "Duplicate file", KeyEvent.VK_D, KeyEvent.VK_E);
+        super("Duplicate...", null, "Duplicate file", KeyEvent.VK_U, KeyEvent.VK_E);
         this.tree = tree;
     }
 

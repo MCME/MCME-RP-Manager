@@ -21,10 +21,7 @@ import com.mcmiddleearth.rpmanager.gui.components.tree.ExpansionStateAwareTreeMo
 import com.mcmiddleearth.rpmanager.gui.components.tree.JarTreeFactory;
 import com.mcmiddleearth.rpmanager.gui.components.tree.ResourcePackTreeFactory;
 import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
-import com.mcmiddleearth.rpmanager.gui.components.tree.actions.TreeCopyAction;
-import com.mcmiddleearth.rpmanager.gui.components.tree.actions.TreeDuplicateAction;
-import com.mcmiddleearth.rpmanager.gui.components.tree.actions.TreePasteAction;
-import com.mcmiddleearth.rpmanager.gui.components.tree.actions.TreeRenameAction;
+import com.mcmiddleearth.rpmanager.gui.components.tree.actions.*;
 import com.mcmiddleearth.rpmanager.gui.listeners.LayerTreeSelectionListener;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 
@@ -65,11 +62,13 @@ public class LayerFilesPane extends JPanel {
         Action copyAction = new TreeCopyAction(tree);
         Action pasteAction = new TreePasteAction(tree);
         pasteAction.setEnabled(editable);
+        Action deleteAction = new TreeDeleteAction(tree);
+        deleteAction.setEnabled(editable);
         Action renameAction = new TreeRenameAction(tree);
         renameAction.setEnabled(editable);
         Action duplicateAction = new TreeDuplicateAction(tree);
         duplicateAction.setEnabled(editable);
-        Action[] actions = new Action[]{ copyAction, pasteAction, renameAction, duplicateAction };
+        Action[] actions = new Action[]{ copyAction, pasteAction, deleteAction, renameAction, duplicateAction };
 
         JPopupMenu menu = new JPopupMenu();
         for (Action action : actions) {
