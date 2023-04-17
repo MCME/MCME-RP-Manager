@@ -29,11 +29,9 @@ import java.util.List;
 
 public class ProjectsPane extends JTabbedPane {
     private final Session session;
-    private final ActionManager actionManager;
 
     public ProjectsPane(Session session) {
         this.session = session;
-        this.actionManager = new ActionManager(this::reload);
 
         session.addProjectAddedListener(this::onProjectAdded);
         session.addProjectRemovedListener(this::onProjectClosed);
@@ -45,8 +43,7 @@ public class ProjectsPane extends JTabbedPane {
     private void onProjectAdded(ListItemAddedEvent event) {
         Project project = (Project) event.getItem();
         try {
-            insertTab(project.getName(), null, new ProjectPane(project, actionManager),
-                    project.getName(), event.getIndex());
+            insertTab(project.getName(), null, new ProjectPane(project), project.getName(), event.getIndex());
             setSelectedIndex(event.getIndex());
         } catch (IOException e) {
             ((List<Project>) event.getSource()).remove(event.getIndex());
@@ -64,12 +61,9 @@ public class ProjectsPane extends JTabbedPane {
     }
 
     public ActionManager getActionManager() {
-        return actionManager;
-    }
-
-    private void reload() {
         if (getSelectedComponent() instanceof ProjectPane p) {
-            p.reload();
+            return p.getActionManager();
         }
+        return new ActionManager(() -> {});
     }
 }

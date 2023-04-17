@@ -33,9 +33,11 @@ public class ProjectPane extends JPanel {
     private final Project project;
     private final ProjectFilesPane treesPane;
     private final FileEditPane fileEditPane;
+    private final ActionManager actionManager;
 
-    public ProjectPane(Project project, ActionManager actionManager) throws IOException {
+    public ProjectPane(Project project) throws IOException {
         this.project = project;
+        this.actionManager = new ActionManager(this::reload);
 
         setLayout(new BorderLayout());
 
@@ -65,6 +67,10 @@ public class ProjectPane extends JPanel {
         fileEditPane.setSelectedFile(layer,
                 newPath == null ? null : newPath.getPath(),
                 newPath == null ? null : (StaticTreeNode) newPath.getLastPathComponent());
+    }
+
+    public ActionManager getActionManager() {
+        return actionManager;
     }
 
     public void reload() {
