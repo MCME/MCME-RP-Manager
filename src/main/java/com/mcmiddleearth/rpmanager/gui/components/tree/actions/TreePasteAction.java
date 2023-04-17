@@ -17,6 +17,7 @@
 
 package com.mcmiddleearth.rpmanager.gui.components.tree.actions;
 
+import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.tree.ResourcePackTreeFactory;
 import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
@@ -31,8 +32,13 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class TreePasteAction extends Action {
     private final JTree tree;
@@ -55,15 +61,27 @@ public class TreePasteAction extends Action {
             if (transferable != null && transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
                 try {
                     java.util.List<File> files = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+                    com.mcmiddleearth.rpmanager.utils.Action undoAction = () -> {};
+                    com.mcmiddleearth.rpmanager.utils.Action redoAction = () -> {};
                     if (files != null) {
                         for (File file : files) {
-                            node.addChild(ResourcePackTreeFactory.createNode(node, file));
-                            if (file.isDirectory()) {
-                                FileUtils.copyDirectoryToDirectory(file, node.getFile());
-                            } else {
-                                FileUtils.copyFileToDirectory(file, node.getFile());
-                            }
+                            StaticTreeNode finalNode = node;
+                            Map<String, Object> restoreData = new LinkedHashMap<>();
+                            File targetFile = new File(node.getFile(), file.getName());
+                            restoreData.put(targetFile.getName(), getFileRestoreData(targetFile));
+                            finalNode.addChild(ResourcePackTreeFactory.createNode(finalNode, file));
+                            redoAction = redoAction.then(() -> {
+                                if (file.isDirectory()) {
+                                    FileUtils.copyDirectoryToDirectory(file, finalNode.getFile());
+                                } else {
+                                    FileUtils.copyFileToDirectory(file, finalNode.getFile());
+                                }
+                            });
+                            undoAction = undoAction.butFirst(() -> {
+                                restoreFileData(finalNode.getFile(), restoreData);
+                            });
                         }
+                        MainWindow.getInstance().getActionManager().submit(undoAction, redoAction);
                         ((DefaultTreeModel) tree.getModel()).reload(node);
                         tree.revalidate();
                         tree.repaint();
@@ -73,5 +91,51 @@ public class TreePasteAction extends Action {
                 }
             }
         }
+    }
+
+    private static Object getFileRestoreData(File file) {
+        if (!file.exists()) {
+            return null;
+        } else if (file.isDirectory()) {
+            Map<String, Object> innerData = new LinkedHashMap<>();
+            for (File innerFile : Objects.requireNonNull(file.listFiles())) {
+                innerData.put(innerFile.getName(), getFileRestoreData(innerFile));
+            }
+            return innerData;
+        } else {
+            try (FileInputStream inputStream = new FileInputStream(file)) {
+                return inputStream.readAllBytes();
+            } catch (IOException e) {
+                //TODO error dialog
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void restoreFileData(File directory, Map<String, Object> restoreData) {
+        restoreData.forEach((name, content) -> {
+            File targetFile = new File(directory, name);
+            if (targetFile.exists() && !targetFile.delete()) {
+                //TODO error dialog
+                throw new RuntimeException("Failed to remove file");
+            }
+            if (content instanceof byte[] bytes) {
+                try (FileOutputStream outputStream = new FileOutputStream(targetFile)) {
+                    outputStream.write(bytes);
+                } catch (IOException e) {
+                    //TODO error dialog
+                    throw new RuntimeException(e);
+                }
+            } else if (content != null) {
+                Map<String, Object> innerData = (Map<String, Object>) content;
+                if (targetFile.mkdir()) {
+                    restoreFileData(targetFile, innerData);
+                } else {
+                    //TODO error dialog
+                    throw new RuntimeException("Failed to create directory");
+                }
+            }
+        });
     }
 }

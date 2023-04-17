@@ -17,10 +17,12 @@
 
 package com.mcmiddleearth.rpmanager.gui.modals;
 
+import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.Form;
 import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
 import com.mcmiddleearth.rpmanager.gui.utils.FormButtonEnabledListener;
+import com.mcmiddleearth.rpmanager.utils.Pair;
 
 import javax.swing.*;
 import javax.swing.text.Document;
@@ -44,9 +46,16 @@ public class MassRenamePatternModal extends BaseRenameModal {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 int i = 1;
+                com.mcmiddleearth.rpmanager.utils.Action undoAction = () -> {};
+                com.mcmiddleearth.rpmanager.utils.Action redoAction = () -> {};
                 for (StaticTreeNode node : nodes) {
-                    renameNode(node, form.getPattern(), i++);
+                    Pair<com.mcmiddleearth.rpmanager.utils.Action, com.mcmiddleearth.rpmanager.utils.Action> action =
+                            renameNode(node, form.getPattern(), i++);
+                    undoAction = undoAction.butFirst(action.getLeft());
+                    redoAction = redoAction.then(action.getRight());
                 }
+                MainWindow.getInstance().getActionManager().submit(undoAction, redoAction);
+                reloadTree();
                 MassRenamePatternModal.this.close();
             }
         });
@@ -65,8 +74,9 @@ public class MassRenamePatternModal extends BaseRenameModal {
         setVisible(true);
     }
 
-    private void renameNode(StaticTreeNode node, String pattern, int i) {
-        renameNode(node, pattern.replaceAll("%i", Integer.toString(i)));
+    private Pair<com.mcmiddleearth.rpmanager.utils.Action, com.mcmiddleearth.rpmanager.utils.Action> renameNode(
+            StaticTreeNode node, String pattern, int i) {
+        return renameNode(node, pattern.replaceAll("%i", Integer.toString(i)));
     }
 
     public void close() {

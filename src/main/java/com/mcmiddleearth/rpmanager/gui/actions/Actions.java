@@ -22,6 +22,8 @@ public class Actions {
     public static Action OPEN_PROJECT = new OpenProjectAction();
     public static Action SAVE_PROJECT = new SaveProjectAction();
     public static Action SETTINGS = new SettingsAction();
+    public static Action UNDO = new UndoAction();
+    public static Action REDO = new RedoAction();
 
     private Actions() {}
 }

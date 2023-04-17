@@ -17,10 +17,12 @@
 
 package com.mcmiddleearth.rpmanager.gui.modals;
 
+import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.Form;
 import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
 import com.mcmiddleearth.rpmanager.gui.utils.FormButtonEnabledListener;
+import com.mcmiddleearth.rpmanager.utils.Pair;
 
 import javax.swing.*;
 import javax.swing.text.Document;
@@ -42,9 +44,16 @@ public class MassRenameReplaceModal extends BaseRenameModal {
         JButton rename = new JButton(new com.mcmiddleearth.rpmanager.gui.actions.Action("Rename", "Rename files") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                com.mcmiddleearth.rpmanager.utils.Action undoAction = () -> {};
+                com.mcmiddleearth.rpmanager.utils.Action redoAction = () -> {};
                 for (StaticTreeNode node : nodes) {
-                    renameNode(node, form.getFrom(), form.getTo());
+                    Pair<com.mcmiddleearth.rpmanager.utils.Action, com.mcmiddleearth.rpmanager.utils.Action> action =
+                            renameNode(node, form.getFrom(), form.getTo());
+                    undoAction = undoAction.butFirst(action.getLeft());
+                    redoAction = redoAction.then(action.getRight());
                 }
+                MainWindow.getInstance().getActionManager().submit(undoAction, redoAction);
+                reloadTree();
                 MassRenameReplaceModal.this.close();
             }
         });
@@ -63,8 +72,9 @@ public class MassRenameReplaceModal extends BaseRenameModal {
         setVisible(true);
     }
 
-    private void renameNode(StaticTreeNode node, String from, String to) {
-        renameNode(node, node.getName().replace(from, to));
+    private Pair<com.mcmiddleearth.rpmanager.utils.Action, com.mcmiddleearth.rpmanager.utils.Action> renameNode(
+            StaticTreeNode node, String from, String to) {
+        return renameNode(node, node.getName().replace(from, to));
     }
 
     public void close() {

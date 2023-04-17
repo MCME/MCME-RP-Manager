@@ -27,11 +27,15 @@ import com.mcmiddleearth.rpmanager.model.BlockState;
 import com.mcmiddleearth.rpmanager.model.ItemModel;
 import com.mcmiddleearth.rpmanager.model.internal.SelectedFileData;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
+import com.mcmiddleearth.rpmanager.utils.Action;
+import com.mcmiddleearth.rpmanager.utils.ActionManager;
 import com.mcmiddleearth.rpmanager.utils.JsonFileLoader;
 
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -42,8 +46,10 @@ public class FileEditPane extends JPanel {
     private final JPanel editPane;
     private final JTextArea previewArea;
     private StaticTreeNode currentNode = null;
+    private final ActionManager actionManager;
 
-    public FileEditPane() {
+    public FileEditPane(ActionManager actionManager) {
+        this.actionManager = actionManager;
         setLayout(new BorderLayout());
 
         this.editPane = new JPanel();
@@ -122,10 +128,26 @@ public class FileEditPane extends JPanel {
 
     private void updateFile(String text) {
         if (currentNode != null) {
-            try (FileOutputStream outputStream = new FileOutputStream(this.currentNode.getFile())) {
-                outputStream.write(text.getBytes(StandardCharsets.UTF_8));
+            File file = this.currentNode.getFile();
+            Action undoAction = null;
+            Action redoAction = null;
+            try (FileInputStream inputStream = new FileInputStream(file)) {
+                byte[] content = inputStream.readAllBytes();
+                undoAction = () -> {
+                    try (FileOutputStream outputStream = new FileOutputStream(file)) {
+                        outputStream.write(content);
+                    }
+                };
+                redoAction = () -> {
+                    try (FileOutputStream outputStream = new FileOutputStream(file)) {
+                        outputStream.write(text.getBytes(StandardCharsets.UTF_8));
+                    }
+                };
             } catch (IOException e) {
                 //TODO display error dialog
+            }
+            if (undoAction != null && redoAction != null) {
+                actionManager.submit(undoAction, redoAction);
             }
         }
     }

@@ -21,6 +21,7 @@ import com.mcmiddleearth.rpmanager.gui.components.FastScrollPane;
 import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 import com.mcmiddleearth.rpmanager.model.project.Project;
+import com.mcmiddleearth.rpmanager.utils.ActionManager;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -30,15 +31,16 @@ import java.io.IOException;
 
 public class ProjectPane extends JPanel {
     private final Project project;
+    private final ProjectFilesPane treesPane;
     private final FileEditPane fileEditPane;
 
-    public ProjectPane(Project project) throws IOException {
+    public ProjectPane(Project project, ActionManager actionManager) throws IOException {
         this.project = project;
 
         setLayout(new BorderLayout());
 
-        ProjectFilesPane treesPane = new ProjectFilesPane(project);
-        this.fileEditPane = new FileEditPane();
+        this.treesPane = new ProjectFilesPane(project);
+        this.fileEditPane = new FileEditPane(actionManager);
         treesPane.addTreeSelectionListener(this::onTreeSelectionChanged);
 
         JSplitPane innerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
@@ -63,5 +65,9 @@ public class ProjectPane extends JPanel {
         fileEditPane.setSelectedFile(layer,
                 newPath == null ? null : newPath.getPath(),
                 newPath == null ? null : (StaticTreeNode) newPath.getLastPathComponent());
+    }
+
+    public void reload() {
+        treesPane.reload();
     }
 }

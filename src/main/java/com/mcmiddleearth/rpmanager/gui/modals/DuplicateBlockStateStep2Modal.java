@@ -17,6 +17,7 @@
 
 package com.mcmiddleearth.rpmanager.gui.modals;
 
+import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.Grid;
 import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
@@ -112,9 +113,19 @@ public class DuplicateBlockStateStep2Modal extends JDialog {
             replaceTextures(model.getMiddle(), replacements);
         }
         try {
-            writeTextures(replacements);
-            writeModels(this.replacements);
-            writeBlockState(this.blockState, newName + ".json");
+            com.mcmiddleearth.rpmanager.utils.Action undoAction = () -> {};
+            com.mcmiddleearth.rpmanager.utils.Action redoAction = () -> {};
+            Pair<com.mcmiddleearth.rpmanager.utils.Action, com.mcmiddleearth.rpmanager.utils.Action> action =
+                    writeTextures(replacements);
+            undoAction = undoAction.butFirst(action.getLeft());
+            redoAction = redoAction.then(action.getRight());
+            action = writeModels(this.replacements);
+            undoAction = undoAction.butFirst(action.getLeft());
+            redoAction = redoAction.then(action.getRight());
+            action = writeBlockState(this.blockState, newName + ".json");
+            undoAction = undoAction.butFirst(action.getLeft());
+            redoAction = redoAction.then(action.getRight());
+            MainWindow.getInstance().getActionManager().submit(undoAction, redoAction);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(getParent(), "Unknown error!", "Error",
                     JOptionPane.ERROR_MESSAGE);
@@ -135,15 +146,23 @@ public class DuplicateBlockStateStep2Modal extends JDialog {
         return textureNode;
     }
 
-    private void writeTextures(List<Triple<String, StaticTreeNode, String>> replacements) throws IOException {
+    private Pair<com.mcmiddleearth.rpmanager.utils.Action, com.mcmiddleearth.rpmanager.utils.Action> writeTextures(
+            List<Triple<String, StaticTreeNode, String>> replacements) throws IOException {
         StaticTreeNode texturesNode = baseNode.getChildren().stream().filter(s -> "textures".equals(s.getName()))
                 .findFirst().orElseThrow();
+        com.mcmiddleearth.rpmanager.utils.Action undoAction = () -> {};
+        com.mcmiddleearth.rpmanager.utils.Action redoAction = () -> {};
         for (Triple<String, StaticTreeNode, String> replacement : replacements) {
-            writeTexture(texturesNode, replacement.getMiddle().getFile(), replacement.getRight());
+            Pair<com.mcmiddleearth.rpmanager.utils.Action, com.mcmiddleearth.rpmanager.utils.Action> action =
+                    writeTexture(texturesNode, replacement.getMiddle().getFile(), replacement.getRight());
+            undoAction = undoAction.butFirst(action.getLeft());
+            redoAction = redoAction.then(action.getRight());
         }
+        return new Pair<>(undoAction, redoAction);
     }
 
-    private void writeTexture(StaticTreeNode texturesNode, File oldFile, String newName) throws IOException {
+    private Pair<com.mcmiddleearth.rpmanager.utils.Action, com.mcmiddleearth.rpmanager.utils.Action> writeTexture(
+            StaticTreeNode texturesNode, File oldFile, String newName) throws IOException {
         String[] newPath = (newName + ".png").split("/");
         StaticTreeNode newNode = texturesNode;
         for (int i = 0; i < newPath.length; ++i) {
@@ -157,23 +176,51 @@ public class DuplicateBlockStateStep2Modal extends JDialog {
             }
             newNode = child;
         }
+        com.mcmiddleearth.rpmanager.utils.Action undoAction = () -> {};
+        com.mcmiddleearth.rpmanager.utils.Action redoAction = () -> {};
         File newFile = newNode.getFile();
-        newFile.getParentFile().mkdirs();
-        try (FileInputStream input = new FileInputStream(oldFile);
-             FileOutputStream output = new FileOutputStream(newFile)) {
-            input.transferTo(output);
+        for (File f = newFile.getParentFile(); !f.exists(); f = f.getParentFile()) {
+            File finalFile = f;
+            undoAction = undoAction.then(() -> finalFile.delete());
         }
+        redoAction = redoAction.then(() -> newFile.getParentFile().mkdirs());
+        undoAction = undoAction.butFirst(() -> newFile.delete());
+        if (newFile.exists()) {
+            try (FileInputStream inputStream = new FileInputStream(newFile)) {
+                byte[] content = inputStream.readAllBytes();
+                undoAction = undoAction.then(() -> {
+                    try (FileOutputStream outputStream = new FileOutputStream(newFile)) {
+                        outputStream.write(content);
+                    }
+                });
+            }
+        }
+        redoAction = redoAction.then(() -> {
+            try (FileInputStream input = new FileInputStream(oldFile);
+                 FileOutputStream output = new FileOutputStream(newFile)) {
+                input.transferTo(output);
+            }
+        });
+        return new Pair<>(undoAction, redoAction);
     }
 
-    private void writeModels(List<Triple<StaticTreeNode, BaseModel, String>> replacements) throws IOException {
+    private Pair<com.mcmiddleearth.rpmanager.utils.Action, com.mcmiddleearth.rpmanager.utils.Action> writeModels(
+            List<Triple<StaticTreeNode, BaseModel, String>> replacements) throws IOException {
         StaticTreeNode modelsNode = baseNode.getChildren().stream().filter(s -> "models".equals(s.getName()))
                 .findFirst().orElseThrow();
+        com.mcmiddleearth.rpmanager.utils.Action undoAction = () -> {};
+        com.mcmiddleearth.rpmanager.utils.Action redoAction = () -> {};
         for (Triple<StaticTreeNode, BaseModel, String> replacement : replacements) {
-            writeModel(modelsNode, replacement.getMiddle(), replacement.getRight());
+            Pair<com.mcmiddleearth.rpmanager.utils.Action, com.mcmiddleearth.rpmanager.utils.Action> action =
+                    writeModel(modelsNode, replacement.getMiddle(), replacement.getRight());
+            undoAction = undoAction.butFirst(action.getLeft());
+            redoAction = redoAction.then(action.getRight());
         }
+        return new Pair<>(undoAction, redoAction);
     }
 
-    private void writeModel(StaticTreeNode modelsNode, BaseModel data, String name) throws IOException {
+    private Pair<com.mcmiddleearth.rpmanager.utils.Action, com.mcmiddleearth.rpmanager.utils.Action> writeModel(
+            StaticTreeNode modelsNode, BaseModel data, String name) throws IOException {
         String[] newPath = (name + ".json").split("/");
         StaticTreeNode newNode = modelsNode;
         for (int i = 0; i < newPath.length; ++i) {
@@ -188,11 +235,30 @@ public class DuplicateBlockStateStep2Modal extends JDialog {
             newNode = child;
         }
         File newFile = newNode.getFile();
-        newFile.getParentFile().mkdirs();
-        ResourcePackUtils.saveFile(data, newFile);
+        com.mcmiddleearth.rpmanager.utils.Action undoAction = () -> {};
+        com.mcmiddleearth.rpmanager.utils.Action redoAction = () -> {};
+        for (File f = newFile.getParentFile(); !f.exists(); f = f.getParentFile()) {
+            File finalFile = f;
+            undoAction = undoAction.then(() -> finalFile.delete());
+        }
+        redoAction = redoAction.then(() -> newFile.getParentFile().mkdirs());
+        undoAction = undoAction.butFirst(() -> newFile.delete());
+        if (newFile.exists()) {
+            try (FileInputStream inputStream = new FileInputStream(newFile)) {
+                byte[] content = inputStream.readAllBytes();
+                undoAction = undoAction.then(() -> {
+                    try (FileOutputStream outputStream = new FileOutputStream(newFile)) {
+                        outputStream.write(content);
+                    }
+                });
+            }
+        }
+        redoAction = redoAction.then(() -> ResourcePackUtils.saveFile(data, newFile));
+        return new Pair<>(undoAction, redoAction);
     }
 
-    private void writeBlockState(BlockState data, String name) throws IOException {
+    private Pair<com.mcmiddleearth.rpmanager.utils.Action, com.mcmiddleearth.rpmanager.utils.Action> writeBlockState(
+            BlockState data, String name) throws IOException {
         StaticTreeNode newNode = baseNode.getChildren().stream().filter(s -> "blockstates".equals(s.getName()))
                 .findFirst().orElseThrow();
         StaticTreeNode child = newNode.getChildren().stream().filter(s -> name.equals(s.getName())).findFirst()
@@ -202,7 +268,20 @@ public class DuplicateBlockStateStep2Modal extends JDialog {
             newNode.addChild(child);
         }
         newNode = child;
-        ResourcePackUtils.saveFile(data, newNode.getFile());
+        File newFile = newNode.getFile();
+        com.mcmiddleearth.rpmanager.utils.Action undoAction = () -> {};
+        undoAction = undoAction.butFirst(() -> newFile.delete());
+        if (newFile.exists()) {
+            try (FileInputStream inputStream = new FileInputStream(newFile)) {
+                byte[] content = inputStream.readAllBytes();
+                undoAction = undoAction.then(() -> {
+                    try (FileOutputStream outputStream = new FileOutputStream(newFile)) {
+                        outputStream.write(content);
+                    }
+                });
+            }
+        }
+        return new Pair<>(undoAction, () -> ResourcePackUtils.saveFile(data, newFile));
     }
 
     private void replaceTextures(BaseModel model, List<Triple<String, StaticTreeNode, String>> replacements) {

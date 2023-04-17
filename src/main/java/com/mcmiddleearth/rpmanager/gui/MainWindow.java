@@ -23,6 +23,7 @@ import com.mcmiddleearth.rpmanager.model.internal.Settings;
 import com.mcmiddleearth.rpmanager.model.project.Project;
 import com.mcmiddleearth.rpmanager.model.project.Session;
 import com.mcmiddleearth.rpmanager.model.wrappers.ResourcePackData;
+import com.mcmiddleearth.rpmanager.utils.ActionManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -61,6 +62,11 @@ public class MainWindow extends JFrame {
         fileMenu.addSeparator();
         fileMenu.add(Actions.SETTINGS);
         menuBar.add(fileMenu);
+        JMenu editMenu = new JMenu("Edit");
+        editMenu.setMnemonic('E');
+        editMenu.add(Actions.UNDO);
+        editMenu.add(Actions.REDO);
+        menuBar.add(editMenu);
 
         setJMenuBar(menuBar);
     }
@@ -85,6 +91,10 @@ public class MainWindow extends JFrame {
 
     public Settings getSettings() {
         return settings;
+    }
+
+    public ActionManager getActionManager() {
+        return projectsPane.getActionManager();
     }
 
     public void updateSettings() {

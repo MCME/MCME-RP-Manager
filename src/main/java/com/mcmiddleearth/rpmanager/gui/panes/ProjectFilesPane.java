@@ -109,4 +109,8 @@ public class ProjectFilesPane extends JPanel {
     public void addTreeSelectionListener(LayerTreeSelectionListener listener) {
         this.treeSelectionListeners.add(listener);
     }
+
+    public void reload() {
+        layerFilesPanes.forEach(LayerFilesPane::reload);
+    }
 }

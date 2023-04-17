@@ -21,6 +21,7 @@ import com.mcmiddleearth.rpmanager.events.ListItemAddedEvent;
 import com.mcmiddleearth.rpmanager.events.ListItemRemovedEvent;
 import com.mcmiddleearth.rpmanager.model.project.Project;
 import com.mcmiddleearth.rpmanager.model.project.Session;
+import com.mcmiddleearth.rpmanager.utils.ActionManager;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -28,9 +29,11 @@ import java.util.List;
 
 public class ProjectsPane extends JTabbedPane {
     private final Session session;
+    private final ActionManager actionManager;
 
     public ProjectsPane(Session session) {
         this.session = session;
+        this.actionManager = new ActionManager(this::reload);
 
         session.addProjectAddedListener(this::onProjectAdded);
         session.addProjectRemovedListener(this::onProjectClosed);
@@ -42,7 +45,8 @@ public class ProjectsPane extends JTabbedPane {
     private void onProjectAdded(ListItemAddedEvent event) {
         Project project = (Project) event.getItem();
         try {
-            insertTab(project.getName(), null, new ProjectPane(project), project.getName(), event.getIndex());
+            insertTab(project.getName(), null, new ProjectPane(project, actionManager),
+                    project.getName(), event.getIndex());
             setSelectedIndex(event.getIndex());
         } catch (IOException e) {
             ((List<Project>) event.getSource()).remove(event.getIndex());
@@ -57,5 +61,15 @@ public class ProjectsPane extends JTabbedPane {
     public Project getCurrentProject() {
         int index = getSelectedIndex();
         return index >= session.getProjects().size() ? null : session.getProjects().get(index);
+    }
+
+    public ActionManager getActionManager() {
+        return actionManager;
+    }
+
+    private void reload() {
+        if (getSelectedComponent() instanceof ProjectPane p) {
+            p.reload();
+        }
     }
 }

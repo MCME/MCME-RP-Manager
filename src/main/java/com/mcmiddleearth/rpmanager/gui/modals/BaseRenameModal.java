@@ -18,6 +18,8 @@
 package com.mcmiddleearth.rpmanager.gui.modals;
 
 import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
+import com.mcmiddleearth.rpmanager.utils.Action;
+import com.mcmiddleearth.rpmanager.utils.Pair;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
@@ -32,11 +34,21 @@ public abstract class BaseRenameModal extends JDialog {
         this.tree = tree;
     }
 
-    protected void renameNode(StaticTreeNode node, String newName) {
+    protected Pair<Action, Action> renameNode(StaticTreeNode node, String newName) {
         node.setName(newName);
         File destination = new File(node.getFile().getParentFile(), newName);
-        node.getFile().renameTo(destination);
+        File originalFile = node.getFile();
+        Action undoAction = () -> destination.renameTo(originalFile);
+        Action redoAction = () -> originalFile.renameTo(destination);
         node.setFile(destination);
-        ((DefaultTreeModel) tree.getModel()).reload(node.getParent());
+        return new Pair<>(undoAction, redoAction);
+    }
+
+    protected void reloadTree(StaticTreeNode node) {
+        ((DefaultTreeModel) tree.getModel()).reload(node);
+    }
+
+    protected void reloadTree() {
+        ((DefaultTreeModel) tree.getModel()).reload();
     }
 }

@@ -17,10 +17,12 @@
 
 package com.mcmiddleearth.rpmanager.gui.modals;
 
+import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.Form;
 import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
 import com.mcmiddleearth.rpmanager.gui.utils.FormButtonEnabledListener;
+import com.mcmiddleearth.rpmanager.utils.Pair;
 
 import javax.swing.*;
 import javax.swing.text.Document;
@@ -41,7 +43,10 @@ public class RenameFileModal extends BaseRenameModal {
         JButton rename = new JButton(new Action("Rename", "Rename file") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                renameNode(node, form.getNewName());
+                Pair<com.mcmiddleearth.rpmanager.utils.Action, com.mcmiddleearth.rpmanager.utils.Action> action =
+                        renameNode(node, form.getNewName());
+                MainWindow.getInstance().getActionManager().submit(action.getLeft(), action.getRight());
+                reloadTree((StaticTreeNode) node.getParent());
                 RenameFileModal.this.close();
             }
         });

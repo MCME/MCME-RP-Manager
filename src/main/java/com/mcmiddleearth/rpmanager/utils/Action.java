@@ -15,21 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.mcmiddleearth.rpmanager.gui.actions;
+package com.mcmiddleearth.rpmanager.utils;
 
-import com.mcmiddleearth.rpmanager.gui.MainWindow;
-import com.mcmiddleearth.rpmanager.gui.modals.SettingsModal;
-
-import java.awt.event.ActionEvent;
-
-public class SettingsAction extends Action {
-    protected SettingsAction() {
-        super("Settings...", "Editor settings");
+@FunctionalInterface
+public interface Action {
+    void run() throws Exception;
+    default Action then(Action other) {
+        return () -> {
+            this.run();
+            other.run();
+        };
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        MainWindow mainWindow = MainWindow.getInstance();
-        new SettingsModal(mainWindow, mainWindow.getSettings());
+    default Action butFirst(Action other) {
+        return other.then(this);
     }
 }

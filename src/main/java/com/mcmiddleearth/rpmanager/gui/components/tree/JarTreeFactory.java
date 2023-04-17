@@ -33,6 +33,7 @@ public class JarTreeFactory {
     public static StaticTreeNode createRootNode(File jarFile) throws IOException {
         String filter = "assets/minecraft/";
         File f = Files.createTempDirectory("mcme-rp-manager-vanilla-rp").toFile();
+        f.deleteOnExit();
         File assets = new File(f, "assets");
         assets.mkdir();
         File minecraft = new File(assets, "minecraft");

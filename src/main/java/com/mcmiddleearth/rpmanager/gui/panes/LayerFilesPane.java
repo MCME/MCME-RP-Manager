@@ -20,6 +20,7 @@ package com.mcmiddleearth.rpmanager.gui.panes;
 import com.mcmiddleearth.rpmanager.gui.components.tree.ExpansionStateAwareTreeModel;
 import com.mcmiddleearth.rpmanager.gui.components.tree.JarTreeFactory;
 import com.mcmiddleearth.rpmanager.gui.components.tree.ResourcePackTreeFactory;
+import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
 import com.mcmiddleearth.rpmanager.gui.components.tree.actions.TreeCopyAction;
 import com.mcmiddleearth.rpmanager.gui.components.tree.actions.TreeDuplicateAction;
 import com.mcmiddleearth.rpmanager.gui.components.tree.actions.TreePasteAction;
@@ -28,6 +29,7 @@ import com.mcmiddleearth.rpmanager.gui.listeners.LayerTreeSelectionListener;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -46,19 +48,17 @@ public class LayerFilesPane extends JPanel {
     }
 
     private static JTree createTree(File file) throws IOException {
-        ExpansionStateAwareTreeModel model;
-        boolean editable;
-        if (file.getName().endsWith(".jar")) {
-            model = new ExpansionStateAwareTreeModel(JarTreeFactory.createRootNode(file));
-            editable = false;
-        } else {
-            model = new ExpansionStateAwareTreeModel(ResourcePackTreeFactory.createRootNode(file));
-            editable = true;
-        }
+        ExpansionStateAwareTreeModel model = new ExpansionStateAwareTreeModel(createRootNode(file));
+        boolean editable = !file.getName().endsWith(".jar");
         JTree tree = new JTree(model);
         model.setTree(tree);
         tree.setComponentPopupMenu(createPopupMenu(tree, editable));
         return tree;
+    }
+
+    private static StaticTreeNode createRootNode(File file) throws IOException {
+        return file.getName().endsWith(".jar") ?
+                JarTreeFactory.createRootNode(file) : ResourcePackTreeFactory.createRootNode(file);
     }
 
     private static JPopupMenu createPopupMenu(JTree tree, boolean editable) {
@@ -103,6 +103,20 @@ public class LayerFilesPane extends JPanel {
             runnable.run();
         } finally {
             this.eventsEnabled = true;
+        }
+    }
+
+    public void reload() {
+        try {
+            StaticTreeNode rootNode = createRootNode(layer.getFile());
+            StaticTreeNode currentRoot = (StaticTreeNode) tree.getModel().getRoot();
+            rootNode.getChildren().forEach(n -> n.setParent(currentRoot));
+            currentRoot.getChildren().clear();
+            currentRoot.getChildren().addAll(rootNode.getChildren());
+            ((DefaultTreeModel) tree.getModel()).reload();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+            //TODO error dialog
         }
     }
 }

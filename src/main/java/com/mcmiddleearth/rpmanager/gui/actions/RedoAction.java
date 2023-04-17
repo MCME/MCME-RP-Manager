@@ -18,18 +18,18 @@
 package com.mcmiddleearth.rpmanager.gui.actions;
 
 import com.mcmiddleearth.rpmanager.gui.MainWindow;
-import com.mcmiddleearth.rpmanager.gui.modals.SettingsModal;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
-public class SettingsAction extends Action {
-    protected SettingsAction() {
-        super("Settings...", "Editor settings");
+public class RedoAction extends Action {
+    protected RedoAction() {
+        super("Redo", null, "Redo last action", KeyEvent.VK_R,
+                KeyEvent.VK_Y);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        MainWindow mainWindow = MainWindow.getInstance();
-        new SettingsModal(mainWindow, mainWindow.getSettings());
+        MainWindow.getInstance().getActionManager().redo();
     }
 }
