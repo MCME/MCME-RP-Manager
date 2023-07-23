@@ -20,8 +20,10 @@ package com.mcmiddleearth.rpmanager.gui.panes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mcmiddleearth.rpmanager.events.ChangeEvent;
+import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.components.FastScrollPane;
 import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
+import com.mcmiddleearth.rpmanager.gui.modals.FileEditModal;
 import com.mcmiddleearth.rpmanager.model.BlockModel;
 import com.mcmiddleearth.rpmanager.model.BlockState;
 import com.mcmiddleearth.rpmanager.model.ItemModel;
@@ -34,6 +36,7 @@ import com.mcmiddleearth.rpmanager.utils.JsonFileLoader;
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -45,6 +48,7 @@ public class FileEditPane extends JPanel {
             .setLenient().setPrettyPrinting().enableComplexMapKeySerialization().create();
     private final JPanel editPane;
     private final JTextArea previewArea;
+    private Class<?> previewType = null;
     private StaticTreeNode currentNode = null;
     private final ActionManager actionManager;
 
@@ -62,11 +66,29 @@ public class FileEditPane extends JPanel {
 
         JPanel previewPane = new JPanel();
         previewPane.setLayout(new BorderLayout());
+        JButton previewEditButton = new JButton(new com.mcmiddleearth.rpmanager.gui.actions.Action(
+                "Edit", "Manually edit this file") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (!previewArea.getText().isEmpty()) {
+                    new FileEditModal(MainWindow.getInstance(), previewArea.getText(), previewType, s -> {
+                        updatePreview(s);
+                        updateFile(s);
+                        actionManager.refresh();
+                    });
+                }
+            }
+        });
         previewPane.add(previewArea, BorderLayout.CENTER);
+
+        JPanel previewOuterPane = new JPanel();
+        previewOuterPane.setLayout(new BorderLayout());
+        previewOuterPane.add(new FastScrollPane(previewPane), BorderLayout.CENTER);
+        previewOuterPane.add(previewEditButton, BorderLayout.PAGE_START);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true,
                 editPane,
-                new FastScrollPane(previewPane));
+                previewOuterPane);
         splitPane.setDividerSize(1);
         splitPane.setOneTouchExpandable(false);
         splitPane.setResizeWeight(0.5);
@@ -91,19 +113,19 @@ public class FileEditPane extends JPanel {
             JLabel label = new JLabel("No file selected, or no editor available for selected file.");
             editPane.add(label, BorderLayout.CENTER);
         } else if (data.getData() instanceof BlockState blockState) {
-            updatePreview(GSON.toJson(data.getData()));
+            updatePreview(GSON.toJson(data.getData()), BlockState.class);
             BlockstateFileEditPane blockstateFileEditPane = new BlockstateFileEditPane(data.getName(), blockState);
             blockstateFileEditPane.addChangeListener(this::onChange);
             JScrollPane scrollPane = new FastScrollPane(blockstateFileEditPane);
             editPane.add(scrollPane, BorderLayout.CENTER);
         } else if (data.getData() instanceof BlockModel blockModel) {
-            updatePreview(GSON.toJson(data.getData()));
+            updatePreview(GSON.toJson(data.getData()), BlockModel.class);
             BlockModelFileEditPane blockModelFileEditPane = new BlockModelFileEditPane(data.getName(), blockModel);
             blockModelFileEditPane.addChangeListener(this::onChange);
             JScrollPane scrollPane = new FastScrollPane(blockModelFileEditPane);
             editPane.add(scrollPane, BorderLayout.CENTER);
         } else if (data.getData() instanceof ItemModel itemModel) {
-            updatePreview(GSON.toJson(data.getData()));
+            updatePreview(GSON.toJson(data.getData()), ItemModel.class);
             ItemModelFileEditPane itemModelFileEditPane = new ItemModelFileEditPane(data.getName(), itemModel);
             itemModelFileEditPane.addChangeListener(this::onChange);
             JScrollPane scrollPane = new FastScrollPane(itemModelFileEditPane);
@@ -123,7 +145,12 @@ public class FileEditPane extends JPanel {
     }
 
     private void updatePreview(String text) {
+        updatePreview(text, previewType);
+    }
+
+    private void updatePreview(String text, Class<?> type) {
         previewArea.setText(text);
+        previewType = type;
     }
 
     private void updateFile(String text) {

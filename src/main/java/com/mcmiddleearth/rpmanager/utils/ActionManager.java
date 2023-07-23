@@ -41,12 +41,16 @@ public class ActionManager {
             current = decrement(current);
             try {
                 actions[current].undoAction.run();
-                refreshAction.run();
+                refresh();
             } catch (Exception e) {
                 //TODO error dialog
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public void refresh() {
+        refreshAction.run();
     }
 
     public void redo() {
@@ -58,7 +62,7 @@ public class ActionManager {
             try {
                 actions[current].redoAction.run();
                 if (refresh) {
-                    refreshAction.run();
+                    refresh();
                 }
             } catch (Exception e) {
                 //TODO error dialog
