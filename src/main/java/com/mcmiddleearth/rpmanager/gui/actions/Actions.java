@@ -24,6 +24,7 @@ public class Actions {
     public static Action SETTINGS = new SettingsAction();
     public static Action UNDO = new UndoAction();
     public static Action REDO = new RedoAction();
+    public static Action COMPILE = new CompileAction();
 
     private Actions() {}
 }

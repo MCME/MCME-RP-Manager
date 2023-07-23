@@ -67,6 +67,10 @@ public class MainWindow extends JFrame {
         editMenu.add(Actions.UNDO);
         editMenu.add(Actions.REDO);
         menuBar.add(editMenu);
+        JMenu toolsMenu = new JMenu("Tools");
+        toolsMenu.setMnemonic('T');
+        toolsMenu.add(Actions.COMPILE);
+        menuBar.add(toolsMenu);
 
         setJMenuBar(menuBar);
     }

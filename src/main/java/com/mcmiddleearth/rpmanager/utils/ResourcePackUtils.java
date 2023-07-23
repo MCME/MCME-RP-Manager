@@ -24,18 +24,26 @@ import com.mcmiddleearth.rpmanager.model.BlockState;
 import com.mcmiddleearth.rpmanager.model.ItemModel;
 import com.mcmiddleearth.rpmanager.model.Model;
 import com.mcmiddleearth.rpmanager.model.internal.Layer;
+import com.mcmiddleearth.rpmanager.model.project.Project;
 import com.mcmiddleearth.rpmanager.model.wrappers.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class ResourcePackUtils {
     private static final Gson GSON =
@@ -107,6 +115,36 @@ public class ResourcePackUtils {
     public static void saveFile(Object data, File target) throws IOException {
         try (FileOutputStream fileOutputStream = new FileOutputStream(target)) {
             fileOutputStream.write(GSON.toJson(data).getBytes(StandardCharsets.UTF_8));
+        }
+    }
+
+    public static void compileProject(Project project, File target) throws IOException {
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(target))) {}
+        try (FileSystem fs = FileSystems.newFileSystem(target.toPath())) {
+            for (int i = 1; i < project.getLayers().size(); ++i) {
+                com.mcmiddleearth.rpmanager.model.project.Layer layer = project.getLayers().get(i);
+                File layerDir = layer.getFile().getParentFile();
+                recursiveCopy(layerDir, fs);
+            }
+        }
+    }
+
+    private static void recursiveCopy(File dir, FileSystem fileSystem) throws IOException {
+        recursiveCopy(dir, dir.toPath(), fileSystem);
+    }
+
+    private static void recursiveCopy(File dir, Path basePath, FileSystem fs) throws IOException {
+        for (File f : dir.listFiles()) {
+            Path path = basePath.relativize(f.toPath());
+            Path target = fs.getPath(path.toString());
+            if (f.isDirectory()) {
+                if (!Files.exists(target)) {
+                    Files.createDirectory(target);
+                }
+                recursiveCopy(f, basePath, fs);
+            } else {
+                Files.copy(f.toPath(), target, REPLACE_EXISTING);
+            }
         }
     }
 
