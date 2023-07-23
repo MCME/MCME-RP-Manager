@@ -27,11 +27,17 @@ public class Icons {
     public static final Icon OPEN_PROJECT = UIManager.getIcon("FileView.directoryIcon");
     public static final Icon SAVE_PROJECT = UIManager.getIcon("FileView.floppyDriveIcon");
     public static final Icon DELETE_ICON;
+    public static final Icon EXPAND_ICON;
+    public static final Icon RETRACT_ICON;
 
     static {
         try {
             BufferedImage deleteIcon = ImageIO.read(Icons.class.getResourceAsStream("/icons/delete.png"));
             DELETE_ICON = new ImageIcon(deleteIcon);
+            BufferedImage expandIcon = ImageIO.read(Icons.class.getResourceAsStream("/icons/expand.png"));
+            EXPAND_ICON = new ImageIcon(expandIcon);
+            BufferedImage retractIcon = ImageIO.read(Icons.class.getResourceAsStream("/icons/retract.png"));
+            RETRACT_ICON = new ImageIcon(retractIcon);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

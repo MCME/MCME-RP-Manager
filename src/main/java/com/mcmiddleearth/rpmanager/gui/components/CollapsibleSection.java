@@ -17,6 +17,8 @@
 
 package com.mcmiddleearth.rpmanager.gui.components;
 
+import com.mcmiddleearth.rpmanager.gui.constants.Icons;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -33,7 +35,7 @@ public class CollapsibleSection extends JPanel {
         this.content = content;
         this.collapsed = collapsed;
         this.setLayout(new BorderLayout());
-        this.expandButton = new JButton(">");
+        this.expandButton = new IconButton(Icons.EXPAND_ICON);
         this.expandButton.addActionListener(actionEvent -> switchState());
         this.title = new JLabel(title);
         this.title.setFont(new Font(this.title.getFont().getName(), Font.BOLD, this.title.getFont().getSize()));
@@ -63,7 +65,7 @@ public class CollapsibleSection extends JPanel {
     }
 
     private void updateState() {
-        expandButton.setText(collapsed ? ">" : "-");
+        expandButton.setIcon(collapsed ? Icons.EXPAND_ICON : Icons.RETRACT_ICON);
         content.setVisible(!collapsed);
         if (collapsed && contentPresent) {
             this.remove(content);
