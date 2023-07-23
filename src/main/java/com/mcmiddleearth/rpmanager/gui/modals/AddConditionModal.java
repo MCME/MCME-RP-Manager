@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 MCME
+ * Copyright (C) 2023 MCME
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,38 +19,35 @@ package com.mcmiddleearth.rpmanager.gui.modals;
 
 import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
+import com.mcmiddleearth.rpmanager.gui.components.MultiValueComboBox;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.*;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class AddBlockstateModal extends JDialog {
-    private final Map<String, List<String>> possibleValues;
-    private final Action onAccept;
-
-    public AddBlockstateModal(Frame parent, Map<String, List<String>> possibleValues, Action onAccept) {
-        super(parent, "Add block state", true);
-        this.possibleValues = possibleValues;
-        this.onAccept = onAccept;
+public class AddConditionModal extends JDialog {
+    public AddConditionModal(Frame parent, Map<String, List<String>> possibleValues,
+                             Consumer<Map<String, Object>> onAccept) {
+        super(parent, "Add condition", true);
 
         setLayout(new BorderLayout());
-        AddBlockstateForm addBlockstateForm = new AddBlockstateForm(possibleValues);
-        add(addBlockstateForm, BorderLayout.CENTER);
-        JButton accept = new JButton(new Action(onAccept.getName(), onAccept.getDescription()) {
+        AddConditionForm addConditionForm = new AddConditionForm(possibleValues);
+        add(addConditionForm, BorderLayout.CENTER);
+        JButton accept = new JButton(new Action("Save", "Save condition") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                onAccept.actionPerformed(new ActionEvent(
-                        AddBlockstateModal.this, ActionEvent.ACTION_PERFORMED, addBlockstateForm.getSelectedValues()));
-                AddBlockstateModal.this.close();
+                onAccept.accept(addConditionForm.getSelectedValues());
+                AddConditionModal.this.close();
             }
         });
-        JButton cancel = new JButton(new Action("Cancel", "Cancel creating variant") {
+        JButton cancel = new JButton(new Action("Cancel", "Cancel creating condition") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                AddBlockstateModal.this.close();
+                AddConditionModal.this.close();
             }
         });
         JPanel buttonsPanel = new JPanel();
@@ -69,29 +66,35 @@ public class AddBlockstateModal extends JDialog {
         dispose();
     }
 
-    private static class AddBlockstateForm extends JPanel {
-        private final Map<String, JComboBox<String>> inputs = new LinkedHashMap<>();
+    private static class AddConditionForm extends JPanel {
+        private final Map<String, MultiValueComboBox> inputs = new LinkedHashMap<>();
 
-        public AddBlockstateForm(Map<String, List<String>> possibleValues) {
+        public AddConditionForm(Map<String, List<String>> possibleValues) {
             setLayout(new GridBagLayout());
             int y = 0;
+            int maxStringWidth = possibleValues.values().stream()
+                    .map(l -> String.join("|", l))
+                    .mapToInt(s -> getFontMetrics(getFont()).stringWidth(s))
+                    .max().orElse(140);
 
             for (Map.Entry<String, List<String>> state : possibleValues.entrySet()) {
                 add(new JLabel(state.getKey()), label(y));
-                Vector<String> values = new Vector<>(state.getValue());
-                values.add(0, null);
-                JComboBox<String> comboBox = new JComboBox<>(values);
+
+                MultiValueComboBox comboBox = new MultiValueComboBox(state.getValue(), "-any-");
+                comboBox.setPreferredSize(
+                        new Dimension(maxStringWidth + 20, (int) comboBox.getPreferredSize().getHeight()));
                 inputs.put(state.getKey(), comboBox);
                 add(comboBox, input(y));
                 y++;
             }
         }
 
-        public String getSelectedValues() {
+        public Map<String, Object> getSelectedValues() {
             return inputs.entrySet().stream()
-                    .filter(e -> e.getValue().getSelectedItem() != null)
-                    .map(e -> e.getKey() + "=" + e.getValue().getSelectedItem())
-                    .collect(Collectors.joining(","));
+                    .map(e -> Map.entry(e.getKey(), e.getValue().getSelectedValues()))
+                    .filter(e -> !e.getValue().isEmpty())
+                    .map(e -> Map.entry(e.getKey(), String.join("|", e.getValue())))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         }
 
         private static GridBagConstraints label(int y) {

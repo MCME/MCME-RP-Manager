@@ -20,6 +20,7 @@ package com.mcmiddleearth.rpmanager.utils;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class BlockStateUtils {
     private static Map<String, Object> BLOCKSTATES;
@@ -35,6 +36,8 @@ public class BlockStateUtils {
         if (!block.startsWith("minecraft:")) {
             block = "minecraft:" + block;
         }
-        return (Map<String, List<String>>) BLOCKSTATES.get(block);
+        return ((Map<String, List<Object>>) BLOCKSTATES.get(block)).entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        e -> e.getValue().stream().map(Object::toString).collect(Collectors.toList())));
     }
 }

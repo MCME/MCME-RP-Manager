@@ -28,7 +28,9 @@ import com.mcmiddleearth.rpmanager.gui.components.VerticalBox;
 import com.mcmiddleearth.rpmanager.gui.constants.Icons;
 import com.mcmiddleearth.rpmanager.gui.modals.AddBlockstateModal;
 import com.mcmiddleearth.rpmanager.model.BlockState;
+import com.mcmiddleearth.rpmanager.model.Case;
 import com.mcmiddleearth.rpmanager.model.Model;
+import com.mcmiddleearth.rpmanager.model.When;
 import com.mcmiddleearth.rpmanager.utils.BlockStateUtils;
 
 import javax.swing.*;
@@ -63,8 +65,21 @@ public class BlockstateFileEditPane extends VerticalBox {
                         removeSectionButton(variant.getKey())));
                 this.add(new JSeparator());
             }
-        } else {
-            //TODO
+        } else if (blockState.getMultipart() != null) {
+            JButton addCase = new JButton(new Action("Add case", "Add new case") {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    addCase();
+                }
+            });
+            this.add(addCase);
+            boolean collapsed = blockState.getMultipart().size() != 1;
+            for (Case c : blockState.getMultipart()) {
+                CaseEditPane caseEditPane = new CaseEditPane(fileName, c);
+                caseEditPane.addChangeListener(event -> onChange());
+                this.add(new CollapsibleSection("Case", caseEditPane, collapsed, removeCaseButton(c)));
+                this.add(new JSeparator());
+            }
         }
     }
 
@@ -80,6 +95,20 @@ public class BlockstateFileEditPane extends VerticalBox {
                 }
             });
         }
+    }
+
+    private void addCase() {
+        Case c = new Case();
+        c.setWhen(new When());
+        c.setApply(new LinkedList<>());
+        blockState.getMultipart().add(c);
+        CaseEditPane caseEditPane = new CaseEditPane(fileName, c);
+        caseEditPane.addChangeListener(event -> onChange());
+        add(new CollapsibleSection("Case", caseEditPane, false, removeCaseButton(c)));
+        add(new JSeparator());
+        revalidate();
+        repaint();
+        onChange();
     }
 
     private void doAddSection(String key) {
@@ -108,6 +137,15 @@ public class BlockstateFileEditPane extends VerticalBox {
         });
     }
 
+    private JButton removeCaseButton(Case c) {
+        return new IconButton(new Action("-", Icons.DELETE_ICON, "Remove case") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                doRemoveCase(c);
+            }
+        });
+    }
+
     private void doRemoveSection(String key) {
         blockState.getVariants().remove(key);
         for (int i = getComponentCount() - 1; i >= 0; --i) {
@@ -115,6 +153,21 @@ public class BlockstateFileEditPane extends VerticalBox {
             if (component instanceof CollapsibleSection section &&
                     section.getContent() instanceof VariantEditPane variantEditPane &&
                     variantEditPane.getVariant().equals(key)) {
+                remove(i+1);
+                remove(i);
+            }
+        }
+        revalidate();
+        repaint();
+        onChange();
+    }
+
+    private void doRemoveCase(Case c) {
+        blockState.getMultipart().remove(c);
+        for (int i = getComponentCount() - 1; i >= 0; --i) {
+            Component component = getComponent(i);
+            if (component instanceof CollapsibleSection section &&
+                    section.getContent() instanceof CaseEditPane caseEditPane && caseEditPane.getCase() == c) {
                 remove(i+1);
                 remove(i);
             }
