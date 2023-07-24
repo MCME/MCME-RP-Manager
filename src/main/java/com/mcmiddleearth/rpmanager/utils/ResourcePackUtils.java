@@ -138,10 +138,12 @@ public class ResourcePackUtils {
             Path path = basePath.relativize(f.toPath());
             Path target = fs.getPath(path.toString());
             if (f.isDirectory()) {
-                if (!Files.exists(target)) {
-                    Files.createDirectory(target);
+                if (!".git".equals(f.getName())) { //skip .git directory, TODO: make this configurable
+                    if (!Files.exists(target)) {
+                        Files.createDirectory(target);
+                    }
+                    recursiveCopy(f, basePath, fs);
                 }
-                recursiveCopy(f, basePath, fs);
             } else {
                 Files.copy(f.toPath(), target, REPLACE_EXISTING);
             }
