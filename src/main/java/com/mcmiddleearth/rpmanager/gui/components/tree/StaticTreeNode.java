@@ -183,6 +183,10 @@ public class StaticTreeNode implements TreeNode {
         return status;
     }
 
+    public String getPath() {
+        return resolvePath(file, (StaticTreeNode) parent);
+    }
+
     private static String resolvePath(File file, StaticTreeNode parent) {
         if (parent == null) {
             return file.isDirectory() ? null : file.getName();

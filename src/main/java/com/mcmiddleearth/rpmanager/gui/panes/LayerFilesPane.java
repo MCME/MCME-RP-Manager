@@ -25,6 +25,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -59,15 +60,19 @@ public class LayerFilesPane extends JPanel {
 
     private static JPopupMenu createPopupMenu(JTree tree, boolean editable) {
         Action copyAction = new TreeCopyAction(tree);
+        copyAction.setEnabled(false);
         Action pasteAction = new TreePasteAction(tree);
-        pasteAction.setEnabled(editable);
+        pasteAction.setEnabled(false);
         Action deleteAction = new TreeDeleteAction(tree);
-        deleteAction.setEnabled(editable);
+        deleteAction.setEnabled(false);
         Action renameAction = new TreeRenameAction(tree);
-        renameAction.setEnabled(editable);
+        renameAction.setEnabled(false);
         Action duplicateAction = new TreeDuplicateAction(tree);
-        duplicateAction.setEnabled(editable);
+        duplicateAction.setEnabled(false);
+        Action gitAddAction = new TreeGitAddAction(tree);
+        gitAddAction.setEnabled(false);
         Action[] actions = new Action[]{ copyAction, pasteAction, deleteAction, renameAction, duplicateAction };
+        Action[] gitActions = new Action[] { gitAddAction };
 
         JPopupMenu menu = new JPopupMenu();
         for (Action action : actions) {
@@ -76,6 +81,32 @@ public class LayerFilesPane extends JPanel {
                     (KeyStroke) action.getValue(Action.ACCELERATOR_KEY), action.getValue(Action.NAME));
             menu.add(action);
         }
+        JMenu gitMenu = new JMenu("Git");
+        for (Action action : gitActions) {
+            gitMenu.getActionMap().put(action.getValue(Action.NAME), action);
+            gitMenu.add(action);
+        }
+        menu.add(gitMenu);
+
+        tree.addTreeSelectionListener(e -> {
+            int selectedFiles = tree.getSelectionCount();
+            boolean canAddToGit = false;
+            if (selectedFiles > 0) {
+                for (TreePath path : tree.getSelectionPaths()) {
+                    StaticTreeNode node = (StaticTreeNode) path.getLastPathComponent();
+                    if (node.getGit() != null && node.getStatus() != StaticTreeNode.NodeStatus.UNMODIFIED) {
+                        canAddToGit = true;
+                        break;
+                    }
+                }
+            }
+            copyAction.setEnabled(selectedFiles > 0);
+            pasteAction.setEnabled(editable && selectedFiles > 0);
+            deleteAction.setEnabled(editable && selectedFiles > 0);
+            renameAction.setEnabled(editable && selectedFiles > 0);
+            duplicateAction.setEnabled(editable && selectedFiles > 0);
+            gitAddAction.setEnabled(editable && canAddToGit);
+        });
         return menu;
     }
 
