@@ -28,6 +28,7 @@ import com.mcmiddleearth.rpmanager.utils.JsonFileLoader;
 import com.mcmiddleearth.rpmanager.utils.Pair;
 import com.mcmiddleearth.rpmanager.utils.ResourcePackUtils;
 import com.mcmiddleearth.rpmanager.utils.Triple;
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 import javax.swing.*;
 import javax.swing.text.Document;
@@ -126,7 +127,8 @@ public class DuplicateBlockStateStep2Modal extends JDialog {
             undoAction = undoAction.butFirst(action.getLeft());
             redoAction = redoAction.then(action.getRight());
             MainWindow.getInstance().getActionManager().submit(undoAction, redoAction);
-        } catch (IOException e) {
+            baseNode.refreshGitStatus();
+        } catch (IOException | GitAPIException e) {
             JOptionPane.showMessageDialog(getParent(), "Unknown error!", "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
