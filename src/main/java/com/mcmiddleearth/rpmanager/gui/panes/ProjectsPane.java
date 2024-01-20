@@ -22,6 +22,7 @@ import com.mcmiddleearth.rpmanager.events.ListItemRemovedEvent;
 import com.mcmiddleearth.rpmanager.model.project.Project;
 import com.mcmiddleearth.rpmanager.model.project.Session;
 import com.mcmiddleearth.rpmanager.utils.ActionManager;
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -45,7 +46,7 @@ public class ProjectsPane extends JTabbedPane {
         try {
             insertTab(project.getName(), null, new ProjectPane(project), project.getName(), event.getIndex());
             setSelectedIndex(event.getIndex());
-        } catch (IOException e) {
+        } catch (IOException | GitAPIException e) {
             ((List<Project>) event.getSource()).remove(event.getIndex());
             //TODO error dialog
         }

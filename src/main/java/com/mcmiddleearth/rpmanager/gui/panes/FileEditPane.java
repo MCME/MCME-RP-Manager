@@ -32,9 +32,11 @@ import com.mcmiddleearth.rpmanager.model.project.Layer;
 import com.mcmiddleearth.rpmanager.utils.Action;
 import com.mcmiddleearth.rpmanager.utils.ActionManager;
 import com.mcmiddleearth.rpmanager.utils.JsonFileLoader;
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
+import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -50,6 +52,7 @@ public class FileEditPane extends JPanel {
     private final JTextArea previewArea;
     private Class<?> previewType = null;
     private StaticTreeNode currentNode = null;
+    private JTree currentTree = null;
     private final ActionManager actionManager;
 
     public FileEditPane(ActionManager actionManager) {
@@ -105,6 +108,10 @@ public class FileEditPane extends JPanel {
         } catch (IOException e) {
             //TODO show error dialog
         }
+    }
+
+    public void setCurrentTree(JTree currentTree) {
+        this.currentTree = currentTree;
     }
 
     private void setData(SelectedFileData data) {
@@ -176,6 +183,17 @@ public class FileEditPane extends JPanel {
             if (undoAction != null && redoAction != null) {
                 actionManager.submit(undoAction, redoAction);
             }
+            StaticTreeNode nodeToRefresh = currentNode;
+            if (!nodeToRefresh.isDirectory()) {
+                nodeToRefresh = (StaticTreeNode) nodeToRefresh.getParent();
+            }
+            try {
+                nodeToRefresh.refreshGitStatus();
+            } catch (GitAPIException e) {
+                //TODO display error dialog?
+            }
+            currentTree.invalidate();
+            currentTree.repaint();
         }
     }
 }

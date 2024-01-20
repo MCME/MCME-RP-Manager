@@ -17,13 +17,11 @@
 
 package com.mcmiddleearth.rpmanager.gui.panes;
 
-import com.mcmiddleearth.rpmanager.gui.components.tree.ExpansionStateAwareTreeModel;
-import com.mcmiddleearth.rpmanager.gui.components.tree.JarTreeFactory;
-import com.mcmiddleearth.rpmanager.gui.components.tree.ResourcePackTreeFactory;
-import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
+import com.mcmiddleearth.rpmanager.gui.components.tree.*;
 import com.mcmiddleearth.rpmanager.gui.components.tree.actions.*;
 import com.mcmiddleearth.rpmanager.gui.listeners.LayerTreeSelectionListener;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
@@ -36,7 +34,7 @@ public class LayerFilesPane extends JPanel {
     private final JTree tree;
     private boolean eventsEnabled = true;
 
-    public LayerFilesPane(Layer layer) throws IOException {
+    public LayerFilesPane(Layer layer) throws IOException, GitAPIException {
         this.layer = layer;
 
         setLayout(new BorderLayout());
@@ -44,16 +42,17 @@ public class LayerFilesPane extends JPanel {
         add(this.tree = createTree(layer.getFile()), BorderLayout.CENTER);
     }
 
-    private static JTree createTree(File file) throws IOException {
+    private static JTree createTree(File file) throws IOException, GitAPIException {
         ExpansionStateAwareTreeModel model = new ExpansionStateAwareTreeModel(createRootNode(file));
         boolean editable = !file.getName().endsWith(".jar");
         JTree tree = new JTree(model);
+        tree.setCellRenderer(new StatusTreeCellRenderer());
         model.setTree(tree);
         tree.setComponentPopupMenu(createPopupMenu(tree, editable));
         return tree;
     }
 
-    private static StaticTreeNode createRootNode(File file) throws IOException {
+    private static StaticTreeNode createRootNode(File file) throws IOException, GitAPIException {
         return file.getName().endsWith(".jar") ?
                 JarTreeFactory.createRootNode(file) : ResourcePackTreeFactory.createRootNode(file);
     }
@@ -84,6 +83,10 @@ public class LayerFilesPane extends JPanel {
         return layer;
     }
 
+    public JTree getTree() {
+        return tree;
+    }
+
     public void clearSelection() {
         tree.clearSelection();
     }
@@ -91,7 +94,7 @@ public class LayerFilesPane extends JPanel {
     public void addTreeSelectionListener(LayerTreeSelectionListener listener) {
         tree.addTreeSelectionListener(event -> {
             if (eventsEnabled) {
-                listener.valueChanged(layer, event);
+                listener.valueChanged(layer, tree, event);
             }
         });
     }
@@ -113,7 +116,7 @@ public class LayerFilesPane extends JPanel {
             currentRoot.getChildren().clear();
             currentRoot.getChildren().addAll(rootNode.getChildren());
             ((DefaultTreeModel) tree.getModel()).reload();
-        } catch (IOException e) {
+        } catch (IOException | GitAPIException e) {
             throw new RuntimeException(e);
             //TODO error dialog
         }

@@ -19,8 +19,9 @@ package com.mcmiddleearth.rpmanager.gui.listeners;
 
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 
+import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 
 public interface LayerTreeSelectionListener {
-    void valueChanged(Layer layer, TreeSelectionEvent event);
+    void valueChanged(Layer layer, JTree tree, TreeSelectionEvent event);
 }

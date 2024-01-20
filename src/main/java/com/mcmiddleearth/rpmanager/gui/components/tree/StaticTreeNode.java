@@ -17,6 +17,10 @@
 
 package com.mcmiddleearth.rpmanager.gui.components.tree;
 
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.errors.GitAPIException;
+
 import javax.swing.tree.TreeNode;
 import java.io.File;
 import java.util.Collections;
@@ -29,6 +33,8 @@ public class StaticTreeNode implements TreeNode {
     private File file;
     private final boolean directory;
     private final List<StaticTreeNode> children;
+    private Git git;
+    private NodeStatus status = NodeStatus.UNMODIFIED;
 
     public StaticTreeNode(TreeNode parent, String name, File file, boolean directory, List<StaticTreeNode> children) {
         this.parent = parent;
@@ -110,5 +116,87 @@ public class StaticTreeNode implements TreeNode {
     public void addChild(StaticTreeNode child) {
         int index = (int) getChildren().stream().filter(c -> c.getName().compareTo(child.getName()) <= 0).count();
         getChildren().add(index, child);
+    }
+
+    public Git getGit() {
+        return git;
+    }
+
+    public void setGit(Git git) {
+        this.git = git;
+    }
+
+    public void refreshGitStatus() throws GitAPIException {
+        Status status = null;
+        if (git != null && file.isDirectory()) {
+            String path = resolvePath(file, (StaticTreeNode) parent);
+            if (path == null) {
+                status = git.status().call();
+            } else {
+                status = git.status().addPath(path).call();
+            }
+        }
+        doRefreshGitStatus(this, status);
+    }
+
+    private static void doRefreshGitStatus(StaticTreeNode node, Status status) {
+        String path = resolvePath(node.file, (StaticTreeNode) node.parent);
+        if (status != null) {
+            if (status.getAdded().contains(path)) {
+                node.status = NodeStatus.ADDED;
+            } else if (status.getModified().contains(path) || status.getChanged().contains(path)) {
+                node.status = NodeStatus.MODIFIED;
+            } else if (status.getUntracked().contains(path)) {
+                node.status = NodeStatus.UNTRACKED;
+            } else {
+                node.status = NodeStatus.UNMODIFIED;
+            }
+            if (status.getUntrackedFolders().contains(path)) {
+                setChildrenStatus(node, NodeStatus.UNTRACKED);
+            } else if (node.children != null && !node.children.isEmpty()) {
+                for (StaticTreeNode child : node.children) {
+                    doRefreshGitStatus(child, status);
+                }
+            }
+        } else {
+            node.status = NodeStatus.UNMODIFIED;
+        }
+        if (node.file.isDirectory()) {
+            node.status = NodeStatus.UNMODIFIED;
+        }
+    }
+
+    private static void setChildrenStatus(StaticTreeNode node, NodeStatus status) {
+        if (node.file.isDirectory()) {
+            node.status = NodeStatus.UNMODIFIED;
+        } else {
+            node.status = status;
+        }
+        if (node.children != null && !node.children.isEmpty()) {
+            for (StaticTreeNode child : node.children) {
+                setChildrenStatus(child, status);
+            }
+        }
+    }
+
+    public NodeStatus getStatus() {
+        return status;
+    }
+
+    private static String resolvePath(File file, StaticTreeNode parent) {
+        if (parent == null) {
+            return file.isDirectory() ? null : file.getName();
+        }
+        while (parent.getParent() != null) {
+            parent = (StaticTreeNode) parent.getParent();
+        }
+        return parent.getFile().toPath().relativize(file.toPath()).toString();
+    }
+
+    public enum NodeStatus {
+        ADDED,
+        MODIFIED,
+        UNTRACKED,
+        UNMODIFIED
     }
 }

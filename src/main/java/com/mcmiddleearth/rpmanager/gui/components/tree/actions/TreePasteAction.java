@@ -22,6 +22,7 @@ import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.tree.ResourcePackTreeFactory;
 import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
 import org.apache.commons.io.FileUtils;
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
@@ -69,7 +70,7 @@ public class TreePasteAction extends Action {
                             Map<String, Object> restoreData = new LinkedHashMap<>();
                             File targetFile = new File(node.getFile(), file.getName());
                             restoreData.put(targetFile.getName(), getFileRestoreData(targetFile));
-                            finalNode.addChild(ResourcePackTreeFactory.createNode(finalNode, file));
+                            finalNode.addChild(ResourcePackTreeFactory.createNode(finalNode, file, finalNode.getGit()));
                             redoAction = redoAction.then(() -> {
                                 if (file.isDirectory()) {
                                     FileUtils.copyDirectoryToDirectory(file, finalNode.getFile());
@@ -86,7 +87,7 @@ public class TreePasteAction extends Action {
                         tree.revalidate();
                         tree.repaint();
                     }
-                } catch (UnsupportedFlavorException | IOException e) {
+                } catch (UnsupportedFlavorException | IOException | GitAPIException e) {
                     //nop
                 }
             }

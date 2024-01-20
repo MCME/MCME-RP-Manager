@@ -22,6 +22,7 @@ import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 import com.mcmiddleearth.rpmanager.model.project.Project;
 import com.mcmiddleearth.rpmanager.utils.ActionManager;
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -35,7 +36,7 @@ public class ProjectPane extends JPanel {
     private final FileEditPane fileEditPane;
     private final ActionManager actionManager;
 
-    public ProjectPane(Project project) throws IOException {
+    public ProjectPane(Project project) throws IOException, GitAPIException {
         this.project = project;
         this.actionManager = new ActionManager(this::reload);
 
@@ -62,11 +63,12 @@ public class ProjectPane extends JPanel {
         add(splitPane, BorderLayout.CENTER);
     }
 
-    public void onTreeSelectionChanged(Layer layer, TreeSelectionEvent event) {
+    public void onTreeSelectionChanged(Layer layer, JTree tree, TreeSelectionEvent event) {
         TreePath newPath = event.getNewLeadSelectionPath();
         fileEditPane.setSelectedFile(layer,
                 newPath == null ? null : newPath.getPath(),
                 newPath == null ? null : (StaticTreeNode) newPath.getLastPathComponent());
+        fileEditPane.setCurrentTree(tree);
     }
 
     public ActionManager getActionManager() {

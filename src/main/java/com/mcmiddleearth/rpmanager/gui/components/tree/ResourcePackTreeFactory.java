@@ -17,7 +17,12 @@
 
 package com.mcmiddleearth.rpmanager.gui.components.tree;
 
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.errors.GitAPIException;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -25,16 +30,25 @@ import java.util.LinkedList;
 public class ResourcePackTreeFactory {
     private ResourcePackTreeFactory() {}
 
-    public static StaticTreeNode createRootNode(File resourcePackMeta) {
-        return createNode(null, resourcePackMeta.getParentFile());
+    public static StaticTreeNode createRootNode(File resourcePackMeta) throws IOException, GitAPIException {
+        File gitDir = new File(resourcePackMeta.getParentFile(), ".git");
+        Git git = null;
+        if (gitDir.exists() && gitDir.isDirectory()) {
+            git = Git.open(resourcePackMeta.getParentFile());
+        }
+        StaticTreeNode node = createNode(null, resourcePackMeta.getParentFile(), git);
+        node.refreshGitStatus();
+        return node;
     }
 
-    public static StaticTreeNode createNode(StaticTreeNode parent, File file) {
+    public static StaticTreeNode createNode(StaticTreeNode parent, File file, Git git)
+            throws IOException, GitAPIException {
         StaticTreeNode node = new StaticTreeNode(parent, file.getName(), file, file.isDirectory(), new LinkedList<>());
+        node.setGit(git);
         if (file.isDirectory()) {
-            Arrays.stream(file.listFiles())
-                    .sorted(Comparator.comparing(File::getName))
-                    .forEach(f -> node.getChildren().add(createNode(node, f)));
+            for (File f : Arrays.stream(file.listFiles()).sorted(Comparator.comparing(File::getName)).toList()) {
+                node.getChildren().add(createNode(node, f, git));
+            }
         }
         return node;
     }

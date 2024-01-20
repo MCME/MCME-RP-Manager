@@ -23,6 +23,7 @@ import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.listeners.LayerTreeSelectionListener;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 import com.mcmiddleearth.rpmanager.model.project.Project;
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -39,7 +40,7 @@ public class ProjectFilesPane extends JPanel {
     private final List<LayerFilesPane> layerFilesPanes = new LinkedList<>();
     private final List<LayerTreeSelectionListener> treeSelectionListeners = new LinkedList<>();
 
-    public ProjectFilesPane(Project project) throws IOException {
+    public ProjectFilesPane(Project project) throws IOException, GitAPIException {
         this.project = project;
 
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Resource pack metadata file", "mcmeta"));
@@ -82,7 +83,7 @@ public class ProjectFilesPane extends JPanel {
             layerFilesPane.addTreeSelectionListener(this::onFileSelectionChanged);
             revalidate();
             repaint();
-        } catch (IOException e) {
+        } catch (IOException | GitAPIException e) {
             //TODO error dialog
             ((List<Layer>) event.getSource()).remove(event.getIndex());
         }
@@ -95,14 +96,14 @@ public class ProjectFilesPane extends JPanel {
         repaint();
     }
 
-    private void onFileSelectionChanged(Layer layer, TreeSelectionEvent event) {
+    private void onFileSelectionChanged(Layer layer, JTree tree, TreeSelectionEvent event) {
         for (LayerFilesPane pane : layerFilesPanes) {
             if (pane.getLayer() != layer) {
                 pane.suppressEvents(pane::clearSelection);
             }
         }
         for (LayerTreeSelectionListener listener : treeSelectionListeners) {
-            listener.valueChanged(layer, event);
+            listener.valueChanged(layer, tree, event);
         }
     }
 
