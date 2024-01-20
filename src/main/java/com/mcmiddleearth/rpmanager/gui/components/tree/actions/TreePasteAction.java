@@ -83,6 +83,7 @@ public class TreePasteAction extends Action {
                             });
                         }
                         MainWindow.getInstance().getActionManager().submit(undoAction, redoAction);
+                        node.refreshGitStatus();
                         ((DefaultTreeModel) tree.getModel()).reload(node);
                         tree.revalidate();
                         tree.repaint();
