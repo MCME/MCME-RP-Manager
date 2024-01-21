@@ -29,6 +29,8 @@ public class Icons {
     public static final Icon DELETE_ICON;
     public static final Icon EXPAND_ICON;
     public static final Icon RETRACT_ICON;
+    public static final Icon NEXT_ICON;
+    public static final Icon PREVIOUS_ICON;
 
     static {
         try {
@@ -38,6 +40,10 @@ public class Icons {
             EXPAND_ICON = new ImageIcon(expandIcon);
             BufferedImage retractIcon = ImageIO.read(Icons.class.getResourceAsStream("/icons/retract.png"));
             RETRACT_ICON = new ImageIcon(retractIcon);
+            BufferedImage nextIcon = ImageIO.read(Icons.class.getResourceAsStream("/icons/next.png"));
+            NEXT_ICON = new ImageIcon(nextIcon);
+            BufferedImage previousIcon = ImageIO.read(Icons.class.getResourceAsStream("/icons/previous.png"));
+            PREVIOUS_ICON = new ImageIcon(previousIcon);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

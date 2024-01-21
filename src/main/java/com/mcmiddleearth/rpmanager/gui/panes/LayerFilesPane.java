@@ -17,8 +17,12 @@
 
 package com.mcmiddleearth.rpmanager.gui.panes;
 
+import com.mcmiddleearth.rpmanager.gui.components.IconButton;
+import com.mcmiddleearth.rpmanager.gui.components.TextInput;
+import com.mcmiddleearth.rpmanager.gui.components.VerticalBox;
 import com.mcmiddleearth.rpmanager.gui.components.tree.*;
 import com.mcmiddleearth.rpmanager.gui.components.tree.actions.*;
+import com.mcmiddleearth.rpmanager.gui.constants.Icons;
 import com.mcmiddleearth.rpmanager.gui.listeners.LayerTreeSelectionListener;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -27,6 +31,7 @@ import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -34,13 +39,73 @@ public class LayerFilesPane extends JPanel {
     private final Layer layer;
     private final JTree tree;
     private boolean eventsEnabled = true;
+    private String searchText = "";
 
     public LayerFilesPane(Layer layer) throws IOException, GitAPIException {
         this.layer = layer;
 
+        com.mcmiddleearth.rpmanager.gui.actions.Action nextAction =
+                new com.mcmiddleearth.rpmanager.gui.actions.Action("v", Icons.NEXT_ICON, "Next") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        findNext();
+                    }
+                };
+        com.mcmiddleearth.rpmanager.gui.actions.Action previousAction =
+                new com.mcmiddleearth.rpmanager.gui.actions.Action("^", Icons.PREVIOUS_ICON, "Previous") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        findPrevious();
+                    }
+                };
+        nextAction.setEnabled(false);
+        previousAction.setEnabled(false);
+
         setLayout(new BorderLayout());
-        add(new JLabel(layer.getName()), BorderLayout.PAGE_START);
+        VerticalBox verticalBox = new VerticalBox();
+        verticalBox.add(new JLabel(layer.getName()));
+        Box horizontalBox = Box.createHorizontalBox();
+        horizontalBox.add(new TextInput("", s -> this.searchText = s, input -> {
+            nextAction.setEnabled(!input.getText().isEmpty());
+            previousAction.setEnabled(!input.getText().isEmpty());
+        }));
+
+        IconButton next = new IconButton(nextAction);
+        IconButton previous = new IconButton(previousAction);
+        horizontalBox.add(next);
+        horizontalBox.add(previous);
+        horizontalBox.add(Box.createHorizontalGlue());
+        verticalBox.add(horizontalBox);
+        add(verticalBox, BorderLayout.PAGE_START);
         add(this.tree = createTree(layer.getFile()), BorderLayout.CENTER);
+    }
+
+    private void findNext() {
+        find(1);
+    }
+
+    private void findPrevious() {
+        find(-1);
+    }
+
+    private void find(int step) {
+        int selectedNode = tree.getMinSelectionRow();
+        if (selectedNode < 0) {
+            selectedNode = 0;
+        }
+        for (int i = 1; i < tree.getRowCount(); ++i) {
+            int row = (selectedNode + i * step) % tree.getRowCount();
+            while (row < 0) {
+                row = tree.getRowCount() + row;
+            }
+            TreePath path = tree.getPathForRow(row);
+            StaticTreeNode node = (StaticTreeNode) path.getLastPathComponent();
+            if (node.getName().contains(searchText)) {
+                tree.setSelectionPath(path);
+                tree.scrollPathToVisible(path);
+                break;
+            }
+        }
     }
 
     private static JTree createTree(File file) throws IOException, GitAPIException {
