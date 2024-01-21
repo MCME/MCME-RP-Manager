@@ -24,6 +24,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import javax.swing.tree.TreeNode;
 import java.io.File;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -50,6 +51,9 @@ public class StaticTreeNode implements TreeNode {
 
     public void setName(String name) {
         this.name = name;
+        if (parent != null) {
+            ((StaticTreeNode) parent).getChildren().sort(Comparator.comparing(StaticTreeNode::getName));
+        };
     }
 
     public List<StaticTreeNode> getChildren() {

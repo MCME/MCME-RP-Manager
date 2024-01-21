@@ -21,11 +21,13 @@ import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.tree.ResourcePackTreeFactory;
 import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
+import com.mcmiddleearth.rpmanager.gui.utils.TreeUtils;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -70,7 +72,7 @@ public class TreePasteAction extends Action {
                             Map<String, Object> restoreData = new LinkedHashMap<>();
                             File targetFile = new File(node.getFile(), file.getName());
                             restoreData.put(targetFile.getName(), getFileRestoreData(targetFile));
-                            finalNode.addChild(ResourcePackTreeFactory.createNode(finalNode, file, finalNode.getGit()));
+                            finalNode.addChild(ResourcePackTreeFactory.createNode(finalNode, targetFile, finalNode.getGit()));
                             redoAction = redoAction.then(() -> {
                                 if (file.isDirectory()) {
                                     FileUtils.copyDirectoryToDirectory(file, finalNode.getFile());
@@ -87,6 +89,16 @@ public class TreePasteAction extends Action {
                         ((DefaultTreeModel) tree.getModel()).reload(node);
                         tree.revalidate();
                         tree.repaint();
+                        if (files.size() == 1) {
+                            StaticTreeNode fileNode = node.getChildren().stream()
+                                    .filter(n -> n.getName().equals(files.get(0).getName()))
+                                    .findFirst().orElse(null);
+                            if (fileNode != null) {
+                                TreePath path = TreeUtils.getPathForNode(fileNode);
+                                tree.setSelectionPath(path);
+                                tree.scrollPathToVisible(path);
+                            }
+                        }
                     }
                 } catch (UnsupportedFlavorException | IOException | GitAPIException e) {
                     //nop

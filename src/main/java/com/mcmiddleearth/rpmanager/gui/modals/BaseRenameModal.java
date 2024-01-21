@@ -20,7 +20,6 @@ package com.mcmiddleearth.rpmanager.gui.modals;
 import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
 import com.mcmiddleearth.rpmanager.utils.Action;
 import com.mcmiddleearth.rpmanager.utils.Pair;
-import org.eclipse.jgit.api.errors.GitAPIException;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
@@ -42,15 +41,6 @@ public abstract class BaseRenameModal extends JDialog {
         Action undoAction = () -> destination.renameTo(originalFile);
         Action redoAction = () -> originalFile.renameTo(destination);
         node.setFile(destination);
-        StaticTreeNode nodeToRefresh = node;
-        if (!nodeToRefresh.isDirectory()) {
-            nodeToRefresh = (StaticTreeNode) nodeToRefresh.getParent();
-        }
-        try {
-            nodeToRefresh.refreshGitStatus();
-        } catch (GitAPIException e) {
-            //TODO error dialog?
-        }
         return new Pair<>(undoAction, redoAction);
     }
 

@@ -23,12 +23,15 @@ import com.mcmiddleearth.rpmanager.gui.components.Form;
 import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
 import com.mcmiddleearth.rpmanager.gui.utils.FormButtonEnabledListener;
 import com.mcmiddleearth.rpmanager.utils.Pair;
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 import javax.swing.*;
 import javax.swing.text.Document;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MassRenamePatternModal extends BaseRenameModal {
     public MassRenamePatternModal(Frame parent, JTree tree, List<StaticTreeNode> nodes) {
@@ -48,13 +51,22 @@ public class MassRenamePatternModal extends BaseRenameModal {
                 int i = 1;
                 com.mcmiddleearth.rpmanager.utils.Action undoAction = () -> {};
                 com.mcmiddleearth.rpmanager.utils.Action redoAction = () -> {};
+                Set<StaticTreeNode> nodesToRefresh = new HashSet<>();
                 for (StaticTreeNode node : nodes) {
                     Pair<com.mcmiddleearth.rpmanager.utils.Action, com.mcmiddleearth.rpmanager.utils.Action> action =
                             renameNode(node, form.getPattern(), i++);
                     undoAction = undoAction.butFirst(action.getLeft());
                     redoAction = redoAction.then(action.getRight());
+                    nodesToRefresh.add(node.isDirectory() ? node : (StaticTreeNode) node.getParent());
                 }
                 MainWindow.getInstance().getActionManager().submit(undoAction, redoAction);
+                for (StaticTreeNode node : nodesToRefresh) {
+                    try {
+                        node.refreshGitStatus();
+                    } catch (GitAPIException e) {
+                        //TODO show error dialog?
+                    }
+                }
                 reloadTree();
                 MassRenamePatternModal.this.close();
             }

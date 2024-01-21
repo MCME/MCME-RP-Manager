@@ -22,10 +22,13 @@ import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.Form;
 import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
 import com.mcmiddleearth.rpmanager.gui.utils.FormButtonEnabledListener;
+import com.mcmiddleearth.rpmanager.gui.utils.TreeUtils;
 import com.mcmiddleearth.rpmanager.utils.Pair;
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 import javax.swing.*;
 import javax.swing.text.Document;
+import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
@@ -46,7 +49,20 @@ public class RenameFileModal extends BaseRenameModal {
                 Pair<com.mcmiddleearth.rpmanager.utils.Action, com.mcmiddleearth.rpmanager.utils.Action> action =
                         renameNode(node, form.getNewName());
                 MainWindow.getInstance().getActionManager().submit(action.getLeft(), action.getRight());
+                try {
+                    ((StaticTreeNode) node.getParent()).refreshGitStatus();
+                } catch (GitAPIException e) {
+                    //TODO show error dialog?
+                }
                 reloadTree((StaticTreeNode) node.getParent());
+                StaticTreeNode fileNode = ((StaticTreeNode) node.getParent()).getChildren().stream()
+                        .filter(n -> n.getName().equals(form.getNewName()))
+                        .findFirst().orElse(null);
+                if (fileNode != null) {
+                    TreePath path = TreeUtils.getPathForNode(fileNode);
+                    tree.setSelectionPath(path);
+                    tree.scrollPathToVisible(path);
+                }
                 RenameFileModal.this.close();
             }
         });
