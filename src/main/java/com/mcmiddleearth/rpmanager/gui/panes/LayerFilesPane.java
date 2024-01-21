@@ -59,6 +59,11 @@ public class LayerFilesPane extends JPanel {
     }
 
     private static JPopupMenu createPopupMenu(JTree tree, boolean editable) {
+        JMenu newMenu = new JMenu("New");
+        Action newFileAction = new TreeNewFileAction(tree);
+        newFileAction.setEnabled(false);
+        Action newDirectoryAction = new TreeNewDirectoryAction(tree);
+        newDirectoryAction.setEnabled(false);
         Action copyAction = new TreeCopyAction(tree);
         copyAction.setEnabled(false);
         Action pasteAction = new TreePasteAction(tree);
@@ -71,10 +76,16 @@ public class LayerFilesPane extends JPanel {
         duplicateAction.setEnabled(false);
         Action gitAddAction = new TreeGitAddAction(tree);
         gitAddAction.setEnabled(false);
+        Action[] newActions = new Action[] { newFileAction, newDirectoryAction };
         Action[] actions = new Action[]{ copyAction, pasteAction, deleteAction, renameAction, duplicateAction };
         Action[] gitActions = new Action[] { gitAddAction };
 
         JPopupMenu menu = new JPopupMenu();
+        for (Action action : newActions) {
+            newMenu.getActionMap().put(action.getValue(Action.NAME), action);
+            newMenu.add(action);
+        }
+        menu.add(newMenu);
         for (Action action : actions) {
             tree.getActionMap().put(action.getValue(Action.NAME), action);
             tree.getInputMap().put(
@@ -100,6 +111,8 @@ public class LayerFilesPane extends JPanel {
                     }
                 }
             }
+            newFileAction.setEnabled(editable && selectedFiles == 1);
+            newDirectoryAction.setEnabled(editable && selectedFiles == 1);
             copyAction.setEnabled(selectedFiles > 0);
             pasteAction.setEnabled(editable && selectedFiles > 0);
             deleteAction.setEnabled(editable && selectedFiles > 0);
