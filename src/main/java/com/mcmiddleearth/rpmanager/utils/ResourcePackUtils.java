@@ -19,16 +19,11 @@ package com.mcmiddleearth.rpmanager.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mcmiddleearth.rpmanager.model.BlockModel;
-import com.mcmiddleearth.rpmanager.model.BlockState;
-import com.mcmiddleearth.rpmanager.model.ItemModel;
-import com.mcmiddleearth.rpmanager.model.Model;
-import com.mcmiddleearth.rpmanager.model.internal.Layer;
+import com.mcmiddleearth.rpmanager.model.*;
+import com.mcmiddleearth.rpmanager.model.internal.RelatedFiles;
+import com.mcmiddleearth.rpmanager.model.internal.SelectedFileData;
 import com.mcmiddleearth.rpmanager.model.project.Project;
-import com.mcmiddleearth.rpmanager.model.wrappers.*;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
@@ -36,10 +31,8 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
@@ -48,69 +41,11 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 public class ResourcePackUtils {
     private static final Gson GSON =
             new GsonBuilder().setPrettyPrinting().setLenient().enableComplexMapKeySerialization().create();
-    private static final String BLOCK_STATE_DIR = "assets/minecraft/blockstates";
-    private static final String BLOCK_MODEL_DIR = "assets/minecraft/models/block";
-    private static final String MODEL_DIR = "assets/minecraft/models";
-    private static final String TEXTURES_DIR = "assets/minecraft/textures";
     private static final String MINECRAFT_PREFIX = "minecraft:";
-
-    private static final Function<InputStream, BlockState, IOException> BLOCK_STATE_READER =
-            gsonReader(BlockState.class);
-    private static final Function<InputStream, BlockModel, IOException> BLOCK_MODEL_READER =
-            gsonReader(BlockModel.class);
-    private static final Function<InputStream, ItemModel, IOException> ITEM_MODEL_READER =
-            gsonReader(ItemModel.class);
+    private static final String[] MODEL_DIR_PATH = new String[] { "assets", "minecraft", "models" };
+    private static final String[] TEXTURES_DIR_PATH = new String[] { "assets", "minecraft", "textures" };
 
     private ResourcePackUtils() {}
-
-    public static Layer loadLayer(File file) throws IOException {
-        if (file.isDirectory()) {
-            return loadLayerFromDirectory(file);
-        } else if ("pack.mcmeta".equals(file.getName())) {
-            return loadLayerFromDirectory(file.getParentFile());
-        } else if (file.getName().endsWith(".zip") || file.getName().endsWith(".jar")) {
-            return loadLayerFromZipFile(file);
-        } else {
-            throw new IllegalArgumentException("Invalid resource pack path");
-        }
-    }
-
-    public static ResourcePackData getStructure(Layer current, Layer urps, Layer vanilla) {
-        Set<String> texturePaths = new TreeSet<>(current.getTextures().keySet());
-        texturePaths.addAll(urps.getTextures().keySet());
-        texturePaths.addAll(vanilla.getTextures().keySet());
-        Map<String, TextureWrapper> textureWrappers = texturePaths.stream().collect(Collectors.toMap(
-                java.util.function.Function.identity(),
-                s -> new TextureWrapper(s, current.getTextures().get(s), urps.getTextures().get(s),
-                        vanilla.getTextures().get(s)), throwingMerger(), TreeMap::new));
-
-        Set<String> blockModelPaths = new TreeSet<>(current.getBlockModels().keySet());
-        blockModelPaths.addAll(urps.getBlockModels().keySet());
-        blockModelPaths.addAll(vanilla.getBlockModels().keySet());
-        Map<String, BlockModelWrapper> blockModelWrappers = blockModelPaths.stream().collect(Collectors.toMap(
-                java.util.function.Function.identity(),
-                s -> wrapBlockModel(current, urps, vanilla, s, textureWrappers), throwingMerger(), TreeMap::new));
-
-        Set<String> itemModelPaths = new TreeSet<>(current.getItemModels().keySet());
-        itemModelPaths.addAll(urps.getItemModels().keySet());
-        itemModelPaths.addAll(vanilla.getItemModels().keySet());
-        Map<String, ItemModelWrapper> itemModelWrappers = itemModelPaths.stream().collect(Collectors.toMap(
-                java.util.function.Function.identity(),
-                s -> wrapItemModel(current, urps, vanilla, s, textureWrappers), throwingMerger(), TreeMap::new));
-        fillParents(Stream.concat(blockModelWrappers.entrySet().stream(), itemModelWrappers.entrySet().stream())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
-
-        Set<String> blockStatePaths = new TreeSet<>(current.getBlockStates().keySet());
-        blockStatePaths.addAll(urps.getBlockStates().keySet());
-        blockStatePaths.addAll(vanilla.getBlockStates().keySet());
-        List<BlockStateWrapper> blockStateWrappers = blockStatePaths.stream()
-                .map(s -> wrapBlockState(current, urps, vanilla, s, blockModelWrappers)).collect(Collectors.toList());
-
-        ResourcePackData resourcePackData = new ResourcePackData();
-        resourcePackData.setBlockStates(blockStateWrappers);
-        resourcePackData.setItemModels(new ArrayList<>(itemModelWrappers.values()));
-        return resourcePackData;
-    }
 
     public static void saveFile(Object data, File target) throws IOException {
         try (FileOutputStream fileOutputStream = new FileOutputStream(target)) {
@@ -150,215 +85,114 @@ public class ResourcePackUtils {
         }
     }
 
-    private static BlockModelWrapper wrapBlockModel(Layer current, Layer urps, Layer vanilla, String filePath,
-                                                    Map<String, TextureWrapper> textureWrappers) {
-        return new BlockModelWrapper(filePath,
-                wrapBlockModel(current, filePath, textureWrappers),
-                wrapBlockModel(urps, filePath, textureWrappers),
-                wrapBlockModel(vanilla, filePath, textureWrappers));
+    public static RelatedFiles getRelatedFiles(BlockState blockState, Project project) throws IOException {
+        List<SelectedFileData> relatedModels = getRelatedModels(blockState, project);
+        List<SelectedFileData> relatedTextures = getRelatedTextures(relatedModels, project);
+        return new RelatedFiles(relatedModels, relatedTextures);
     }
 
-    private static ItemModelWrapper wrapItemModel(Layer current, Layer urps, Layer vanilla, String filePath,
-                                                  Map<String, TextureWrapper> textureWrappers) {
-        return new ItemModelWrapper(filePath,
-                wrapItemModel(current, filePath, textureWrappers),
-                wrapItemModel(urps, filePath, textureWrappers),
-                wrapItemModel(vanilla, filePath, textureWrappers));
+    public static RelatedFiles getRelatedFiles(BaseModel model, Project project) throws IOException {
+        List<String> models = model.getParent() == null ?
+                Collections.emptyList() :
+                Stream.of(model.getParent()).map(ResourcePackUtils::removePrefix)
+                        .map(s -> s.contains("/") ? s : model instanceof BlockModel ? "block/" + s : "item/" + s)
+                        .toList();
+        List<SelectedFileData> relatedModels = getModels(models, project);
+        List<SelectedFileData> relatedTextures = getRelatedTextures(
+                Stream.concat(Stream.of(new SelectedFileData(model, "")), relatedModels.stream()).toList(),
+                project);
+        return new RelatedFiles(relatedModels, relatedTextures);
     }
 
-    private static BlockStateWrapper wrapBlockState(Layer current, Layer urps, Layer vanilla, String filePath,
-                                                    Map<String, BlockModelWrapper> blockModelWrappers) {
-        return new BlockStateWrapper(filePath,
-                wrapBlockState(current, filePath, blockModelWrappers),
-                wrapBlockState(urps, filePath, blockModelWrappers),
-                wrapBlockState(vanilla, filePath, blockModelWrappers));
-    }
-
-    private static BlockModelData wrapBlockModel(Layer layer, String filePath,
-                                                 Map<String, TextureWrapper> textureWrappers) {
-        BlockModel blockModel = layer.getBlockModels().get(filePath);
-        if (blockModel == null) {
-            return null;
-        }
-        BlockModelData blockModelData = new BlockModelData();
-        blockModelData.setModel(blockModel);
-        blockModelData.setTextures(Optional.ofNullable(blockModel.getTextures()).orElse(Collections.emptyMap())
-                .values().stream()
-                .filter(s -> !s.startsWith("#"))
+    private static List<SelectedFileData> getRelatedModels(BlockState blockState, Project project) throws IOException {
+        List<String> models = Optional.ofNullable(blockState.getVariants())
+                .map(v -> v.values().stream().flatMap(l -> l.stream().map(Model::getModel)))
+                .orElseGet(() -> blockState.getMultipart().stream().flatMap(
+                        c -> c.getApply().stream().map(Model::getModel)))
                 .distinct()
-                .map(s -> textureWrappers.get(TEXTURES_DIR + "/" + removePrefix(s) + ".png"))
-                .collect(Collectors.toList()));
-        return blockModelData;
+                .map(ResourcePackUtils::removePrefix)
+                .map(s -> s.contains("/") ? s : "block/" + s)
+                .toList();
+        return getModels(models, project);
     }
 
-    private static ItemModelData wrapItemModel(Layer layer, String filePath,
-                                               Map<String, TextureWrapper> textureWrappers) {
-        ItemModel itemModel = layer.getItemModels().get(filePath);
-        if (itemModel == null) {
-            return null;
+    private static List<SelectedFileData> getModels(List<String> models, Project project) throws IOException {
+        List<SelectedFileData> result = new LinkedList<>();
+        for (String model : models) {
+            Object[] path = Stream.concat(Stream.of(MODEL_DIR_PATH), Stream.of((model + ".json").split("/")))
+                    .toArray();
+            for (com.mcmiddleearth.rpmanager.model.project.Layer layer : reverse(project.getLayers())) {
+                if (containsFile(layer, path)) {
+                    result.add(FileLoader.load(
+                            layer, Stream.concat(Stream.of(layer.getName()), Stream.of(path)).toArray()));
+                    break;
+                }
+            }
         }
-        ItemModelData itemModelData = new ItemModelData();
-        itemModelData.setModel(itemModel);
-        itemModelData.setTextures(Optional.ofNullable(itemModel.getTextures()).orElse(Collections.emptyMap())
-                .values().stream()
-                .filter(s -> !s.startsWith("#"))
+        return result;
+    }
+
+    private static List<SelectedFileData> getRelatedTextures(List<SelectedFileData> models, Project project)
+            throws IOException {
+        List<String> textures = models.stream()
+                .flatMap(fileData -> Optional.ofNullable(((BaseModel) fileData.getData()).getTextures()).stream()
+                        .flatMap(t -> t.values().stream()))
                 .distinct()
-                .map(s -> textureWrappers.get(TEXTURES_DIR + "/" + removePrefix(s) + ".png"))
-                .collect(Collectors.toList()));
-        return itemModelData;
-    }
-
-    private static BlockStateData wrapBlockState(Layer layer, String filePath,
-                                                 Map<String, BlockModelWrapper> blockModelWrappers) {
-        BlockState blockState = layer.getBlockStates().get(filePath);
-        if (blockState == null) {
-            return null;
+                .map(ResourcePackUtils::removePrefix)
+                .toList();
+        List<SelectedFileData> result = new LinkedList<>();
+        for (String texture : textures) {
+            Object[] path = Stream.concat(Stream.of(TEXTURES_DIR_PATH), Stream.of((texture + ".png").split("/")))
+                    .toArray();
+            for (com.mcmiddleearth.rpmanager.model.project.Layer layer : reverse(project.getLayers())) {
+                if (containsFile(layer, path)) {
+                    result.add(FileLoader.load(
+                            layer, Stream.concat(Stream.of(layer.getName()), Stream.of(path)).toArray()));
+                    break;
+                }
+            }
         }
-        BlockStateData blockStateData = new BlockStateData();
-        blockStateData.setBlockState(blockState);
-        blockStateData.setBlockModels(
-                Optional.ofNullable(blockState.getVariants())
-                        .map(v -> v.values().stream().flatMap(l -> l.stream().map(Model::getModel)))
-                        .orElseGet(() -> blockState.getMultipart().stream().flatMap(
-                                c -> c.getApply().stream().map(Model::getModel)))
-                        .distinct()
-                        .map(s -> blockModelWrappers.get(MODEL_DIR + "/" + removePrefix(s) + ".json"))
-                        .collect(Collectors.toList()));
-        return blockStateData;
-    }
-
-    private static void fillParents(Map<String, ModelWrapper<?>> models) {
-        for (ModelWrapper<?> modelWrapper : models.values()) {
-            fillParent(modelWrapper.getCurrent(), models);
-            fillParent(modelWrapper.getUrps(), models);
-            fillParent(modelWrapper.getVanilla(), models);
-        }
-    }
-
-    private static void fillParent(ModelData<?> modelData, Map<String, ModelWrapper<?>> models) {
-        if (modelData != null && modelData.getModel().getParent() != null) {
-            modelData.setParent(models.get(MODEL_DIR + "/" + removePrefix(modelData.getModel().getParent()) + ".json"));
-        }
+        return result;
     }
 
     private static String removePrefix(String path) {
         return path.replace(MINECRAFT_PREFIX, "");
     }
 
-    private static Layer loadLayerFromDirectory(File directory) throws IOException {
-        Layer layer = new Layer();
-        layer.setBlockStates(loadBlockStates(directory));
-        layer.setBlockModels(loadBlockModels(directory));
-        layer.setItemModels(loadItemModels(directory));
-        layer.setTextures(loadTextures(directory));
-        return layer;
-    }
-
-    private static Layer loadLayerFromZipFile(File zipFile) throws IOException {
-        Layer layer = new Layer();
-        layer.setBlockStates(loadBlockStatesFromZipFile(zipFile));
-        layer.setBlockModels(loadBlockModelsFromZipFile(zipFile));
-        layer.setItemModels(loadItemModelsFromZipFile(zipFile));
-        layer.setTextures(loadTexturesFromZipFile(zipFile));
-        return layer;
-    }
-
-    private static Map<String, BlockState> loadBlockStates(File packDirectory) throws IOException {
-        return loadItems(packDirectory, new File(packDirectory, BLOCK_STATE_DIR), BLOCK_STATE_READER);
-    }
-
-    private static Map<String, BlockState> loadBlockStatesFromZipFile(File zipFile) throws IOException {
-        return loadItemsFromZipFile(zipFile, BLOCK_STATE_DIR, BLOCK_STATE_READER);
-    }
-
-    private static Map<String, BlockModel> loadBlockModels(File packDirectory) throws IOException {
-        return loadItems(packDirectory, new File(packDirectory, BLOCK_MODEL_DIR), BLOCK_MODEL_READER);
-    }
-
-    private static Map<String, BlockModel> loadBlockModelsFromZipFile(File zipFile) throws IOException {
-        return loadItemsFromZipFile(zipFile, BLOCK_MODEL_DIR, BLOCK_MODEL_READER);
-    }
-
-    private static Map<String, ItemModel> loadItemModels(File packDirectory) throws IOException {
-        return loadItems(packDirectory, new File(packDirectory, MODEL_DIR), ITEM_MODEL_READER, BLOCK_MODEL_DIR);
-    }
-
-    private static Map<String, ItemModel> loadItemModelsFromZipFile(File zipFile) throws IOException {
-        return loadItemsFromZipFile(zipFile, MODEL_DIR, ITEM_MODEL_READER, BLOCK_MODEL_DIR);
-    }
-
-    private static Map<String, BufferedImage> loadTextures(File packDirectory) throws IOException {
-        return loadItems(packDirectory, new File(packDirectory, TEXTURES_DIR), ImageIO::read);
-    }
-
-    private static Map<String, BufferedImage> loadTexturesFromZipFile(File zipFile) throws IOException {
-        return loadItemsFromZipFile(zipFile, TEXTURES_DIR, ImageIO::read);
-    }
-
-    private static <T> Map<String, T> loadItems(File packDirectory, File directory,
-                                                Function<InputStream, T, IOException> reader,
-                                                String... excludedDirectories)
+    private static boolean containsFile(com.mcmiddleearth.rpmanager.model.project.Layer layer, Object[] path)
             throws IOException {
-        Map<String, T> result = new LinkedHashMap<>();
-        for (File f : Objects.requireNonNull(directory.listFiles())) {
-            String filePath = getFilePath(packDirectory, f);
-            if (f.isDirectory()) {
-                if (Arrays.stream(excludedDirectories)
-                        .noneMatch(excludedDirectory -> excludedDirectory.equals(filePath))) {
-                    result.putAll(loadItems(packDirectory, f, reader, excludedDirectories));
-                }
-            } else if (!filePath.endsWith(".mcmeta")) {
-                try (FileInputStream fileInputStream = new FileInputStream(f)) {
-                    result.put(filePath, reader.apply(fileInputStream));
-                }
-            }
+        if (path == null || path.length == 0) {
+            return false;
         }
-        return result;
-    }
-
-    private static <T> Map<String, T> loadItemsFromZipFile(File zipFile, String directory,
-                                                           Function<InputStream, T, IOException> reader,
-                                                           String... excludeDirectories) throws IOException {
-        ZipFile file = new ZipFile(zipFile);
-        Enumeration<? extends ZipEntry> entries = file.entries();
-        Map<String, T> result = new LinkedHashMap<>();
-        while (entries.hasMoreElements()) {
-            ZipEntry zipEntry = entries.nextElement();
-            String filePath = zipEntry.getName();
-            if (!zipEntry.isDirectory() && filePath.startsWith(directory + "/") && !filePath.endsWith(".mcmeta") &&
-                    Arrays.stream(excludeDirectories)
-                            .noneMatch(excludedDirectory -> filePath.startsWith(excludedDirectory + "/"))) {
-                try (InputStream inputStream = file.getInputStream(zipEntry)) {
-                    result.put(filePath, reader.apply(inputStream));
-                }
+        List<String> pathStr = Stream.concat(Stream.of(layer.getName()), Arrays.stream(path)).map(Object::toString)
+                .collect(Collectors.toCollection(LinkedList::new));
+        if (!layer.getFile().getName().endsWith(".jar")) {
+            pathStr.remove(0);
+            if (pathStr.isEmpty()) {
+                return false;
             }
+            return containsFile(layer.getFile().getParentFile(), pathStr);
+        } else {
+            return zipContainsFile(layer.getFile(), pathStr);
         }
+    }
+
+    private static boolean containsFile(File file, List<String> path) {
+        for (String part : path) {
+            file = new File(file, part);
+        }
+        return file.exists();
+    }
+
+    private static boolean zipContainsFile(File file, List<String> path) throws IOException {
+        try (ZipFile zipFile = new ZipFile(file)) {
+            return zipFile.getEntry(String.join("/", path)) != null;
+        }
+    }
+
+    private static <T> List<T> reverse(List<T> list) {
+        List<T> result = new ArrayList<>(list);
+        Collections.reverse(result);
         return result;
-    }
-
-    private static <T> Function<InputStream, T, IOException> gsonReader(Class<T> targetClass) {
-        return inputStream -> {
-            try (InputStreamReader reader = new InputStreamReader(inputStream)) {
-                return GSON.fromJson(removeTrailingCommas(reader), targetClass);
-            }
-        };
-    }
-
-    private static String getFilePath(File baseDirectory, File file) {
-        return baseDirectory.toPath().relativize(file.toPath()).toString();
-    }
-
-    private static String removeTrailingCommas(Reader reader) throws IOException {
-        StringWriter writer = new StringWriter();
-        reader.transferTo(writer);
-        return writer.toString()
-                .replaceAll(",(\\s+})", "$1")
-                .replaceAll(",(\\s+])", "$1");
-    }
-
-    private static <T> BinaryOperator<T> throwingMerger() {
-        return (u, v) -> {
-            throw new IllegalStateException(String.format("Duplicate key %s", u));
-        };
     }
 }

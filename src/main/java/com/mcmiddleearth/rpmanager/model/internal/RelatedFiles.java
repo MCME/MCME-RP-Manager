@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 MCME
+ * Copyright (C) 2024 MCME
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,12 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.mcmiddleearth.rpmanager.model.wrappers;
+package com.mcmiddleearth.rpmanager.model.internal;
 
-import java.awt.image.BufferedImage;
+import java.util.List;
 
-public class TextureWrapper extends Wrapper<BufferedImage> {
-    public TextureWrapper(String filePath, BufferedImage current, BufferedImage urps, BufferedImage vanilla) {
-        super(filePath, current, urps, vanilla);
+public class RelatedFiles {
+    private final List<SelectedFileData> relatedModels;
+    private final List<SelectedFileData> relatedTextures;
+
+    public RelatedFiles(List<SelectedFileData> relatedModels, List<SelectedFileData> relatedTextures) {
+        this.relatedModels = relatedModels;
+        this.relatedTextures = relatedTextures;
+    }
+
+    public List<SelectedFileData> getRelatedModels() {
+        return relatedModels;
+    }
+
+    public List<SelectedFileData> getRelatedTextures() {
+        return relatedTextures;
     }
 }

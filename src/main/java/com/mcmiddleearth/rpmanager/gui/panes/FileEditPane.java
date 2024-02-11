@@ -28,15 +28,12 @@ import com.mcmiddleearth.rpmanager.model.BlockModel;
 import com.mcmiddleearth.rpmanager.model.BlockState;
 import com.mcmiddleearth.rpmanager.model.ItemModel;
 import com.mcmiddleearth.rpmanager.model.internal.SelectedFileData;
-import com.mcmiddleearth.rpmanager.model.project.Layer;
 import com.mcmiddleearth.rpmanager.utils.Action;
 import com.mcmiddleearth.rpmanager.utils.ActionManager;
-import com.mcmiddleearth.rpmanager.utils.JsonFileLoader;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
-import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -99,15 +96,10 @@ public class FileEditPane extends JPanel {
         add(splitPane, BorderLayout.CENTER);
     }
 
-    public void setSelectedFile(Layer layer, Object[] path, StaticTreeNode node) {
-        try {
-            SelectedFileData fileData = JsonFileLoader.load(layer, path);
-            this.currentNode = null;
-            setData(fileData);
-            this.currentNode = node;
-        } catch (IOException e) {
-            //TODO show error dialog
-        }
+    public void setSelectedFile(SelectedFileData fileData, StaticTreeNode node) {
+        this.currentNode = null;
+        setData(fileData);
+        this.currentNode = node;
     }
 
     public void setCurrentTree(JTree currentTree) {

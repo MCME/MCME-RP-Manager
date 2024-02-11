@@ -19,7 +19,7 @@ package com.mcmiddleearth.rpmanager.utils.loaders;
 
 import com.google.gson.Gson;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
-import com.mcmiddleearth.rpmanager.utils.JsonFileLoader;
+import com.mcmiddleearth.rpmanager.utils.FileLoader;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public abstract class AbstractFileLoader implements JsonFileLoader {
+public abstract class AbstractFileLoader implements FileLoader {
     private final Gson gson = new Gson();
 
     protected Object loadFile(Layer layer, Object[] path, Class<?> resultClass) throws IOException {
@@ -59,7 +59,7 @@ public abstract class AbstractFileLoader implements JsonFileLoader {
         return Collections.lastIndexOfSubList(tokens, subTokens) >= 0;
     }
 
-    private byte[] loadBytes(Layer layer, Object[] path) throws IOException {
+    protected byte[] loadBytes(Layer layer, Object[] path) throws IOException {
         if (path == null || path.length == 0) {
             return null;
         }
@@ -76,27 +76,28 @@ public abstract class AbstractFileLoader implements JsonFileLoader {
         }
     }
 
-    private byte[] loadBytesFromFile(File file, List<String> path) throws IOException {
+    protected byte[] loadBytesFromFile(File file, List<String> path) throws IOException {
         for (String part : path) {
             file = new File(file, part);
         }
         return Files.readAllBytes(file.toPath());
     }
 
-    private byte[] loadBytesFromZipEntry(File file, List<String> path) throws IOException {
-        ZipFile zipFile = new ZipFile(file);
-        ZipEntry zipEntry = zipFile.getEntry(String.join("/", path));
-        try (InputStream is = zipFile.getInputStream(zipEntry);
-             ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-            int nRead;
-            byte[] data = new byte[2048];
+    protected byte[] loadBytesFromZipEntry(File file, List<String> path) throws IOException {
+        try (ZipFile zipFile = new ZipFile(file)) {
+            ZipEntry zipEntry = zipFile.getEntry(String.join("/", path));
+            try (InputStream is = zipFile.getInputStream(zipEntry);
+                 ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+                int nRead;
+                byte[] data = new byte[2048];
 
-            while ((nRead = is.readNBytes(data, 0, data.length)) != 0) {
-                os.write(data, 0, nRead);
+                while ((nRead = is.readNBytes(data, 0, data.length)) != 0) {
+                    os.write(data, 0, nRead);
+                }
+
+                os.flush();
+                return os.toByteArray();
             }
-
-            os.flush();
-            return os.toByteArray();
         }
     }
 }

@@ -27,7 +27,7 @@ import com.mcmiddleearth.rpmanager.gui.utils.FormButtonEnabledListener;
 import com.mcmiddleearth.rpmanager.model.BlockState;
 import com.mcmiddleearth.rpmanager.model.Case;
 import com.mcmiddleearth.rpmanager.model.Model;
-import com.mcmiddleearth.rpmanager.utils.JsonFileLoader;
+import com.mcmiddleearth.rpmanager.utils.FileLoader;
 import com.mcmiddleearth.rpmanager.utils.Pair;
 import com.mcmiddleearth.rpmanager.utils.Triple;
 
@@ -51,7 +51,7 @@ public class DuplicateBlockStateModal extends JDialog {
         super(parent, "Select files to duplicate", true);
         this.tree = tree;
         this.node = node;
-        this.blockState = (BlockState) JsonFileLoader.load(node.getFile()).getData();
+        this.blockState = (BlockState) FileLoader.load(node.getFile()).getData();
 
         setLayout(new BorderLayout());
         VerticalBox verticalBox = new VerticalBox();

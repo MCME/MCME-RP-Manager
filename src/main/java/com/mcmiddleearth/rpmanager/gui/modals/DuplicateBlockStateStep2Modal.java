@@ -24,7 +24,7 @@ import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
 import com.mcmiddleearth.rpmanager.gui.utils.FormButtonEnabledListener;
 import com.mcmiddleearth.rpmanager.model.BaseModel;
 import com.mcmiddleearth.rpmanager.model.BlockState;
-import com.mcmiddleearth.rpmanager.utils.JsonFileLoader;
+import com.mcmiddleearth.rpmanager.utils.FileLoader;
 import com.mcmiddleearth.rpmanager.utils.Pair;
 import com.mcmiddleearth.rpmanager.utils.ResourcePackUtils;
 import com.mcmiddleearth.rpmanager.utils.Triple;
@@ -61,7 +61,7 @@ public class DuplicateBlockStateStep2Modal extends JDialog {
         this.blockState = blockState;
         for (Pair<StaticTreeNode, String> replacement : replacements) {
             this.replacements.add(new Triple<>(replacement.getLeft(),
-                    (BaseModel) JsonFileLoader.load(replacement.getLeft().getFile()).getData(),
+                    (BaseModel) FileLoader.load(replacement.getLeft().getFile()).getData(),
                     replacement.getRight()));
         }
 

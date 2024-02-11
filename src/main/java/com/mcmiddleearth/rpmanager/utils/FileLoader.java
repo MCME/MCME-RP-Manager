@@ -22,15 +22,16 @@ import com.mcmiddleearth.rpmanager.model.project.Layer;
 import com.mcmiddleearth.rpmanager.utils.loaders.BlockModelFileLoader;
 import com.mcmiddleearth.rpmanager.utils.loaders.BlockstateFileLoader;
 import com.mcmiddleearth.rpmanager.utils.loaders.ItemModelFileLoader;
+import com.mcmiddleearth.rpmanager.utils.loaders.TextureFileLoader;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public interface JsonFileLoader {
-    List<JsonFileLoader> LOADERS = Arrays.asList(
-            new BlockstateFileLoader(), new BlockModelFileLoader(), new ItemModelFileLoader());
+public interface FileLoader {
+    List<FileLoader> LOADERS = Arrays.asList(
+            new BlockstateFileLoader(), new BlockModelFileLoader(), new ItemModelFileLoader(), new TextureFileLoader());
 
     Object loadFile(Layer layer, Object[] path) throws IOException;
     Object loadFile(File file) throws IOException;
@@ -38,7 +39,7 @@ public interface JsonFileLoader {
     boolean canLoad(File file) throws IOException;
 
     static SelectedFileData load(Layer layer, Object[] path) throws IOException {
-        for (JsonFileLoader loader : LOADERS) {
+        for (FileLoader loader : LOADERS) {
             if (loader.canLoad(layer, path)) {
                 String fileName = path[path.length-1].toString();
                 return new SelectedFileData(
@@ -49,7 +50,7 @@ public interface JsonFileLoader {
     }
 
     static SelectedFileData load(File file) throws IOException {
-        for (JsonFileLoader loader : LOADERS) {
+        for (FileLoader loader : LOADERS) {
             if (loader.canLoad(file)) {
                 String fileName = file.getName();
                 return new SelectedFileData(

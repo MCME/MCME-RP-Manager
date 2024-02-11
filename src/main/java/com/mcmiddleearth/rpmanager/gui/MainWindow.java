@@ -22,18 +22,14 @@ import com.mcmiddleearth.rpmanager.gui.panes.ProjectsPane;
 import com.mcmiddleearth.rpmanager.model.internal.Settings;
 import com.mcmiddleearth.rpmanager.model.project.Project;
 import com.mcmiddleearth.rpmanager.model.project.Session;
-import com.mcmiddleearth.rpmanager.model.wrappers.ResourcePackData;
 import com.mcmiddleearth.rpmanager.utils.ActionManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.beans.PropertyChangeSupport;
 import java.util.Arrays;
 
 public class MainWindow extends JFrame {
     private static MainWindow INSTANCE;
-    private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
-    private ResourcePackData resourcePackData = null;
     private final Session session = new Session();
     private final ProjectsPane projectsPane;
     private final Settings settings;
@@ -73,16 +69,6 @@ public class MainWindow extends JFrame {
         menuBar.add(toolsMenu);
 
         setJMenuBar(menuBar);
-    }
-
-    public ResourcePackData getResourcePackData() {
-        return resourcePackData;
-    }
-
-    public void setResourcePackData(ResourcePackData resourcePackData) {
-        ResourcePackData oldValue = this.resourcePackData;
-        this.resourcePackData = resourcePackData;
-        propertyChangeSupport.firePropertyChange("resourcePackData", oldValue, resourcePackData);
     }
 
     public Session getSession() {
