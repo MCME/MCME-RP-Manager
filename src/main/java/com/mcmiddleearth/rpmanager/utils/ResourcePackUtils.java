@@ -123,8 +123,9 @@ public class ResourcePackUtils {
                     .toArray();
             for (com.mcmiddleearth.rpmanager.model.project.Layer layer : reverse(project.getLayers())) {
                 if (containsFile(layer, path)) {
-                    result.add(FileLoader.load(
-                            layer, Stream.concat(Stream.of(layer.getName()), Stream.of(path)).toArray()));
+                    result.add(FileLoader.load(layer, Stream.concat(
+                            layer.getFile().getName().endsWith(".jar") ? Stream.empty() : Stream.of(layer.getName()),
+                            Stream.of(path)).toArray()));
                     break;
                 }
             }
@@ -164,10 +165,9 @@ public class ResourcePackUtils {
         if (path == null || path.length == 0) {
             return false;
         }
-        List<String> pathStr = Stream.concat(Stream.of(layer.getName()), Arrays.stream(path)).map(Object::toString)
+        List<String> pathStr = Arrays.stream(path).map(Object::toString)
                 .collect(Collectors.toCollection(LinkedList::new));
         if (!layer.getFile().getName().endsWith(".jar")) {
-            pathStr.remove(0);
             if (pathStr.isEmpty()) {
                 return false;
             }
