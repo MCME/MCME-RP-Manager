@@ -36,6 +36,7 @@ import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -98,7 +99,7 @@ public class FileEditPane extends JPanel {
 
     public void setSelectedFile(SelectedFileData fileData, StaticTreeNode node) {
         this.currentNode = null;
-        setData(fileData);
+        setData(fileData, node == null ? null : node.getFile());
         this.currentNode = node;
     }
 
@@ -106,7 +107,7 @@ public class FileEditPane extends JPanel {
         this.currentTree = currentTree;
     }
 
-    private void setData(SelectedFileData data) {
+    private void setData(SelectedFileData data, File file) {
         editPane.removeAll();
         if (data == null) {
             JLabel label = new JLabel("No file selected, or no editor available for selected file.");
@@ -128,6 +129,11 @@ public class FileEditPane extends JPanel {
             ItemModelFileEditPane itemModelFileEditPane = new ItemModelFileEditPane(data.getName(), itemModel);
             itemModelFileEditPane.addChangeListener(this::onChange);
             JScrollPane scrollPane = new FastScrollPane(itemModelFileEditPane);
+            editPane.add(scrollPane, BorderLayout.CENTER);
+        } else if (data.getData() instanceof BufferedImage bufferedImage) {
+            updatePreview("", BufferedImage.class);
+            TextureFileEditPane textureFileEditPane = new TextureFileEditPane(file, bufferedImage);
+            JScrollPane scrollPane = new FastScrollPane(textureFileEditPane);
             editPane.add(scrollPane, BorderLayout.CENTER);
         } else {
             JLabel label = new JLabel("No file selected, or no editor available for selected file.");

@@ -24,6 +24,7 @@ public class Settings {
     public static File FILE = new File(System.getProperty("user.home"), "mcme-rp-manager-settings.json");
 
     private String lookAndFeel = UIManager.getLookAndFeel().getName();
+    private String imageEditor;
 
     public String getLookAndFeel() {
         return lookAndFeel;
@@ -31,5 +32,13 @@ public class Settings {
 
     public void setLookAndFeel(String lookAndFeel) {
         this.lookAndFeel = lookAndFeel;
+    }
+
+    public String getImageEditor() {
+        return imageEditor;
+    }
+
+    public void setImageEditor(String imageEditor) {
+        this.imageEditor = imageEditor;
     }
 }

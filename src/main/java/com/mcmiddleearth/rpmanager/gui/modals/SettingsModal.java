@@ -21,6 +21,7 @@ import com.google.gson.GsonBuilder;
 import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.Form;
+import com.mcmiddleearth.rpmanager.gui.components.TextInput;
 import com.mcmiddleearth.rpmanager.model.internal.Settings;
 
 import javax.swing.*;
@@ -77,6 +78,7 @@ public class SettingsModal extends JDialog {
 
     private class SettingsForm extends Form {
         private final JComboBox<String> lookAndFeelCombo;
+        private final TextInput imageEditorInput;
 
         public SettingsForm() {
             this.lookAndFeelCombo = new JComboBox<>(Arrays.stream(UIManager.getInstalledLookAndFeels())
@@ -87,8 +89,13 @@ public class SettingsModal extends JDialog {
                 window.updateSettings();
             });
 
+            this.imageEditorInput = new TextInput(settings.getImageEditor() == null ? "" : settings.getImageEditor(),
+                    settings::setImageEditor, input -> {});
+
             addLabel(0, "GUI style: ");
             addInput(0, this.lookAndFeelCombo);
+            addLabel(1, "Image editor: ");
+            addInput(1, this.imageEditorInput);
         }
     }
 }
