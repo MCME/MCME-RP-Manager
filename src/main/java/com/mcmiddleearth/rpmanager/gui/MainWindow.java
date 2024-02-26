@@ -40,11 +40,11 @@ public class MainWindow extends JFrame {
         createMenu();
         setTitle("MCME Resource Pack Manager");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
         setLayout(new BorderLayout());
         add(this.projectsPane = new ProjectsPane(session), BorderLayout.CENTER);
         setVisible(true);
         updateSettings();
+        setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
     }
 
     private void createMenu() {
