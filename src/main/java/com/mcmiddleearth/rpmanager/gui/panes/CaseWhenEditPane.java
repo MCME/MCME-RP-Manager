@@ -76,7 +76,7 @@ public class CaseWhenEditPane extends VerticalBox {
     }
 
     private List<Map<String, Object>> getConditionList() {
-        return theCase.getWhen().getOR() == null ?
+        return theCase.getWhen() == null ? new LinkedList<>() : theCase.getWhen().getOR() == null ?
                 theCase.getWhen().getValue() == null ?
                         new LinkedList<>() : new LinkedList<>(Collections.singletonList(theCase.getWhen().getValue())) :
                 theCase.getWhen().getOR();

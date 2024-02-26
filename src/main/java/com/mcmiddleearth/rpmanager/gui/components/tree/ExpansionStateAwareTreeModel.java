@@ -57,6 +57,11 @@ public class ExpansionStateAwareTreeModel extends DefaultTreeModel {
         restoreSelection(fixTreePath(selectionPath));
     }
 
+    public void filter(String text) {
+        ((StaticTreeNode) getRoot()).filter(text);
+        reload();
+    }
+
     private List<TreePath> fixTreePaths(List<TreePath> paths) {
         return paths.stream().map(this::fixTreePath).filter(Objects::nonNull).toList();
     }

@@ -36,6 +36,7 @@ public class StaticTreeNode implements TreeNode {
     private final List<StaticTreeNode> children;
     private Git git;
     private NodeStatus status = NodeStatus.UNMODIFIED;
+    private boolean visible = true;
 
     public StaticTreeNode(TreeNode parent, String name, File file, boolean directory, List<StaticTreeNode> children) {
         this.parent = parent;
@@ -74,12 +75,12 @@ public class StaticTreeNode implements TreeNode {
 
     @Override
     public TreeNode getChildAt(int i) {
-        return children.get(i);
+        return filterVisible(children).get(i);
     }
 
     @Override
     public int getChildCount() {
-        return children.size();
+        return filterVisible(children).size();
     }
 
     @Override
@@ -94,7 +95,7 @@ public class StaticTreeNode implements TreeNode {
     @SuppressWarnings("SuspiciousMethodCalls")
     @Override
     public int getIndex(TreeNode treeNode) {
-        return children.indexOf(treeNode);
+        return filterVisible(children).indexOf(treeNode);
     }
 
     @Override
@@ -104,12 +105,12 @@ public class StaticTreeNode implements TreeNode {
 
     @Override
     public boolean isLeaf() {
-        return children.isEmpty();
+        return filterVisible(children).isEmpty();
     }
 
     @Override
     public Enumeration<? extends TreeNode> children() {
-        return Collections.enumeration(children);
+        return Collections.enumeration(filterVisible(children));
     }
 
     @Override
@@ -191,6 +192,25 @@ public class StaticTreeNode implements TreeNode {
         return resolvePath(file, (StaticTreeNode) parent);
     }
 
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
+    public void filter(String filter) {
+        this.visible = shouldShow(filter);
+        if (this.children != null) {
+            this.children.forEach(c -> c.filter(filter));
+        }
+    }
+
+    private boolean shouldShow(String filter) {
+        return name.contains(filter) || children != null && children.stream().anyMatch(c -> c.shouldShow(filter));
+    }
+
     private static String resolvePath(File file, StaticTreeNode parent) {
         if (parent == null) {
             return file.isDirectory() ? null : file.getName();
@@ -199,6 +219,10 @@ public class StaticTreeNode implements TreeNode {
             parent = (StaticTreeNode) parent.getParent();
         }
         return parent.getFile().toPath().relativize(file.toPath()).toString();
+    }
+
+    private static List<StaticTreeNode> filterVisible(List<StaticTreeNode> list) {
+        return list.stream().filter(StaticTreeNode::isVisible).toList();
     }
 
     public enum NodeStatus {

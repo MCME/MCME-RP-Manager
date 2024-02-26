@@ -145,9 +145,11 @@ public class RelatedFilesPane extends JPanel {
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
                                                       boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            String name = ((SelectedFileData) value).getName();
-            setText(name);
-            setToolTipText(name);
+            if (value != null) {
+                String name = ((SelectedFileData) value).getName();
+                setText(name);
+                setToolTipText(name);
+            }
             return this;
         }
     }

@@ -56,7 +56,9 @@ public class ProjectPane extends JPanel {
         treesPane.addTreeSelectionListener(this::onTreeSelectionChanged);
 
         JSplitPane innerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
-                new FastScrollPane(treesPane),
+                new FastScrollPane(treesPane,
+                        ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER,
+                        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED),
                 this.fileEditPane);
         innerSplitPane.setDividerSize(1);
         innerSplitPane.setOneTouchExpandable(false);

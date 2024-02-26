@@ -17,6 +17,8 @@
 
 package com.mcmiddleearth.rpmanager.gui.panes;
 
+import com.mcmiddleearth.rpmanager.gui.MainWindow;
+import com.mcmiddleearth.rpmanager.gui.components.FastScrollPane;
 import com.mcmiddleearth.rpmanager.gui.components.IconButton;
 import com.mcmiddleearth.rpmanager.gui.components.TextInput;
 import com.mcmiddleearth.rpmanager.gui.components.VerticalBox;
@@ -28,6 +30,8 @@ import com.mcmiddleearth.rpmanager.model.project.Layer;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import javax.swing.*;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
@@ -40,6 +44,7 @@ public class LayerFilesPane extends JPanel {
     private final JTree tree;
     private boolean eventsEnabled = true;
     private String searchText = "";
+    private String filterText = "";
 
     public LayerFilesPane(Layer layer) throws IOException, GitAPIException {
         this.layer = layer;
@@ -75,9 +80,21 @@ public class LayerFilesPane extends JPanel {
         horizontalBox.add(next);
         horizontalBox.add(previous);
         horizontalBox.add(Box.createHorizontalGlue());
+        Box filterBox = Box.createHorizontalBox();
+        filterBox.add(new TextInput("", s -> this.filterText = s, input -> {}));
+        filterBox.add(new JButton(new com.mcmiddleearth.rpmanager.gui.actions.Action("Filter", "Filter files") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ((ExpansionStateAwareTreeModel) tree.getModel()).filter(filterText);
+            }
+        }));
+        filterBox.add(Box.createHorizontalGlue());
+        verticalBox.add(filterBox);
         verticalBox.add(horizontalBox);
         add(verticalBox, BorderLayout.PAGE_START);
-        add(this.tree = createTree(layer.getFile()), BorderLayout.CENTER);
+        add(new FastScrollPane(this.tree = createTree(layer.getFile()),
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
     }
 
     private void findNext() {
@@ -115,6 +132,19 @@ public class LayerFilesPane extends JPanel {
         tree.setCellRenderer(new StatusTreeCellRenderer());
         model.setTree(tree);
         tree.setComponentPopupMenu(createPopupMenu(tree, editable));
+        tree.addTreeExpansionListener(new TreeExpansionListener() {
+            @Override
+            public void treeExpanded(TreeExpansionEvent event) {
+                MainWindow.getInstance().invalidate();
+                MainWindow.getInstance().repaint();
+            }
+
+            @Override
+            public void treeCollapsed(TreeExpansionEvent event) {
+                MainWindow.getInstance().invalidate();
+                MainWindow.getInstance().repaint();
+            }
+        });
         return tree;
     }
 
