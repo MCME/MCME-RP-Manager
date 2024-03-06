@@ -32,7 +32,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class OpenProjectAction extends Action {
-    private final Gson gson = new GsonBuilder().setLenient().create();
+    private static final Gson GSON = new GsonBuilder().setLenient().create();
     private final JFileChooser fileChooser;
 
     protected OpenProjectAction() {
@@ -52,12 +52,14 @@ public class OpenProjectAction extends Action {
         }
     }
 
-    private void doOpenProject(File projectFile) {
+    public static void doOpenProject(File projectFile) {
         try (FileReader fileReader = new FileReader(projectFile)) {
-            Project project = gson.fromJson(fileReader, Project.class);
+            Project project = GSON.fromJson(fileReader, Project.class);
+            project.setProjectFile(projectFile);
             project.setLocation(projectFile.getParentFile());
             project.setName(projectFile.getName().substring(0, projectFile.getName().length() - 10));
             MainWindow.getInstance().getSession().addProject(project);
+            MainWindow.getInstance().updateRecentProjects(project);
         } catch (IOException e) {
             //TODO error dialog
         }

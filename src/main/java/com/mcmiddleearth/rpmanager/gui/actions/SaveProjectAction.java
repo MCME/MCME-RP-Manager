@@ -45,6 +45,7 @@ public class SaveProjectAction extends Action {
             File f = new File(project.getLocation(), project.getName() + ".rpproject");
             try (FileWriter fileWriter = new FileWriter(f)) {
                 gson.toJson(project, fileWriter);
+                MainWindow.getInstance().updateRecentProjects(project);
             } catch (IOException e) {
                 //TODO error dialog
             }

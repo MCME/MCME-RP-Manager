@@ -46,6 +46,7 @@ public class NewProjectModal extends JDialog {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 session.addProject(new Project(newProjectForm.getMinecraftLocation(), newProjectForm.getProjectName(),
+                        new File(newProjectForm.getProjectDir(), newProjectForm.getProjectName() + ".rpproject"),
                         newProjectForm.getProjectDir()));
                 NewProjectModal.this.close();
             }

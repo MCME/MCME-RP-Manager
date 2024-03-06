@@ -30,14 +30,16 @@ import java.util.List;
 public class Project implements Serializable {
     private List<Layer> layers = new LinkedList<>();
     private String name;
+    private transient File projectFile;
     private transient File location;
     private transient final EventDispatcher eventDispatcher = new EventDispatcher();
 
     public Project() {}
 
-    public Project(File minecraftJar, String name, File location) {
+    public Project(File minecraftJar, String name, File projectFile, File location) {
         layers.add(new Layer("Vanilla", minecraftJar));
         this.name = name;
+        this.projectFile = projectFile;
         this.location = location;
     }
 
@@ -55,6 +57,14 @@ public class Project implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public File getProjectFile() {
+        return projectFile;
+    }
+
+    public void setProjectFile(File projectFile) {
+        this.projectFile = projectFile;
     }
 
     public File getLocation() {

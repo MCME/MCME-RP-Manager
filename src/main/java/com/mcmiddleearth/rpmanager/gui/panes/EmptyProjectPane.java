@@ -17,7 +17,9 @@
 
 package com.mcmiddleearth.rpmanager.gui.panes;
 
+import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.actions.Actions;
+import com.mcmiddleearth.rpmanager.gui.components.FastScrollPane;
 import com.mcmiddleearth.rpmanager.gui.components.VerticalBox;
 
 import javax.swing.*;
@@ -31,6 +33,15 @@ public class EmptyProjectPane extends JPanel {
         internal.add(Box.createVerticalGlue());
         internal.add(new JMenuItem(Actions.NEW_PROJECT));
         internal.add(new JMenuItem(Actions.OPEN_PROJECT));
+        internal.add(Box.createVerticalStrut(50));
+        JLabel label = new JLabel("Recent projects:");
+        label.setFont(label.getFont().deriveFont(label.getFont().getStyle() | Font.BOLD, 24.0f));
+        internal.add(label);
+        VerticalBox openRecentBox = new VerticalBox(GridBagConstraints.NONE);
+        for (Component c : MainWindow.getInstance().getOpenRecentMenu().getMenuComponents()) {
+            openRecentBox.add(c);
+        }
+        internal.add(new FastScrollPane(openRecentBox));
         add(internal, BorderLayout.CENTER);
     }
 }
