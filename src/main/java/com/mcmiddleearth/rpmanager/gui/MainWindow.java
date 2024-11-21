@@ -61,6 +61,7 @@ public class MainWindow extends JFrame {
         setVisible(true);
         updateSettings();
         setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+        SwingUtilities.invokeLater(this::updateRecentProjects);
     }
 
     public JMenu getOpenRecentMenu() {
