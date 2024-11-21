@@ -20,14 +20,16 @@ package com.mcmiddleearth.rpmanager.gui.components;
 import com.mcmiddleearth.rpmanager.gui.constants.Icons;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 
 public class CollapsibleSection extends JPanel {
-    //TODO replace with nice icons
     private final JButton expandButton;
     private final JLabel title;
     private final JPanel content;
     private final JPanel titlePanel;
+    private final Border border;
+    private final Border noBorder;
     private boolean collapsed;
     private boolean contentPresent = false;
 
@@ -39,6 +41,8 @@ public class CollapsibleSection extends JPanel {
         this.expandButton.addActionListener(actionEvent -> switchState());
         this.title = new JLabel(title);
         this.title.setFont(new Font(this.title.getFont().getName(), Font.BOLD, this.title.getFont().getSize()));
+        this.border = BorderFactory.createLoweredBevelBorder();
+        this.noBorder = BorderFactory.createEmptyBorder();
 
         JPanel toolbar = new JPanel();
         toolbar.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
@@ -67,6 +71,7 @@ public class CollapsibleSection extends JPanel {
     private void updateState() {
         expandButton.setIcon(collapsed ? Icons.EXPAND_ICON : Icons.RETRACT_ICON);
         content.setVisible(!collapsed);
+        setBorder(collapsed ? noBorder : border);
         if (collapsed && contentPresent) {
             this.remove(content);
             contentPresent = false;
