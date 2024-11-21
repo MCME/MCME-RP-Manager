@@ -17,6 +17,7 @@
 
 package com.mcmiddleearth.rpmanager.gui.panes;
 
+import com.mcmiddleearth.rpmanager.events.ListDoubleClickEvent;
 import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.components.FastScrollPane;
 import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
@@ -53,6 +54,7 @@ public class ProjectPane extends JPanel {
         this.treesPane = new ProjectFilesPane(project);
         this.fileEditPane = new FileEditPane(actionManager);
         this.relatedFilesPane = new RelatedFilesPane();
+        this.relatedFilesPane.addListDoubleClickEventListener(this::onListDoubleClick);
         treesPane.addTreeSelectionListener(this::onTreeSelectionChanged);
 
         JSplitPane innerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
@@ -108,6 +110,11 @@ public class ProjectPane extends JPanel {
                     "Unknown error reading file: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             relatedFilesPane.setRelatedFiles(null);
         }
+    }
+
+    private void onListDoubleClick(ListDoubleClickEvent event) {
+        SelectedFileData selectedFileData = (SelectedFileData) event.getObject();
+        treesPane.setSelectedNode(selectedFileData.getPath());
     }
 
     public ActionManager getActionManager() {

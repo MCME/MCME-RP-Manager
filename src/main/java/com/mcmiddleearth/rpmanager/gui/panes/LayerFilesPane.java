@@ -26,6 +26,7 @@ import com.mcmiddleearth.rpmanager.gui.components.tree.*;
 import com.mcmiddleearth.rpmanager.gui.components.tree.actions.*;
 import com.mcmiddleearth.rpmanager.gui.constants.Icons;
 import com.mcmiddleearth.rpmanager.gui.listeners.LayerTreeSelectionListener;
+import com.mcmiddleearth.rpmanager.gui.utils.TreeUtils;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
@@ -259,5 +260,20 @@ public class LayerFilesPane extends JPanel {
             throw new RuntimeException(e);
             //TODO error dialog
         }
+    }
+
+    public StaticTreeNode findNode(Object[] path) {
+        return TreeUtils.findNode(tree, path);
+    }
+
+    public void setSelectedNode(StaticTreeNode node) {
+        TreePath treePath = TreeUtils.getPathForNode(node);
+        TreePath currentPath = treePath;
+        while (currentPath != null) {
+            tree.expandPath(currentPath);
+            currentPath = currentPath.getParentPath();
+        }
+        tree.setSelectionPath(treePath);
+        tree.scrollPathToVisible(treePath);
     }
 }

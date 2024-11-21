@@ -19,6 +19,9 @@ package com.mcmiddleearth.rpmanager.gui.panes;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mcmiddleearth.rpmanager.events.EventDispatcher;
+import com.mcmiddleearth.rpmanager.events.EventListener;
+import com.mcmiddleearth.rpmanager.events.ListDoubleClickEvent;
 import com.mcmiddleearth.rpmanager.gui.components.FastScrollPane;
 import com.mcmiddleearth.rpmanager.model.BlockModel;
 import com.mcmiddleearth.rpmanager.model.internal.RelatedFiles;
@@ -28,6 +31,8 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 public class RelatedFilesPane extends JPanel {
@@ -41,6 +46,7 @@ public class RelatedFilesPane extends JPanel {
     private JList<SelectedFileData> relatedModelsList;
     private JList<SelectedFileData> relatedTexturesList;
     private boolean suppressSelectionEvents = false;
+    private final EventDispatcher eventDispatcher = new EventDispatcher();
 
     public RelatedFilesPane() {
         setLayout(new BorderLayout());
@@ -81,16 +87,22 @@ public class RelatedFilesPane extends JPanel {
             relatedModelsList.setCellRenderer(new SelectedFileDataListCellRenderer());
             relatedModelsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             relatedModelsList.addListSelectionListener(this::onModelSelectionChanged);
+            relatedModelsList.addMouseListener(new ListMouseAdapter());
             relatedModelsPane.add(relatedModelsList);
             relatedTexturesList = new JList<>(relatedFiles.getRelatedTextures()
                     .toArray(SelectedFileData[]::new));
             relatedTexturesList.setCellRenderer(new SelectedFileDataListCellRenderer());
             relatedTexturesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             relatedTexturesList.addListSelectionListener(this::onTextureSelectionChanged);
+            relatedTexturesList.addMouseListener(new ListMouseAdapter());
             relatedTexturesPane.add(relatedTexturesList);
         }
         invalidate();
         repaint();
+    }
+
+    public void addListDoubleClickEventListener(EventListener<ListDoubleClickEvent> eventListener) {
+        eventDispatcher.addEventListener(eventListener, ListDoubleClickEvent.class);
     }
 
     private void onModelSelectionChanged(ListSelectionEvent event) {
@@ -151,6 +163,21 @@ public class RelatedFilesPane extends JPanel {
                 setToolTipText(name);
             }
             return this;
+        }
+    }
+
+    private class ListMouseAdapter extends MouseAdapter {
+        @SuppressWarnings("unchecked")
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            JList<SelectedFileData> list = (JList<SelectedFileData>) e.getSource();
+            if (e.getClickCount() >= 2 && e.getButton() == MouseEvent.BUTTON1) {
+                Rectangle r = list.getCellBounds(0, list.getLastVisibleIndex());
+                if (r != null && r.contains(e.getPoint())) {
+                    SelectedFileData data = list.getSelectedValue();
+                    eventDispatcher.dispatchEvent(new ListDoubleClickEvent(list, data));
+                }
+            }
         }
     }
 }

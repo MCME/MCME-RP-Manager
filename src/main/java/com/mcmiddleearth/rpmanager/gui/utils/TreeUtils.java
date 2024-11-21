@@ -17,6 +17,9 @@
 
 package com.mcmiddleearth.rpmanager.gui.utils;
 
+import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
+
+import javax.swing.*;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
@@ -29,5 +32,21 @@ public class TreeUtils {
         } else {
             return getPathForNode(node.getParent()).pathByAddingChild(node);
         }
+    }
+
+    public static StaticTreeNode findNode(JTree tree, Object[] path) {
+        StaticTreeNode currentNode = (StaticTreeNode) tree.getModel().getRoot();
+        if (currentNode == null || !currentNode.getName().equals(path[0])) {
+            return null;
+        }
+        for (int i = 1; i < path.length; ++i) {
+            Object currentPathComponent = path[i];
+            currentNode = currentNode.getChildren().stream().filter(n -> n.getName().equals(currentPathComponent))
+                    .findFirst().orElse(null);
+            if (currentNode == null) {
+                return null;
+            }
+        }
+        return currentNode;
     }
 }

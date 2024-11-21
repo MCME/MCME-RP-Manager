@@ -51,7 +51,7 @@ public class DuplicateBlockStateModal extends JDialog {
         super(parent, "Select files to duplicate", true);
         this.tree = tree;
         this.node = node;
-        this.blockState = (BlockState) FileLoader.load(node.getFile()).getData();
+        this.blockState = (BlockState) FileLoader.load(node).getData();
 
         setLayout(new BorderLayout());
         VerticalBox verticalBox = new VerticalBox();

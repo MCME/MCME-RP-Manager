@@ -61,7 +61,7 @@ public class DuplicateBlockStateStep2Modal extends JDialog {
         this.blockState = blockState;
         for (Pair<StaticTreeNode, String> replacement : replacements) {
             this.replacements.add(new Triple<>(replacement.getLeft(),
-                    (BaseModel) FileLoader.load(replacement.getLeft().getFile()).getData(),
+                    (BaseModel) FileLoader.load(replacement.getLeft()).getData(),
                     replacement.getRight()));
         }
 

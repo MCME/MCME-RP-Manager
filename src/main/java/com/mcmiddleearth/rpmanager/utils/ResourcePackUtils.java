@@ -99,7 +99,8 @@ public class ResourcePackUtils {
                         .toList();
         List<SelectedFileData> relatedModels = getModels(models, project);
         List<SelectedFileData> relatedTextures = getRelatedTextures(
-                Stream.concat(Stream.of(new SelectedFileData(model, "")), relatedModels.stream()).toList(),
+                Stream.concat(Stream.of(new SelectedFileData(model, "", new Object[0])), relatedModels.stream())
+                        .toList(),
                 project);
         return new RelatedFiles(relatedModels, relatedTextures);
     }

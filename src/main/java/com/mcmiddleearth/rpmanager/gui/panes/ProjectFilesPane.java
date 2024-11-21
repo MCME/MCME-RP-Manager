@@ -20,6 +20,7 @@ package com.mcmiddleearth.rpmanager.gui.panes;
 import com.mcmiddleearth.rpmanager.events.ListItemAddedEvent;
 import com.mcmiddleearth.rpmanager.events.ListItemRemovedEvent;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
+import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
 import com.mcmiddleearth.rpmanager.gui.listeners.LayerTreeSelectionListener;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 import com.mcmiddleearth.rpmanager.model.project.Project;
@@ -113,5 +114,15 @@ public class ProjectFilesPane extends JPanel {
 
     public void reload() {
         layerFilesPanes.forEach(LayerFilesPane::reload);
+    }
+
+    public void setSelectedNode(Object[] path) {
+        for (LayerFilesPane layerFilesPane : layerFilesPanes) {
+            StaticTreeNode staticTreeNode = layerFilesPane.findNode(path);
+            if (staticTreeNode != null) {
+                layerFilesPane.setSelectedNode(staticTreeNode);
+                break;
+            }
+        }
     }
 }

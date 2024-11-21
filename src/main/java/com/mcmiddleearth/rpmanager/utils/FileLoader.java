@@ -17,6 +17,8 @@
 
 package com.mcmiddleearth.rpmanager.utils;
 
+import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
+import com.mcmiddleearth.rpmanager.gui.utils.TreeUtils;
 import com.mcmiddleearth.rpmanager.model.internal.SelectedFileData;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 import com.mcmiddleearth.rpmanager.utils.loaders.BlockModelFileLoader;
@@ -28,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 public interface FileLoader {
     List<FileLoader> LOADERS = Arrays.asList(
@@ -43,18 +46,20 @@ public interface FileLoader {
             if (loader.canLoad(layer, path)) {
                 String fileName = path[path.length-1].toString();
                 return new SelectedFileData(
-                        loader.loadFile(layer, path), fileName.substring(0, fileName.lastIndexOf(".")));
+                        loader.loadFile(layer, path), fileName.substring(0, fileName.lastIndexOf(".")),
+                        Stream.of(path).skip(layer.getFile().getName().endsWith(".jar") ? 1L : 0L).toArray());
             }
         }
         return null;
     }
 
-    static SelectedFileData load(File file) throws IOException {
+    static SelectedFileData load(StaticTreeNode node) throws IOException {
         for (FileLoader loader : LOADERS) {
-            if (loader.canLoad(file)) {
-                String fileName = file.getName();
+            if (loader.canLoad(node.getFile())) {
+                String fileName = node.getFile().getName();
                 return new SelectedFileData(
-                        loader.loadFile(file), fileName.substring(0, fileName.lastIndexOf(".")));
+                        loader.loadFile(node.getFile()), fileName.substring(0, fileName.lastIndexOf(".")),
+                        TreeUtils.getPathForNode(node).getPath());
             }
         }
         return null;

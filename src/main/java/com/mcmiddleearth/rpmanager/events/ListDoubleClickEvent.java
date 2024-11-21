@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 MCME
+ * Copyright (C) 2024 MCME
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,28 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.mcmiddleearth.rpmanager.model.internal;
+package com.mcmiddleearth.rpmanager.events;
 
-public class SelectedFileData {
-    private final Object data;
-    private final String name;
-    private final Object[] path;
+public class ListDoubleClickEvent implements Event {
+    private final Object source;
+    private final Object object;
 
-    public SelectedFileData(Object data, String name, Object[] path) {
-        this.data = data;
-        this.name = name;
-        this.path = path;
+    public ListDoubleClickEvent(Object source, Object object) {
+        this.source = source;
+        this.object = object;
     }
 
-    public Object getData() {
-        return data;
+    @Override
+    public Object getSource() {
+        return source;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public Object[] getPath() {
-        return path;
+    public Object getObject() {
+        return object;
     }
 }
