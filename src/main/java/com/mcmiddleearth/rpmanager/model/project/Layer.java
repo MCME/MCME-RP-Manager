@@ -25,7 +25,7 @@ import java.io.File;
 public class Layer {
     private final String name;
     @JsonAdapter(FileJsonAdapter.Factory.class)
-    private final File file;
+    private File file;
 
     public Layer(String name, File file) {
         this.name = name;
@@ -38,5 +38,9 @@ public class Layer {
 
     public File getFile() {
         return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 }

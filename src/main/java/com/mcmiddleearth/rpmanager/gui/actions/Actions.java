@@ -25,6 +25,7 @@ public class Actions {
     public static Action UNDO = new UndoAction();
     public static Action REDO = new RedoAction();
     public static Action COMPILE = new CompileAction();
+    public static Action CHANGE_MINECRAFT_VERSION = new ChangeMinecraftVersionAction();
 
     private Actions() {}
 }

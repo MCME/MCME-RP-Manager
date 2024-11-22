@@ -67,4 +67,10 @@ public class ProjectsPane extends JTabbedPane {
         }
         return new ActionManager(() -> {});
     }
+
+    public void reload() {
+        if (getSelectedComponent() instanceof ProjectPane p) {
+            p.reload();
+        }
+    }
 }

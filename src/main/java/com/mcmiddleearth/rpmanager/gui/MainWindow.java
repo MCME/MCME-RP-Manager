@@ -84,6 +84,8 @@ public class MainWindow extends JFrame {
         editMenu.setMnemonic('E');
         editMenu.add(Actions.UNDO);
         editMenu.add(Actions.REDO);
+        editMenu.addSeparator();
+        editMenu.add(Actions.CHANGE_MINECRAFT_VERSION);
         menuBar.add(editMenu);
         JMenu toolsMenu = new JMenu("Tools");
         toolsMenu.setMnemonic('T');
@@ -165,6 +167,10 @@ public class MainWindow extends JFrame {
             }));
         }
         items.forEach(openRecentMenu::add);
+    }
+
+    public void reload() {
+        projectsPane.reload();
     }
 
     private static class RecentProjects {

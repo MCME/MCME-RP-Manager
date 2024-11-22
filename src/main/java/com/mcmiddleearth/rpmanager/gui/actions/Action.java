@@ -44,7 +44,9 @@ public abstract class Action extends AbstractAction {
         super(name, icon);
         putValue(SHORT_DESCRIPTION, description);
         putValue(MNEMONIC_KEY, mnemonic);
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(acceleratorKey, KeyEvent.CTRL_DOWN_MASK));
+        if (acceleratorKey != null) {
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(acceleratorKey, KeyEvent.CTRL_DOWN_MASK));
+        }
 
         this.name = name;
         this.description = description;
