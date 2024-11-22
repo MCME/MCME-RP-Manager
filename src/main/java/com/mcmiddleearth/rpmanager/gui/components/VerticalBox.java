@@ -29,7 +29,15 @@ public class VerticalBox extends JPanel {
         this(GridBagConstraints.HORIZONTAL);
     }
 
+    public VerticalBox(Insets insets) {
+        this(GridBagConstraints.HORIZONTAL, insets);
+    }
+
     public VerticalBox(int fill) {
+        this(fill, new Insets(0, 0, 0, 0));
+    }
+
+    public VerticalBox(int fill, Insets insets) {
         this.setLayout(new GridBagLayout());
         this.gridBagConstraints = new GridBagConstraints();
         this.gridBagConstraints.fill = fill;
@@ -37,6 +45,7 @@ public class VerticalBox extends JPanel {
         this.gridBagConstraints.gridy = 0;
         this.gridBagConstraints.weighty = 0.0;
         this.gridBagConstraints.weightx = 1.0;
+        this.gridBagConstraints.insets = insets;
 
         addVerticalGlue();
     }

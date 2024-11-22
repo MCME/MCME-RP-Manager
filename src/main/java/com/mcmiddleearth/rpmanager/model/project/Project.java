@@ -32,6 +32,8 @@ public class Project implements Serializable {
     private String name;
     private transient File projectFile;
     private transient File location;
+    private transient File recentFilesFile;
+    private transient File favoriteFilesFile;
     private transient final EventDispatcher eventDispatcher = new EventDispatcher();
 
     public Project() {}
@@ -41,6 +43,8 @@ public class Project implements Serializable {
         this.name = name;
         this.projectFile = projectFile;
         this.location = location;
+        this.recentFilesFile = new File(projectFile.getParent(), projectFile.getName() + ".recent");
+        this.favoriteFilesFile = new File(projectFile.getParent(), projectFile.getName() + ".fav");
     }
 
     public List<Layer> getLayers() {
@@ -65,6 +69,8 @@ public class Project implements Serializable {
 
     public void setProjectFile(File projectFile) {
         this.projectFile = projectFile;
+        this.recentFilesFile = new File(projectFile.getParent(), projectFile.getName() + ".recent");
+        this.favoriteFilesFile = new File(projectFile.getParent(), projectFile.getName() + ".fav");
     }
 
     public File getLocation() {
@@ -73,6 +79,14 @@ public class Project implements Serializable {
 
     public void setLocation(File location) {
         this.location = location;
+    }
+
+    public File getRecentFilesFile() {
+        return recentFilesFile;
+    }
+
+    public File getFavoriteFilesFile() {
+        return favoriteFilesFile;
     }
 
     public void addLayer(String name, File location) {

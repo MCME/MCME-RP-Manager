@@ -170,10 +170,15 @@ public class LayerFilesPane extends JPanel {
         renameAction.setEnabled(false);
         Action duplicateAction = new TreeDuplicateAction(tree);
         duplicateAction.setEnabled(false);
+        Action addToFavoritesAction = new AddToFavoritesAction(tree);
+        addToFavoritesAction.setEnabled(false);
+        Action removeFromFavoritesAction = new RemoveFromFavoritesAction(tree);
+        removeFromFavoritesAction.setEnabled(false);
         Action gitAddAction = new TreeGitAddAction(tree);
         gitAddAction.setEnabled(false);
         Action[] newActions = new Action[] { newFileAction, newDirectoryAction };
-        Action[] actions = new Action[]{ copyAction, pasteAction, deleteAction, renameAction, duplicateAction };
+        Action[] actions = new Action[]{ copyAction, pasteAction, deleteAction, renameAction, duplicateAction,
+                addToFavoritesAction, removeFromFavoritesAction };
         Action[] gitActions = new Action[] { gitAddAction };
 
         JPopupMenu menu = new JPopupMenu();
@@ -214,6 +219,8 @@ public class LayerFilesPane extends JPanel {
             deleteAction.setEnabled(editable && selectedFiles > 0);
             renameAction.setEnabled(editable && selectedFiles > 0);
             duplicateAction.setEnabled(editable && selectedFiles > 0);
+            addToFavoritesAction.setEnabled(selectedFiles > 0);
+            removeFromFavoritesAction.setEnabled(selectedFiles > 0);
             gitAddAction.setEnabled(editable && canAddToGit);
         });
         return menu;

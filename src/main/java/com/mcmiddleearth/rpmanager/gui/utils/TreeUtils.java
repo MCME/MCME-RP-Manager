@@ -36,11 +36,11 @@ public class TreeUtils {
 
     public static StaticTreeNode findNode(JTree tree, Object[] path) {
         StaticTreeNode currentNode = (StaticTreeNode) tree.getModel().getRoot();
-        if (currentNode == null || !currentNode.getName().equals(path[0])) {
+        if (currentNode == null || !currentNode.getName().equals(path[0].toString())) {
             return null;
         }
         for (int i = 1; i < path.length; ++i) {
-            Object currentPathComponent = path[i];
+            String currentPathComponent = path[i].toString();
             currentNode = currentNode.getChildren().stream().filter(n -> n.getName().equals(currentPathComponent))
                     .findFirst().orElse(null);
             if (currentNode == null) {

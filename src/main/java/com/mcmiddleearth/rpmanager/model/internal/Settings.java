@@ -25,6 +25,7 @@ public class Settings {
 
     private String lookAndFeel = UIManager.getLookAndFeel().getName();
     private String imageEditor;
+    private int openedFileHistorySize = 20;
 
     public String getLookAndFeel() {
         return lookAndFeel;
@@ -40,5 +41,13 @@ public class Settings {
 
     public void setImageEditor(String imageEditor) {
         this.imageEditor = imageEditor;
+    }
+
+    public int getOpenedFileHistorySize() {
+        return openedFileHistorySize;
+    }
+
+    public void setOpenedFileHistorySize(int openedFileHistorySize) {
+        this.openedFileHistorySize = openedFileHistorySize;
     }
 }

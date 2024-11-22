@@ -21,6 +21,8 @@ import com.google.gson.GsonBuilder;
 import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.Form;
+import com.mcmiddleearth.rpmanager.gui.components.NumberInput;
+import com.mcmiddleearth.rpmanager.gui.components.NumericStepper;
 import com.mcmiddleearth.rpmanager.gui.components.TextInput;
 import com.mcmiddleearth.rpmanager.model.internal.Settings;
 
@@ -79,6 +81,7 @@ public class SettingsModal extends JDialog {
     private class SettingsForm extends Form {
         private final JComboBox<String> lookAndFeelCombo;
         private final TextInput imageEditorInput;
+        private final NumericStepper recentFilesHistorySizeInput;
 
         public SettingsForm() {
             this.lookAndFeelCombo = new JComboBox<>(Arrays.stream(UIManager.getInstalledLookAndFeels())
@@ -92,10 +95,15 @@ public class SettingsModal extends JDialog {
             this.imageEditorInput = new TextInput(settings.getImageEditor() == null ? "" : settings.getImageEditor(),
                     settings::setImageEditor, input -> {});
 
+            this.recentFilesHistorySizeInput = new NumericStepper(settings.getOpenedFileHistorySize(), 1, 100,
+                    settings::setOpenedFileHistorySize, e -> {});
+
             addLabel(0, "GUI style: ");
             addInput(0, this.lookAndFeelCombo);
             addLabel(1, "Image editor: ");
             addInput(1, this.imageEditorInput);
+            addLabel(2, "Opened files history size");
+            addInput(2, this.recentFilesHistorySizeInput);
         }
     }
 }

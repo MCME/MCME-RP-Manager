@@ -18,6 +18,7 @@
 package com.mcmiddleearth.rpmanager.gui.panes;
 
 import com.mcmiddleearth.rpmanager.events.ListDoubleClickEvent;
+import com.mcmiddleearth.rpmanager.events.ListSelectionChangeEvent;
 import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.components.FastScrollPane;
 import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
@@ -36,7 +37,13 @@ import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ProjectPane extends JPanel {
     private final Project project;
@@ -73,6 +80,10 @@ public class ProjectPane extends JPanel {
         splitPane.setOneTouchExpandable(false);
         splitPane.setResizeWeight(0.66);
 
+        FileShortcutsPane fileShortcutsPane = new FileShortcutsPane(project);
+        fileShortcutsPane.addListSelectionChangeListener(this::onShortcutListSelectionChange);
+
+        add(fileShortcutsPane, BorderLayout.LINE_START);
         add(splitPane, BorderLayout.CENTER);
     }
 
@@ -84,6 +95,7 @@ public class ProjectPane extends JPanel {
                     newPath == null ? null : (StaticTreeNode) newPath.getLastPathComponent());
             fileEditPane.setCurrentTree(tree);
             updateRelatedFiles(fileData);
+            updateRecentFiles(fileData);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(MainWindow.getInstance(),
                     "Unknown error reading file: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -112,9 +124,41 @@ public class ProjectPane extends JPanel {
         }
     }
 
+    private void updateRecentFiles(SelectedFileData data) {
+        File recentFilesFile = project.getRecentFilesFile();
+        List<String> recentFiles = null;
+        if (recentFilesFile.exists()) {
+            try {
+                recentFiles = new ArrayList<>(Files.readAllLines(recentFilesFile.toPath()));
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(MainWindow.getInstance(),
+                        "Unknown error reading file: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        if (recentFiles == null) {
+            recentFiles = new ArrayList<>();
+        }
+        String path = Stream.of(data.getPath()).map(Object::toString).collect(Collectors.joining("/"));
+        recentFiles.remove(path);
+        recentFiles.add(0, path);
+        while (recentFiles.size() > MainWindow.getInstance().getSettings().getOpenedFileHistorySize()) {
+            recentFiles.remove(recentFiles.size() - 1);
+        }
+        try {
+            Files.write(recentFilesFile.toPath(), recentFiles);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(MainWindow.getInstance(),
+                    "Unknown error reading file: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     private void onListDoubleClick(ListDoubleClickEvent event) {
         SelectedFileData selectedFileData = (SelectedFileData) event.getObject();
         treesPane.setSelectedNode(selectedFileData.getPath());
+    }
+
+    private void onShortcutListSelectionChange(ListSelectionChangeEvent event) {
+        treesPane.setSelectedNode(Stream.of(event.getObject().toString().split("/")).toArray());
     }
 
     public ActionManager getActionManager() {
