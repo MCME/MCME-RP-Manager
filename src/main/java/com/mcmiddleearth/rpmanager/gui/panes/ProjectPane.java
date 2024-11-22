@@ -125,6 +125,9 @@ public class ProjectPane extends JPanel {
     }
 
     private void updateRecentFiles(SelectedFileData data) {
+        if (data == null) {
+            return;
+        }
         File recentFilesFile = project.getRecentFilesFile();
         List<String> recentFiles = null;
         if (recentFilesFile.exists()) {

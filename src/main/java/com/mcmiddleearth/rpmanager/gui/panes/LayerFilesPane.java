@@ -170,6 +170,8 @@ public class LayerFilesPane extends JPanel {
         renameAction.setEnabled(false);
         Action duplicateAction = new TreeDuplicateAction(tree);
         duplicateAction.setEnabled(false);
+        Action replaceInFilesAction = new ReplaceInFilesAction(tree);
+        replaceInFilesAction.setEnabled(false);
         Action addToFavoritesAction = new AddToFavoritesAction(tree);
         addToFavoritesAction.setEnabled(false);
         Action removeFromFavoritesAction = new RemoveFromFavoritesAction(tree);
@@ -178,7 +180,7 @@ public class LayerFilesPane extends JPanel {
         gitAddAction.setEnabled(false);
         Action[] newActions = new Action[] { newFileAction, newDirectoryAction };
         Action[] actions = new Action[]{ copyAction, pasteAction, deleteAction, renameAction, duplicateAction,
-                addToFavoritesAction, removeFromFavoritesAction };
+                replaceInFilesAction, addToFavoritesAction, removeFromFavoritesAction };
         Action[] gitActions = new Action[] { gitAddAction };
 
         JPopupMenu menu = new JPopupMenu();
@@ -189,8 +191,10 @@ public class LayerFilesPane extends JPanel {
         menu.add(newMenu);
         for (Action action : actions) {
             tree.getActionMap().put(action.getValue(Action.NAME), action);
-            tree.getInputMap().put(
-                    (KeyStroke) action.getValue(Action.ACCELERATOR_KEY), action.getValue(Action.NAME));
+            if (action.getValue(Action.ACCELERATOR_KEY) != null) {
+                tree.getInputMap().put(
+                        (KeyStroke) action.getValue(Action.ACCELERATOR_KEY), action.getValue(Action.NAME));
+            }
             menu.add(action);
         }
         JMenu gitMenu = new JMenu("Git");
@@ -219,6 +223,7 @@ public class LayerFilesPane extends JPanel {
             deleteAction.setEnabled(editable && selectedFiles > 0);
             renameAction.setEnabled(editable && selectedFiles > 0);
             duplicateAction.setEnabled(editable && selectedFiles > 0);
+            replaceInFilesAction.setEnabled(editable && selectedFiles > 0);
             addToFavoritesAction.setEnabled(selectedFiles > 0);
             removeFromFavoritesAction.setEnabled(selectedFiles > 0);
             gitAddAction.setEnabled(editable && canAddToGit);
