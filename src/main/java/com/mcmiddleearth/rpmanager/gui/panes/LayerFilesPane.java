@@ -28,6 +28,7 @@ import com.mcmiddleearth.rpmanager.gui.constants.Icons;
 import com.mcmiddleearth.rpmanager.gui.listeners.LayerTreeSelectionListener;
 import com.mcmiddleearth.rpmanager.gui.utils.TreeUtils;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
+import com.mcmiddleearth.rpmanager.model.project.Project;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import javax.swing.*;
@@ -47,7 +48,7 @@ public class LayerFilesPane extends JPanel {
     private String searchText = "";
     private String filterText = "";
 
-    public LayerFilesPane(Layer layer) throws IOException, GitAPIException {
+    public LayerFilesPane(Layer layer, Project project) throws IOException, GitAPIException {
         this.layer = layer;
 
         com.mcmiddleearth.rpmanager.gui.actions.Action nextAction =
@@ -69,7 +70,44 @@ public class LayerFilesPane extends JPanel {
 
         setLayout(new BorderLayout());
         VerticalBox verticalBox = new VerticalBox();
-        verticalBox.add(new JLabel(layer.getName()));
+
+        JLabel title = new JLabel(layer.getName());
+        title.setFont(new Font(title.getFont().getName(), Font.BOLD, title.getFont().getSize()));
+        JPanel toolbar = new JPanel();
+        toolbar.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
+
+        JButton refreshButton = new IconButton(
+                new com.mcmiddleearth.rpmanager.gui.actions.Action("Refresh", Icons.REFRESH_ICON, "Refresh files") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        reload();
+                    }
+                });
+        toolbar.add(refreshButton);
+
+        JButton deleteButton = new IconButton(
+                new com.mcmiddleearth.rpmanager.gui.actions.Action("-", Icons.DELETE_ICON, "Remove layer") {
+                    @Override
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        if (JOptionPane.showConfirmDialog(MainWindow.getInstance(),
+                                "Removing a layer cannot be undone. Do you want to continue?",
+                                "Confirm removing layer",
+                                JOptionPane.YES_NO_OPTION) == 0) {
+                            project.removeLayer(layer);
+                        }
+                    }
+                });
+        if (layer.getFile().getName().endsWith(".jar")) {
+            deleteButton.setEnabled(false);
+        }
+        toolbar.add(deleteButton);
+
+        JPanel titlePanel = new JPanel();
+        titlePanel.setLayout(new BorderLayout());
+        titlePanel.add(title, BorderLayout.CENTER);
+        titlePanel.add(toolbar, BorderLayout.LINE_END);
+
+        verticalBox.add(titlePanel);
         Box horizontalBox = Box.createHorizontalBox();
         horizontalBox.add(new TextInput("", s -> this.searchText = s, input -> {
             nextAction.setEnabled(!input.getText().isEmpty());

@@ -26,14 +26,18 @@ public class Icons {
     public static final Icon NEW_PROJECT = UIManager.getIcon("FileView.fileIcon");
     public static final Icon OPEN_PROJECT = UIManager.getIcon("FileView.directoryIcon");
     public static final Icon SAVE_PROJECT = UIManager.getIcon("FileView.floppyDriveIcon");
+    public static final Icon ADD_ICON;
     public static final Icon DELETE_ICON;
     public static final Icon EXPAND_ICON;
     public static final Icon RETRACT_ICON;
     public static final Icon NEXT_ICON;
     public static final Icon PREVIOUS_ICON;
+    public static final Icon REFRESH_ICON;
 
     static {
         try {
+            BufferedImage addIcon = ImageIO.read(Icons.class.getResourceAsStream("/icons/add.png"));
+            ADD_ICON = new ImageIcon(addIcon);
             BufferedImage deleteIcon = ImageIO.read(Icons.class.getResourceAsStream("/icons/delete.png"));
             DELETE_ICON = new ImageIcon(deleteIcon);
             BufferedImage expandIcon = ImageIO.read(Icons.class.getResourceAsStream("/icons/expand.png"));
@@ -44,6 +48,8 @@ public class Icons {
             NEXT_ICON = new ImageIcon(nextIcon);
             BufferedImage previousIcon = ImageIO.read(Icons.class.getResourceAsStream("/icons/previous.png"));
             PREVIOUS_ICON = new ImageIcon(previousIcon);
+            BufferedImage refreshIcon = ImageIO.read(Icons.class.getResourceAsStream("/icons/refresh.png"));
+            REFRESH_ICON = new ImageIcon(refreshIcon);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

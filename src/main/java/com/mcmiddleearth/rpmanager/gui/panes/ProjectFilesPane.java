@@ -20,7 +20,9 @@ package com.mcmiddleearth.rpmanager.gui.panes;
 import com.mcmiddleearth.rpmanager.events.ListItemAddedEvent;
 import com.mcmiddleearth.rpmanager.events.ListItemRemovedEvent;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
+import com.mcmiddleearth.rpmanager.gui.components.IconButton;
 import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
+import com.mcmiddleearth.rpmanager.gui.constants.Icons;
 import com.mcmiddleearth.rpmanager.gui.listeners.LayerTreeSelectionListener;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 import com.mcmiddleearth.rpmanager.model.project.Project;
@@ -29,6 +31,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -52,13 +55,13 @@ public class ProjectFilesPane extends JPanel {
         setAlignmentY(TOP_ALIGNMENT);
 
         for (Layer layer : project.getLayers()) {
-            LayerFilesPane layerFilesPane = new LayerFilesPane(layer);
+            LayerFilesPane layerFilesPane = new LayerFilesPane(layer, project);
             layerFilesPane.setAlignmentY(TOP_ALIGNMENT);
-            add(layerFilesPane);
             layerFilesPanes.add(layerFilesPane);
             layerFilesPane.addTreeSelectionListener(this::onFileSelectionChanged);
         }
-        JButton addLayerButton = new JButton(new Action("+", "Add resource pack layer") {
+
+        JButton addLayerButton = new IconButton(new Action("+", Icons.ADD_ICON, "Add resource pack layer") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if (fileChooser.showOpenDialog(ProjectFilesPane.this) == JFileChooser.APPROVE_OPTION) {
@@ -68,7 +71,25 @@ public class ProjectFilesPane extends JPanel {
             }
         });
         addLayerButton.setAlignmentY(TOP_ALIGNMENT);
-        add(addLayerButton);
+        JPanel addLayerPanel = new JPanel();
+        addLayerPanel.setLayout(new BorderLayout());
+        addLayerPanel.add(addLayerButton, BorderLayout.PAGE_START);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
+                layerFilesPanes.get(layerFilesPanes.size() - 1), addLayerPanel);
+        splitPane.setDividerSize(10);
+        splitPane.setOneTouchExpandable(false);
+        splitPane.setResizeWeight(1.0);
+        splitPane.setEnabled(false);
+        for (int i = layerFilesPanes.size() - 2; i >= 0; --i) {
+            splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
+                    layerFilesPanes.get(i), splitPane);
+            splitPane.setDividerSize(10);
+            splitPane.setOneTouchExpandable(false);
+            splitPane.setResizeWeight(1.0 / (double) (layerFilesPanes.size() - i));
+        }
+
+        add(splitPane);
 
         project.addLayerAddedListener(this::onLayerAdded);
         project.addLayerRemovedListener(this::onLayerRemoved);
@@ -77,9 +98,18 @@ public class ProjectFilesPane extends JPanel {
     @SuppressWarnings("unchecked")
     private void onLayerAdded(ListItemAddedEvent event) {
         try {
-            LayerFilesPane layerFilesPane = new LayerFilesPane((Layer) event.getItem());
+            LayerFilesPane layerFilesPane = new LayerFilesPane((Layer) event.getItem(), project);
             layerFilesPane.setAlignmentY(TOP_ALIGNMENT);
-            add(layerFilesPane, event.getIndex());
+            // event.getIndex() should always be greater than 0 - it is not possible to add before vanilla pack.
+            JSplitPane mainSplitPane = (JSplitPane) layerFilesPanes.get(event.getIndex() - 1).getParent();
+            JSplitPane newInnerPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
+                    layerFilesPane, mainSplitPane.getRightComponent());
+            newInnerPane.setDividerSize(10);
+            newInnerPane.setOneTouchExpandable(false);
+            newInnerPane.setResizeWeight(mainSplitPane.getResizeWeight());
+            newInnerPane.setEnabled(mainSplitPane.isEnabled());
+            mainSplitPane.setRightComponent(newInnerPane);
+            mainSplitPane.setEnabled(true);
             layerFilesPanes.add(event.getIndex(), layerFilesPane);
             layerFilesPane.addTreeSelectionListener(this::onFileSelectionChanged);
             revalidate();
@@ -91,7 +121,22 @@ public class ProjectFilesPane extends JPanel {
     }
 
     private void onLayerRemoved(ListItemRemovedEvent event) {
-        remove(event.getIndex());
+        if (event.getIndex() == layerFilesPanes.size() - 1) {
+            // event.getIndex() should always be greater than 0 - it is not possible to remove vanilla pack.
+            JSplitPane mainSplitPane = (JSplitPane) layerFilesPanes.get(event.getIndex() - 1).getParent();
+            JSplitPane childPane = (JSplitPane) mainSplitPane.getRightComponent();
+            mainSplitPane.setRightComponent(childPane.getRightComponent());
+            mainSplitPane.setEnabled(childPane.isEnabled());
+            mainSplitPane.setResizeWeight(childPane.getResizeWeight());
+        } else {
+            // Removing from the middle.
+            JSplitPane mainSplitPane = (JSplitPane) layerFilesPanes.get(event.getIndex()).getParent();
+            JSplitPane childPane = (JSplitPane) mainSplitPane.getRightComponent();
+            mainSplitPane.setLeftComponent(childPane.getLeftComponent());
+            mainSplitPane.setRightComponent(childPane.getRightComponent());
+            mainSplitPane.setEnabled(childPane.isEnabled());
+            mainSplitPane.setResizeWeight(childPane.getResizeWeight());
+        }
         layerFilesPanes.remove(event.getIndex());
         revalidate();
         repaint();

@@ -69,14 +69,14 @@ public class ProjectPane extends JPanel {
                         ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER,
                         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED),
                 this.fileEditPane);
-        innerSplitPane.setDividerSize(1);
+        innerSplitPane.setDividerSize(10);
         innerSplitPane.setOneTouchExpandable(false);
         innerSplitPane.setResizeWeight(0.5);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
                 innerSplitPane,
                 relatedFilesPane);
-        splitPane.setDividerSize(1);
+        splitPane.setDividerSize(10);
         splitPane.setOneTouchExpandable(false);
         splitPane.setResizeWeight(0.66);
 
