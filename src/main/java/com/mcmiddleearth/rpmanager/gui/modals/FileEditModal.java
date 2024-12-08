@@ -54,12 +54,15 @@ public class FileEditModal extends JDialog {
                 try {
                     //TODO silly workaround to detect errors because of a critical error in GSON
                     //     which makes it accept everything regardless of the desired object type
-                    String newJson = GSON.toJson(GSON.fromJson(textArea.getText(), type));
-                    JsonElement element1 = JsonParser.parseString(textArea.getText());
-                    JsonElement element2 = JsonParser.parseString(newJson);
-                    if (!element1.equals(element2)) {
-                        throw new JsonSyntaxException("Invalid JSON object (no further details available due to a " +
-                                "critical error in GSON library)");
+                    if (type != String.class) {
+                        String newJson = GSON.toJson(GSON.fromJson(textArea.getText(), type));
+                        JsonElement element1 = JsonParser.parseString(textArea.getText());
+                        JsonElement element2 = JsonParser.parseString(newJson);
+                        if (!element1.equals(element2)) {
+                            throw new JsonSyntaxException(
+                                    "Invalid JSON object (no further details available due to a critical error in " +
+                                            "GSON library)");
+                        }
                     }
                     onAccept.accept(textArea.getText());
                     FileEditModal.this.close();

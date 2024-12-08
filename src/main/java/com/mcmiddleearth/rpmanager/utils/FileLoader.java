@@ -21,10 +21,7 @@ import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
 import com.mcmiddleearth.rpmanager.gui.utils.TreeUtils;
 import com.mcmiddleearth.rpmanager.model.internal.SelectedFileData;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
-import com.mcmiddleearth.rpmanager.utils.loaders.BlockModelFileLoader;
-import com.mcmiddleearth.rpmanager.utils.loaders.BlockstateFileLoader;
-import com.mcmiddleearth.rpmanager.utils.loaders.ItemModelFileLoader;
-import com.mcmiddleearth.rpmanager.utils.loaders.TextureFileLoader;
+import com.mcmiddleearth.rpmanager.utils.loaders.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +31,8 @@ import java.util.stream.Stream;
 
 public interface FileLoader {
     List<FileLoader> LOADERS = Arrays.asList(
-            new BlockstateFileLoader(), new BlockModelFileLoader(), new ItemModelFileLoader(), new TextureFileLoader());
+            new BlockstateFileLoader(), new BlockModelFileLoader(), new ItemModelFileLoader(), new TextureFileLoader(),
+            new TextFileLoader());
 
     Object loadFile(Layer layer, Object[] path) throws IOException;
     Object loadFile(File file) throws IOException;

@@ -48,6 +48,7 @@ public class FileEditPane extends JPanel {
             .setLenient().setPrettyPrinting().enableComplexMapKeySerialization().create();
     private final JPanel editPane;
     private final JTextArea previewArea;
+    private final JButton previewEditButton;
     private Class<?> previewType = null;
     private StaticTreeNode currentNode = null;
     private JTree currentTree = null;
@@ -67,7 +68,7 @@ public class FileEditPane extends JPanel {
 
         JPanel previewPane = new JPanel();
         previewPane.setLayout(new BorderLayout());
-        JButton previewEditButton = new JButton(new com.mcmiddleearth.rpmanager.gui.actions.Action(
+        previewEditButton = new JButton(new com.mcmiddleearth.rpmanager.gui.actions.Action(
                 "Edit", "Manually edit this file") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -110,6 +111,7 @@ public class FileEditPane extends JPanel {
     private void setData(SelectedFileData data, File file) {
         editPane.removeAll();
         if (data == null) {
+            updatePreview("", String.class, false);
             JLabel label = new JLabel("No file selected, or no editor available for selected file.");
             editPane.add(label, BorderLayout.CENTER);
         } else if (data.getData() instanceof BlockState blockState) {
@@ -135,7 +137,12 @@ public class FileEditPane extends JPanel {
             TextureFileEditPane textureFileEditPane = new TextureFileEditPane(file, bufferedImage);
             JScrollPane scrollPane = new FastScrollPane(textureFileEditPane);
             editPane.add(scrollPane, BorderLayout.CENTER);
+        } else if (data.getData() instanceof String string) {
+            updatePreview(string, String.class);
+            JLabel label = new JLabel("No editor available for selected file.");
+            editPane.add(label, BorderLayout.CENTER);
         } else {
+            updatePreview("", String.class, false);
             JLabel label = new JLabel("No file selected, or no editor available for selected file.");
             editPane.add(label, BorderLayout.CENTER);
         }
@@ -154,8 +161,13 @@ public class FileEditPane extends JPanel {
     }
 
     private void updatePreview(String text, Class<?> type) {
+        updatePreview(text, type, true);
+    }
+
+    private void updatePreview(String text, Class<?> type, boolean editable) {
         previewArea.setText(text);
         previewType = type;
+        previewEditButton.setEnabled(editable);
     }
 
     private void updateFile(String text) {
