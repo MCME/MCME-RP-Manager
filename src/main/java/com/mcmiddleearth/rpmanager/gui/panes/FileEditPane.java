@@ -45,7 +45,7 @@ import java.nio.charset.StandardCharsets;
 
 public class FileEditPane extends JPanel {
     private static final Gson GSON = new GsonBuilder()
-            .setLenient().setPrettyPrinting().enableComplexMapKeySerialization().create();
+            .setLenient().setPrettyPrinting().enableComplexMapKeySerialization().disableHtmlEscaping().create();
     private final JPanel editPane;
     private final JTextArea previewArea;
     private final JButton previewEditButton;
