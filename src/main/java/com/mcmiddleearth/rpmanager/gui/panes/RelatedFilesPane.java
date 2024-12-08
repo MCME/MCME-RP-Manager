@@ -67,7 +67,7 @@ public class RelatedFilesPane extends JPanel {
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true,
                 new FastScrollPane(previewOuterPane),
                 selectFilePane);
-        splitPane.setDividerSize(1);
+        splitPane.setDividerSize(10);
         splitPane.setOneTouchExpandable(false);
         splitPane.setResizeWeight(0.5);
 

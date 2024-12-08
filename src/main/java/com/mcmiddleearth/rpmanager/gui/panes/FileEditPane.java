@@ -90,7 +90,7 @@ public class FileEditPane extends JPanel {
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true,
                 editPane,
                 previewOuterPane);
-        splitPane.setDividerSize(1);
+        splitPane.setDividerSize(10);
         splitPane.setOneTouchExpandable(false);
         splitPane.setResizeWeight(0.5);
 
