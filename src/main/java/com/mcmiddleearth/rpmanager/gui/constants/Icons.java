@@ -33,6 +33,7 @@ public class Icons {
     public static final Icon NEXT_ICON;
     public static final Icon PREVIOUS_ICON;
     public static final Icon REFRESH_ICON;
+    public static final Icon FOLDER_ICON;
 
     static {
         try {
@@ -50,6 +51,8 @@ public class Icons {
             PREVIOUS_ICON = new ImageIcon(previousIcon);
             BufferedImage refreshIcon = ImageIO.read(Icons.class.getResourceAsStream("/icons/refresh.png"));
             REFRESH_ICON = new ImageIcon(refreshIcon);
+            BufferedImage folderIcon = ImageIO.read(Icons.class.getResourceAsStream("/icons/folder.png"));
+            FOLDER_ICON = new ImageIcon(folderIcon);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

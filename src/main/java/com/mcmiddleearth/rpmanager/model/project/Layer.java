@@ -23,7 +23,7 @@ import com.mcmiddleearth.rpmanager.json.adapters.FileJsonAdapter;
 import java.io.File;
 
 public class Layer {
-    private final String name;
+    private String name;
     @JsonAdapter(FileJsonAdapter.Factory.class)
     private File file;
 
@@ -34,6 +34,10 @@ public class Layer {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public File getFile() {

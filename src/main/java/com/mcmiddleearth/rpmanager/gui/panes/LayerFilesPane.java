@@ -34,6 +34,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
@@ -44,6 +45,7 @@ import java.io.IOException;
 public class LayerFilesPane extends JPanel {
     private final Layer layer;
     private final JTree tree;
+    private final JLabel title;
     private boolean eventsEnabled = true;
     private String searchText = "";
     private String filterText = "";
@@ -71,36 +73,9 @@ public class LayerFilesPane extends JPanel {
         setLayout(new BorderLayout());
         VerticalBox verticalBox = new VerticalBox();
 
-        JLabel title = new JLabel(layer.getName());
+        title = new JLabel(layer.getName());
         title.setFont(new Font(title.getFont().getName(), Font.BOLD, title.getFont().getSize()));
-        JPanel toolbar = new JPanel();
-        toolbar.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
-
-        JButton refreshButton = new IconButton(
-                new com.mcmiddleearth.rpmanager.gui.actions.Action("Refresh", Icons.REFRESH_ICON, "Refresh files") {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        reload();
-                    }
-                });
-        toolbar.add(refreshButton);
-
-        JButton deleteButton = new IconButton(
-                new com.mcmiddleearth.rpmanager.gui.actions.Action("-", Icons.DELETE_ICON, "Remove layer") {
-                    @Override
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        if (JOptionPane.showConfirmDialog(MainWindow.getInstance(),
-                                "Removing a layer cannot be undone. Do you want to continue?",
-                                "Confirm removing layer",
-                                JOptionPane.YES_NO_OPTION) == 0) {
-                            project.removeLayer(layer);
-                        }
-                    }
-                });
-        if (layer.getFile().getName().endsWith(".jar")) {
-            deleteButton.setEnabled(false);
-        }
-        toolbar.add(deleteButton);
+        JPanel toolbar = createToolbar(layer, project);
 
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new BorderLayout());
@@ -134,6 +109,77 @@ public class LayerFilesPane extends JPanel {
         add(new FastScrollPane(this.tree = createTree(layer.getFile()),
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+    }
+
+    private JPanel createToolbar(Layer layer, Project project) {
+        JPanel toolbar = new JPanel();
+        toolbar.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 5));
+
+        JButton changeLocationButton = new IconButton(
+                new com.mcmiddleearth.rpmanager.gui.actions.Action(
+                        "Change location", Icons.FOLDER_ICON, "Change location") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (layer.getFile().getName().endsWith(".jar")) {
+                            changeMinecraftVersion();
+                        } else {
+                            changeResourcePackLocation();
+                        }
+                    }
+                });
+        toolbar.add(changeLocationButton);
+
+        JButton refreshButton = new IconButton(
+                new com.mcmiddleearth.rpmanager.gui.actions.Action("Refresh", Icons.REFRESH_ICON, "Refresh files") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        reload();
+                    }
+                });
+        toolbar.add(refreshButton);
+
+        JButton deleteButton = new IconButton(
+                new com.mcmiddleearth.rpmanager.gui.actions.Action("-", Icons.DELETE_ICON, "Remove layer") {
+                    @Override
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        if (JOptionPane.showConfirmDialog(MainWindow.getInstance(),
+                                "Removing a layer cannot be undone. Do you want to continue?",
+                                "Confirm removing layer",
+                                JOptionPane.YES_NO_OPTION) == 0) {
+                            project.removeLayer(layer);
+                        }
+                    }
+                });
+        if (layer.getFile().getName().endsWith(".jar")) {
+            deleteButton.setEnabled(false);
+        }
+        toolbar.add(deleteButton);
+        return toolbar;
+    }
+
+    private void changeMinecraftVersion() {
+        JFileChooser fileChooser = new JFileChooser(layer.getFile());
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("JAR file", "jar"));
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.setFileHidingEnabled(false);
+        fileChooser.setDialogTitle("Choose Minecraft JAR location");
+        if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            layer.setFile(fileChooser.getSelectedFile());
+            reload();
+        }
+    }
+
+    private void changeResourcePackLocation() {
+        JFileChooser fileChooser = new JFileChooser(layer.getFile());
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Resource pack metadata file", "mcmeta"));
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.setFileHidingEnabled(false);
+        fileChooser.setDialogTitle("Choose resource pack location");
+        if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            layer.setFile(fileChooser.getSelectedFile());
+            layer.setName(layer.getFile().getParentFile().getName());
+            reload(true);
+        }
     }
 
     private void findNext() {
@@ -299,13 +345,24 @@ public class LayerFilesPane extends JPanel {
     }
 
     public void reload() {
+        reload(false);
+    }
+
+    private void reload(boolean changeTitle) {
         try {
             StaticTreeNode rootNode = createRootNode(layer.getFile());
             StaticTreeNode currentRoot = (StaticTreeNode) tree.getModel().getRoot();
             rootNode.getChildren().forEach(n -> n.setParent(currentRoot));
             currentRoot.getChildren().clear();
             currentRoot.getChildren().addAll(rootNode.getChildren());
+            currentRoot.setName(rootNode.getName());
+            currentRoot.setGit(rootNode.getGit());
             ((DefaultTreeModel) tree.getModel()).reload();
+            if (changeTitle) {
+                title.setText(layer.getName());
+            }
+            invalidate();
+            repaint();
         } catch (IOException | GitAPIException e) {
             throw new RuntimeException(e);
             //TODO error dialog
