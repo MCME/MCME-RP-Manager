@@ -23,6 +23,7 @@ import com.mcmiddleearth.rpmanager.events.ListSelectionChangeEvent;
 import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.components.FastScrollPane;
 import com.mcmiddleearth.rpmanager.gui.components.VerticalBox;
+import com.mcmiddleearth.rpmanager.gui.components.VerticalLabel;
 import com.mcmiddleearth.rpmanager.gui.components.VerticalLabelUI;
 import com.mcmiddleearth.rpmanager.model.project.Project;
 
@@ -55,13 +56,11 @@ public class FileShortcutsPane extends JPanel {
         setLayout(new BorderLayout());
 
         VerticalBox verticalBox = new VerticalBox();
-        verticalBox.add(this.recentFilesLabel = new JLabel(" Recent files "));
-        recentFilesLabel.setUI(new VerticalLabelUI(false));
+        verticalBox.add(this.recentFilesLabel = new VerticalLabel(" Recent files ", false));
         recentFilesLabel.addMouseListener(new MouseClickAdapter());
         recentFilesLabel.setFont(recentFilesLabel.getFont().deriveFont(Font.BOLD, 15.f));
         verticalBox.add(new JSeparator(JSeparator.HORIZONTAL));
-        verticalBox.add(this.favoriteFilesLabel = new JLabel(" Favorite files "));
-        favoriteFilesLabel.setUI(new VerticalLabelUI(false));
+        verticalBox.add(this.favoriteFilesLabel = new VerticalLabel(" Favorite files ", false));
         favoriteFilesLabel.addMouseListener(new MouseClickAdapter());
         favoriteFilesLabel.setFont(favoriteFilesLabel.getFont().deriveFont(Font.BOLD, 15.f));
 
