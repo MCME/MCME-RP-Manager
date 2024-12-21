@@ -15,8 +15,7 @@ import java.util.stream.Stream;
 public class ResourcePackManager {
     public static void main(String[] args) throws IOException {
         Settings settings = loadSettings();
-
-        JFrame.setDefaultLookAndFeelDecorated(true);
+        JFrame.setDefaultLookAndFeelDecorated(false);
         BlockStateUtils.init();
         SwingUtilities.invokeLater(() -> {
             Stream.of(

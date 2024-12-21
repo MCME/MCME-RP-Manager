@@ -30,13 +30,11 @@ import com.mcmiddleearth.rpmanager.utils.ActionManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class MainWindow extends JFrame {
     private static MainWindow INSTANCE;
@@ -60,6 +58,7 @@ public class MainWindow extends JFrame {
         add(this.projectsPane = new ProjectsPane(session), BorderLayout.CENTER);
         setVisible(true);
         updateSettings();
+        this.addWindowStateListener(this::onWindowStateChanged);
         setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
         SwingUtilities.invokeLater(this::updateRecentProjects);
     }
@@ -169,6 +168,42 @@ public class MainWindow extends JFrame {
 
     public void reload() {
         projectsPane.reload();
+    }
+
+    private void onWindowStateChanged(WindowEvent event) {
+        if ((event.getNewState() & JFrame.MAXIMIZED_BOTH) != 0) {
+            Rectangle oldMaximizedBounds = getMaximizedBounds();
+            updateMaximizedBounds();
+            Rectangle newMaximizedBounds = getMaximizedBounds();
+            if( newMaximizedBounds != null && !newMaximizedBounds.equals( oldMaximizedBounds ) ) {
+                int oldExtendedState = getExtendedState();
+                setExtendedState(oldExtendedState & ~JFrame.MAXIMIZED_BOTH);
+                SwingUtilities.invokeLater(() -> setExtendedState(oldExtendedState));
+            }
+        }
+    }
+
+    private void updateMaximizedBounds() {
+        Rectangle oldMaximizedBounds = getMaximizedBounds();
+        if (oldMaximizedBounds == null) {
+            GraphicsConfiguration gc = getGraphicsConfiguration();
+            Rectangle screenBounds = gc.getBounds();
+
+            int maximizedX = screenBounds.x;
+            int maximizedY = screenBounds.y;
+            int maximizedWidth = screenBounds.width;
+            int maximizedHeight = screenBounds.height;
+
+            Insets screenInsets = getToolkit().getScreenInsets(gc);
+
+            Rectangle newMaximizedBounds = new Rectangle(
+                    maximizedX + screenInsets.left,
+                    maximizedY + screenInsets.top,
+                    maximizedWidth - screenInsets.left - screenInsets.right,
+                    maximizedHeight - screenInsets.top - screenInsets.bottom);
+
+            setMaximizedBounds(newMaximizedBounds);
+        }
     }
 
     private static class RecentProjects {
