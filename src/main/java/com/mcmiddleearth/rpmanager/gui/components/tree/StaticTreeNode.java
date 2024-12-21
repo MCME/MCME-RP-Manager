@@ -20,6 +20,7 @@ package com.mcmiddleearth.rpmanager.gui.components.tree;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.util.FileUtils;
 
 import javax.swing.tree.TreeNode;
 import java.io.File;
@@ -134,7 +135,7 @@ public class StaticTreeNode implements TreeNode {
     public void refreshGitStatus() throws GitAPIException {
         Status status = null;
         if (git != null && file.isDirectory()) {
-            String path = resolvePath(file, (StaticTreeNode) parent);
+            String path = resolveGitPath(file, (StaticTreeNode) parent);
             if (path == null) {
                 status = git.status().call();
             } else {
@@ -145,7 +146,7 @@ public class StaticTreeNode implements TreeNode {
     }
 
     private static void doRefreshGitStatus(StaticTreeNode node, Status status) {
-        String path = resolvePath(node.file, (StaticTreeNode) node.parent);
+        String path = resolveGitPath(node.file, (StaticTreeNode) node.parent);
         if (status != null) {
             if (status.getAdded().contains(path)) {
                 node.status = NodeStatus.ADDED;
@@ -219,6 +220,16 @@ public class StaticTreeNode implements TreeNode {
             parent = (StaticTreeNode) parent.getParent();
         }
         return parent.getFile().toPath().relativize(file.toPath()).toString();
+    }
+
+    private static String resolveGitPath(File file, StaticTreeNode parent) {
+        if (parent == null) {
+            return file.isDirectory() ? null : file.getName();
+        }
+        while (parent.getParent() != null) {
+            parent = (StaticTreeNode) parent.getParent();
+        }
+        return FileUtils.relativizeGitPath(FileUtils.pathToString(parent.getFile()), FileUtils.pathToString(file));
     }
 
     private static List<StaticTreeNode> filterVisible(List<StaticTreeNode> list) {
