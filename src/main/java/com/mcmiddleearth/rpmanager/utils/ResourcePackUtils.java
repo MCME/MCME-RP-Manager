@@ -20,6 +20,7 @@ package com.mcmiddleearth.rpmanager.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mcmiddleearth.rpmanager.model.*;
+import com.mcmiddleearth.rpmanager.model.internal.LayerRelatedFiles;
 import com.mcmiddleearth.rpmanager.model.internal.RelatedFiles;
 import com.mcmiddleearth.rpmanager.model.internal.SelectedFileData;
 import com.mcmiddleearth.rpmanager.model.project.Project;
@@ -86,8 +87,8 @@ public class ResourcePackUtils {
     }
 
     public static RelatedFiles getRelatedFiles(BlockState blockState, Project project) throws IOException {
-        List<SelectedFileData> relatedModels = getRelatedModels(blockState, project);
-        List<SelectedFileData> relatedTextures = getRelatedTextures(relatedModels, project);
+        List<LayerRelatedFiles> relatedModels = getRelatedModels(blockState, project);
+        List<LayerRelatedFiles> relatedTextures = getRelatedTextures(relatedModels, project);
         return new RelatedFiles(relatedModels, relatedTextures);
     }
 
@@ -97,15 +98,18 @@ public class ResourcePackUtils {
                 Stream.of(model.getParent()).map(ResourcePackUtils::removePrefix)
                         .map(s -> s.contains("/") ? s : model instanceof BlockModel ? "block/" + s : "item/" + s)
                         .toList();
-        List<SelectedFileData> relatedModels = getModels(models, project);
-        List<SelectedFileData> relatedTextures = getRelatedTextures(
-                Stream.concat(Stream.of(new SelectedFileData(model, "", new Object[0])), relatedModels.stream())
+        List<LayerRelatedFiles> relatedModels = getModels(models, project);
+        List<LayerRelatedFiles> relatedTextures = getRelatedTextures(
+                Stream.concat(
+                        Stream.of(new LayerRelatedFiles(null,
+                                Collections.singletonList(new SelectedFileData(model, "", new Object[0])))),
+                        relatedModels.stream())
                         .toList(),
                 project);
         return new RelatedFiles(relatedModels, relatedTextures);
     }
 
-    private static List<SelectedFileData> getRelatedModels(BlockState blockState, Project project) throws IOException {
+    private static List<LayerRelatedFiles> getRelatedModels(BlockState blockState, Project project) throws IOException {
         List<String> models = Optional.ofNullable(blockState.getVariants())
                 .map(v -> v.values().stream().flatMap(l -> l.stream().map(Model::getModel)))
                 .orElseGet(() -> blockState.getMultipart().stream().flatMap(
@@ -117,41 +121,49 @@ public class ResourcePackUtils {
         return getModels(models, project);
     }
 
-    private static List<SelectedFileData> getModels(List<String> models, Project project) throws IOException {
-        List<SelectedFileData> result = new LinkedList<>();
-        for (String model : models) {
-            Object[] path = Stream.concat(Stream.of(MODEL_DIR_PATH), Stream.of((model + ".json").split("/")))
-                    .toArray();
-            for (com.mcmiddleearth.rpmanager.model.project.Layer layer : reverse(project.getLayers())) {
+    private static List<LayerRelatedFiles> getModels(List<String> models, Project project) throws IOException {
+        List<LayerRelatedFiles> result = new LinkedList<>();
+        for (com.mcmiddleearth.rpmanager.model.project.Layer layer : project.getLayers()) {
+            List<SelectedFileData> layerModels = new LinkedList<>();
+            for (String model : models) {
+                Object[] path = Stream.concat(Stream.of(MODEL_DIR_PATH), Stream.of((model + ".json").split("/")))
+                        .toArray();
                 if (containsFile(layer, path)) {
-                    result.add(FileLoader.load(layer, Stream.concat(
+                    layerModels.add(FileLoader.load(layer, Stream.concat(
                             layer.getFile().getName().endsWith(".jar") ? Stream.empty() : Stream.of(layer.getName()),
                             Stream.of(path)).toArray()));
-                    break;
                 }
+            }
+            if (!layerModels.isEmpty()) {
+                result.add(new LayerRelatedFiles(layer.getName(), layerModels));
             }
         }
         return result;
     }
 
-    private static List<SelectedFileData> getRelatedTextures(List<SelectedFileData> models, Project project)
+    private static List<LayerRelatedFiles> getRelatedTextures(List<LayerRelatedFiles> models, Project project)
             throws IOException {
         List<String> textures = models.stream()
+                .flatMap(files -> files.getRelatedFiles().stream())
                 .flatMap(fileData -> Optional.ofNullable(((BaseModel) fileData.getData()).getTextures()).stream()
                         .flatMap(t -> t.values().stream()))
-                .distinct()
                 .map(ResourcePackUtils::removePrefix)
+                .distinct()
                 .toList();
-        List<SelectedFileData> result = new LinkedList<>();
-        for (String texture : textures) {
-            Object[] path = Stream.concat(Stream.of(TEXTURES_DIR_PATH), Stream.of((texture + ".png").split("/")))
-                    .toArray();
-            for (com.mcmiddleearth.rpmanager.model.project.Layer layer : reverse(project.getLayers())) {
+        List<LayerRelatedFiles> result = new LinkedList<>();
+        for (com.mcmiddleearth.rpmanager.model.project.Layer layer : project.getLayers()) {
+            List<SelectedFileData> layerTextures = new LinkedList<>();
+            for (String texture : textures) {
+                Object[] path = Stream.concat(Stream.of(TEXTURES_DIR_PATH), Stream.of((texture + ".png").split("/")))
+                        .toArray();
                 if (containsFile(layer, path)) {
-                    result.add(FileLoader.load(
-                            layer, Stream.concat(Stream.of(layer.getName()), Stream.of(path)).toArray()));
-                    break;
+                    layerTextures.add(FileLoader.load(layer, Stream.concat(
+                            layer.getFile().getName().endsWith(".jar") ? Stream.empty() : Stream.of(layer.getName()),
+                            Stream.of(path)).toArray()));
                 }
+            }
+            if (!layerTextures.isEmpty()) {
+                result.add(new LayerRelatedFiles(layer.getName(), layerTextures));
             }
         }
         return result;

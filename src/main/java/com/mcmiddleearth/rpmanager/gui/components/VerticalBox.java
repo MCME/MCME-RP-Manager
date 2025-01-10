@@ -75,6 +75,13 @@ public class VerticalBox extends JPanel {
         }
     }
 
+    @Override
+    public void removeAll() {
+        while (gridBagConstraints.gridy > 0) {
+            remove(gridBagConstraints.gridy-1);
+        }
+    }
+
     private void addVerticalGlue() {
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.VERTICAL;

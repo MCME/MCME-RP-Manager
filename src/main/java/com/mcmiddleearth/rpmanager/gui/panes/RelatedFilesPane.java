@@ -23,7 +23,9 @@ import com.mcmiddleearth.rpmanager.events.EventDispatcher;
 import com.mcmiddleearth.rpmanager.events.EventListener;
 import com.mcmiddleearth.rpmanager.events.ListDoubleClickEvent;
 import com.mcmiddleearth.rpmanager.gui.components.FastScrollPane;
+import com.mcmiddleearth.rpmanager.gui.components.VerticalBox;
 import com.mcmiddleearth.rpmanager.model.BlockModel;
+import com.mcmiddleearth.rpmanager.model.internal.LayerRelatedFiles;
 import com.mcmiddleearth.rpmanager.model.internal.RelatedFiles;
 import com.mcmiddleearth.rpmanager.model.internal.SelectedFileData;
 
@@ -34,6 +36,8 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RelatedFilesPane extends JPanel {
     private static final Gson GSON = new GsonBuilder()
@@ -41,10 +45,10 @@ public class RelatedFilesPane extends JPanel {
 
     private RelatedFiles relatedFiles;
     private final JPanel previewOuterPane;
-    private final JPanel relatedModelsPane;
-    private final JPanel relatedTexturesPane;
-    private JList<SelectedFileData> relatedModelsList;
-    private JList<SelectedFileData> relatedTexturesList;
+    private final VerticalBox relatedModelsPane;
+    private final VerticalBox relatedTexturesPane;
+    private final List<JList<SelectedFileData>> relatedModelsLists = new ArrayList<>();
+    private final List<JList<SelectedFileData>> relatedTexturesLists = new ArrayList<>();
     private boolean suppressSelectionEvents = false;
     private final EventDispatcher eventDispatcher = new EventDispatcher();
 
@@ -54,11 +58,9 @@ public class RelatedFilesPane extends JPanel {
         previewOuterPane = new JPanel();
         previewOuterPane.setLayout(new BorderLayout());
 
-        relatedModelsPane = new JPanel();
-        relatedModelsPane.setLayout(new BorderLayout());
+        relatedModelsPane = new VerticalBox();
 
-        relatedTexturesPane = new JPanel();
-        relatedTexturesPane.setLayout(new BorderLayout());
+        relatedTexturesPane = new VerticalBox();
 
         JTabbedPane selectFilePane = new JTabbedPane();
         selectFilePane.addTab("Related models", new FastScrollPane(relatedModelsPane));
@@ -79,23 +81,37 @@ public class RelatedFilesPane extends JPanel {
         previewOuterPane.removeAll();
         relatedModelsPane.removeAll();
         relatedTexturesPane.removeAll();
-        relatedModelsList = null;
-        relatedTexturesList = null;
+        relatedModelsLists.clear();
+        relatedTexturesLists.clear();
         if (relatedFiles != null) {
-            relatedModelsList = new JList<>(relatedFiles.getRelatedModels()
-                    .toArray(SelectedFileData[]::new));
-            relatedModelsList.setCellRenderer(new SelectedFileDataListCellRenderer());
-            relatedModelsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            relatedModelsList.addListSelectionListener(this::onModelSelectionChanged);
-            relatedModelsList.addMouseListener(new ListMouseAdapter());
-            relatedModelsPane.add(relatedModelsList);
-            relatedTexturesList = new JList<>(relatedFiles.getRelatedTextures()
-                    .toArray(SelectedFileData[]::new));
-            relatedTexturesList.setCellRenderer(new SelectedFileDataListCellRenderer());
-            relatedTexturesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            relatedTexturesList.addListSelectionListener(this::onTextureSelectionChanged);
-            relatedTexturesList.addMouseListener(new ListMouseAdapter());
-            relatedTexturesPane.add(relatedTexturesList);
+            for (LayerRelatedFiles layerRelatedFiles : relatedFiles.getRelatedModels()) {
+                JLabel label = new JLabel(layerRelatedFiles.getLayerName());
+                label.setFont(label.getFont().deriveFont(label.getFont().getStyle() | Font.BOLD, 15.0f));
+                relatedModelsPane.add(label);
+                relatedModelsPane.add(new JSeparator(JSeparator.HORIZONTAL));
+                JList<SelectedFileData> relatedModelsList = new JList<>(layerRelatedFiles.getRelatedFiles()
+                        .toArray(SelectedFileData[]::new));
+                relatedModelsList.setCellRenderer(new SelectedFileDataListCellRenderer());
+                relatedModelsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                relatedModelsList.addListSelectionListener(this::onModelSelectionChanged);
+                relatedModelsList.addMouseListener(new ListMouseAdapter());
+                relatedModelsPane.add(relatedModelsList);
+                relatedModelsLists.add(relatedModelsList);
+            }
+            for (LayerRelatedFiles layerRelatedFiles : relatedFiles.getRelatedTextures()) {
+                JLabel label = new JLabel(layerRelatedFiles.getLayerName());
+                label.setFont(label.getFont().deriveFont(label.getFont().getStyle() | Font.BOLD, 15.0f));
+                relatedTexturesPane.add(label);
+                relatedTexturesPane.add(new JSeparator(JSeparator.HORIZONTAL));
+                JList<SelectedFileData> relatedTexturesList = new JList<>(layerRelatedFiles.getRelatedFiles()
+                        .toArray(SelectedFileData[]::new));
+                relatedTexturesList.setCellRenderer(new SelectedFileDataListCellRenderer());
+                relatedTexturesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                relatedTexturesList.addListSelectionListener(this::onTextureSelectionChanged);
+                relatedTexturesList.addMouseListener(new ListMouseAdapter());
+                relatedTexturesPane.add(relatedTexturesList);
+                relatedTexturesLists.add(relatedTexturesList);
+            }
         }
         invalidate();
         repaint();
@@ -105,24 +121,40 @@ public class RelatedFilesPane extends JPanel {
         eventDispatcher.addEventListener(eventListener, ListDoubleClickEvent.class);
     }
 
+    @SuppressWarnings("unchecked")
     private void onModelSelectionChanged(ListSelectionEvent event) {
         if (!suppressSelectionEvents) {
             try {
                 suppressSelectionEvents = true;
-                relatedTexturesList.setSelectedValue(null, false);
-                onSelectionChanged(relatedModelsList.getSelectedValue());
+                for (JList<SelectedFileData> relatedTexturesList : relatedTexturesLists) {
+                    relatedTexturesList.setSelectedValue(null, false);
+                }
+                for (JList<SelectedFileData> relatedModelList : relatedModelsLists) {
+                    if (relatedModelList != event.getSource()) {
+                        relatedModelList.setSelectedValue(null, false);
+                    }
+                }
+                onSelectionChanged(((JList<SelectedFileData>) event.getSource()).getSelectedValue());
             } finally {
                 suppressSelectionEvents = false;
             }
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void onTextureSelectionChanged(ListSelectionEvent event) {
         if (!suppressSelectionEvents) {
             try {
                 suppressSelectionEvents = true;
-                relatedModelsList.setSelectedValue(null, false);
-                onSelectionChanged(relatedTexturesList.getSelectedValue());
+                for (JList<SelectedFileData> relatedModelsList : relatedModelsLists) {
+                    relatedModelsList.setSelectedValue(null, false);
+                }
+                for (JList<SelectedFileData> relatedTexturesList : relatedTexturesLists) {
+                    if (relatedTexturesList != event.getSource()) {
+                        relatedTexturesList.setSelectedValue(null, false);
+                    }
+                }
+                onSelectionChanged(((JList<SelectedFileData>) event.getSource()).getSelectedValue());
             } finally {
                 suppressSelectionEvents = false;
             }

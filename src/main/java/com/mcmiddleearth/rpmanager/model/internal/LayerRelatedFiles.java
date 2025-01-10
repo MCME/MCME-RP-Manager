@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 MCME
+ * Copyright (C) 2025 MCME
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,20 +19,20 @@ package com.mcmiddleearth.rpmanager.model.internal;
 
 import java.util.List;
 
-public class RelatedFiles {
-    private final List<LayerRelatedFiles> relatedModels;
-    private final List<LayerRelatedFiles> relatedTextures;
+public class LayerRelatedFiles {
+    private final String layerName;
+    private final List<SelectedFileData> relatedFiles;
 
-    public RelatedFiles(List<LayerRelatedFiles> relatedModels, List<LayerRelatedFiles> relatedTextures) {
-        this.relatedModels = relatedModels;
-        this.relatedTextures = relatedTextures;
+    public LayerRelatedFiles(String layerName, List<SelectedFileData> relatedFiles) {
+        this.layerName = layerName;
+        this.relatedFiles = relatedFiles;
     }
 
-    public List<LayerRelatedFiles> getRelatedModels() {
-        return relatedModels;
+    public String getLayerName() {
+        return layerName;
     }
 
-    public List<LayerRelatedFiles> getRelatedTextures() {
-        return relatedTextures;
+    public List<SelectedFileData> getRelatedFiles() {
+        return relatedFiles;
     }
 }
