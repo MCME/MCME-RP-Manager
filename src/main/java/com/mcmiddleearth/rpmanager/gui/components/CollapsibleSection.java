@@ -93,4 +93,10 @@ public class CollapsibleSection extends JPanel {
         revalidate();
         repaint();
     }
+
+    public void setCollapsed(boolean collapsed) {
+        if (this.collapsed != collapsed) {
+            switchState();
+        }
+    }
 }

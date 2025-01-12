@@ -102,6 +102,13 @@ public class ProjectPane extends JPanel {
         }
     }
 
+    public void selectFoundBlockState(String searchString, Object[] path) {
+        treesPane.setSelectedNode(path);
+        SwingUtilities.invokeLater(() -> {
+            fileEditPane.scrollToMatchingNodeAndExpand(searchString);
+        });
+    }
+
     private void updateRelatedFiles(SelectedFileData fileData) {
         try {
             if (fileData != null && fileData.getData() != null) {

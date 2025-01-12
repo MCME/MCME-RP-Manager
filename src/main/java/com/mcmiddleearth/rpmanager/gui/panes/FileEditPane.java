@@ -108,6 +108,14 @@ public class FileEditPane extends JPanel {
         this.currentTree = currentTree;
     }
 
+    public void scrollToMatchingNodeAndExpand(String searchString) {
+        if (editPane.getComponentCount() > 0 && editPane.getComponent(0) instanceof JScrollPane scrollPane &&
+                scrollPane.getViewport() != null &&
+                scrollPane.getViewport().getView() instanceof BlockstateFileEditPane blockstateFileEditPane) {
+            blockstateFileEditPane.scrollToMatchingNodeAndExpand(searchString);
+        }
+    }
+
     private void setData(SelectedFileData data, File file) {
         editPane.removeAll();
         if (data == null) {

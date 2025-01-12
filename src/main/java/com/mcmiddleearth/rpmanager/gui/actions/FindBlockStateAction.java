@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 MCME
+ * Copyright (C) 2025 MCME
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,23 @@
 
 package com.mcmiddleearth.rpmanager.gui.actions;
 
-public class Actions {
-    public static Action NEW_PROJECT = new NewProjectAction();
-    public static Action OPEN_PROJECT = new OpenProjectAction();
-    public static Action SAVE_PROJECT = new SaveProjectAction();
-    public static Action SETTINGS = new SettingsAction();
-    public static Action UNDO = new UndoAction();
-    public static Action REDO = new RedoAction();
-    public static Action COMPILE = new CompileAction();
-    public static Action FIND_BLOCK_STATE = new FindBlockStateAction();
+import com.mcmiddleearth.rpmanager.gui.MainWindow;
+import com.mcmiddleearth.rpmanager.gui.modals.FindBlockStateModal;
 
-    private Actions() {}
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+public class FindBlockStateAction extends Action {
+    protected FindBlockStateAction() {
+        super("Find block state...", null, "Find block state by its text representation",
+                KeyEvent.VK_F, KeyEvent.VK_F);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent actionEvent) {
+        MainWindow mainWindow = MainWindow.getInstance();
+        if (mainWindow.getCurrentProject() != null) {
+            new FindBlockStateModal(mainWindow);
+        }
+    }
 }

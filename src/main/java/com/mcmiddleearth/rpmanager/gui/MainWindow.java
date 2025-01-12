@@ -83,6 +83,8 @@ public class MainWindow extends JFrame {
         editMenu.setMnemonic('E');
         editMenu.add(Actions.UNDO);
         editMenu.add(Actions.REDO);
+        editMenu.addSeparator();
+        editMenu.add(Actions.FIND_BLOCK_STATE);
         menuBar.add(editMenu);
         JMenu toolsMenu = new JMenu("Tools");
         toolsMenu.setMnemonic('T');
@@ -140,6 +142,10 @@ public class MainWindow extends JFrame {
             }
             updateRecentProjects();
         }
+    }
+
+    public void selectFoundBlockState(String searchString, Object[] path) {
+        projectsPane.selectFoundBlockState(searchString, path);
     }
 
     private void loadRecentProjects() {

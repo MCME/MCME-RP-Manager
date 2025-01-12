@@ -34,6 +34,7 @@ public class Icons {
     public static final Icon PREVIOUS_ICON;
     public static final Icon REFRESH_ICON;
     public static final Icon FOLDER_ICON;
+    public static final Icon SEARCH_ICON;
 
     static {
         try {
@@ -53,6 +54,8 @@ public class Icons {
             REFRESH_ICON = new ImageIcon(refreshIcon);
             BufferedImage folderIcon = ImageIO.read(Icons.class.getResourceAsStream("/icons/folder.png"));
             FOLDER_ICON = new ImageIcon(folderIcon);
+            BufferedImage searchIcon = ImageIO.read(Icons.class.getResourceAsStream("/icons/search.png"));
+            SEARCH_ICON = new ImageIcon(searchIcon);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

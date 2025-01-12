@@ -23,6 +23,7 @@ import com.mcmiddleearth.rpmanager.model.*;
 import com.mcmiddleearth.rpmanager.model.internal.LayerRelatedFiles;
 import com.mcmiddleearth.rpmanager.model.internal.RelatedFiles;
 import com.mcmiddleearth.rpmanager.model.internal.SelectedFileData;
+import com.mcmiddleearth.rpmanager.model.project.Layer;
 import com.mcmiddleearth.rpmanager.model.project.Project;
 
 import java.io.*;
@@ -32,6 +33,8 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipFile;
@@ -43,8 +46,11 @@ public class ResourcePackUtils {
     private static final Gson GSON =
             new GsonBuilder().setPrettyPrinting().setLenient().enableComplexMapKeySerialization().create();
     private static final String MINECRAFT_PREFIX = "minecraft:";
+    private static final String[] BLOCK_STATE_DIR_PATH = new String[] { "assets", "minecraft", "blockstates" };
     private static final String[] MODEL_DIR_PATH = new String[] { "assets", "minecraft", "models" };
     private static final String[] TEXTURES_DIR_PATH = new String[] { "assets", "minecraft", "textures" };
+    private static final Pattern BLOCK_STATE_NAME_PATTERN =
+            Pattern.compile("^(?:" + Pattern.quote(MINECRAFT_PREFIX) + ")?([^\\[]+)(?:\\[[^]]+])?$");
 
     private ResourcePackUtils() {}
 
@@ -107,6 +113,26 @@ public class ResourcePackUtils {
                         .toList(),
                 project);
         return new RelatedFiles(relatedModels, relatedTextures);
+    }
+
+    public static List<LayerRelatedFiles> getMatchingBlockStates(Project project, String blockState)
+            throws IOException {
+        List<LayerRelatedFiles> result = new LinkedList<>();
+        Matcher matcher = BLOCK_STATE_NAME_PATTERN.matcher(blockState);
+        if (matcher.matches()) {
+            String name = matcher.group(1);
+            Object[] path = Stream.concat(Stream.of(BLOCK_STATE_DIR_PATH), Stream.of((name + ".json").split("/")))
+                    .toArray();
+            for (Layer layer : project.getLayers()) {
+                if (containsFile(layer, path)) {
+                    SelectedFileData selectedFileData = FileLoader.load(layer, Stream.concat(
+                            layer.getFile().getName().endsWith(".jar") ? Stream.empty() : Stream.of(layer.getName()),
+                            Stream.of(path)).toArray());
+                    result.add(new LayerRelatedFiles(layer.getName(), Collections.singletonList(selectedFileData)));
+                }
+            }
+        }
+        return result;
     }
 
     private static List<LayerRelatedFiles> getRelatedModels(BlockState blockState, Project project) throws IOException {

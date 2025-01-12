@@ -73,4 +73,10 @@ public class ProjectsPane extends JTabbedPane {
             p.reload();
         }
     }
+
+    public void selectFoundBlockState(String searchString, Object[] path) {
+        if (getSelectedComponent() instanceof ProjectPane p) {
+            p.selectFoundBlockState(searchString, path);
+        }
+    }
 }
