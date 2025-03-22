@@ -67,10 +67,12 @@ public class FindBlockStateModal extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    updateLayerList(ResourcePackUtils.getMatchingBlockStates(
-                            MainWindow.getInstance().getCurrentProject(), searchString));
-                    invalidate();
-                    repaint();
+                    if (searchString != null) {
+                        updateLayerList(ResourcePackUtils.getMatchingBlockStates(
+                                MainWindow.getInstance().getCurrentProject(), searchString.trim()));
+                        revalidate();
+                        repaint();
+                    }
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(MainWindow.getInstance(), "Unknown error", "Error",
                             JOptionPane.ERROR_MESSAGE);
@@ -108,9 +110,14 @@ public class FindBlockStateModal extends JDialog {
 
         updateLayerList(null);
 
-        setLocation(MainWindow.getInstance().getMousePosition());
         pack();
-        setVisible(true);
+
+        SwingUtilities.invokeLater(() -> {
+            setLocation(
+                    MainWindow.getInstance().getX() + MainWindow.getInstance().getWidth()/2 - getWidth()/2,
+                    MainWindow.getInstance().getY() + MainWindow.getInstance().getHeight()/2 - getHeight()/2);
+            setVisible(true);
+        });
     }
 
     public void close() {
@@ -182,7 +189,7 @@ public class FindBlockStateModal extends JDialog {
                 if (r != null && r.contains(e.getPoint())) {
                     LayerRelatedFiles data = list.getSelectedValue();
                     MainWindow.getInstance().selectFoundBlockState(
-                            searchString, data.getRelatedFiles().get(0).getPath());
+                            searchString.trim(), data.getRelatedFiles().get(0).getPath());
                     close();
                 }
             }

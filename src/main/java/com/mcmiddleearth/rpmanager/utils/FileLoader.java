@@ -44,8 +44,7 @@ public interface FileLoader {
             if (loader.canLoad(layer, path)) {
                 String fileName = path[path.length-1].toString();
                 return new SelectedFileData(
-                        loader.loadFile(layer, path), fileName.substring(0, fileName.lastIndexOf(".")),
-                        Stream.of(path).skip(layer.getFile().getName().endsWith(".jar") ? 1L : 0L).toArray());
+                        loader.loadFile(layer, path), fileName.substring(0, fileName.lastIndexOf(".")), path);
             }
         }
         return null;

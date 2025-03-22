@@ -47,7 +47,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BlockstateFileEditPane extends VerticalBox {
-    private static final Pattern BLOCK_STATE_VARIANT_PATTERN = Pattern.compile("^[^\\[]+\\[([^]]*)]$");
+    private static final Pattern BLOCK_STATE_VARIANT_PATTERN = Pattern.compile("^[^\\[#]+\\[([^]]*)]$");
+    private static final Pattern BLOCK_STATE_VARIANT_PATTERN2 = Pattern.compile("^[^#]+#(.*)$");
     private final String fileName;
     private final BlockState blockState;
     private final EventDispatcher eventDispatcher = new EventDispatcher();
@@ -92,7 +93,9 @@ public class BlockstateFileEditPane extends VerticalBox {
 
     public void scrollToMatchingNodeAndExpand(String searchString) {
         Matcher matcher = BLOCK_STATE_VARIANT_PATTERN.matcher(searchString);
-        Map<String, String> matchValues = getVariantValues(matcher.matches() ? matcher.group(1) : null);
+        Matcher matcher2 = BLOCK_STATE_VARIANT_PATTERN2.matcher(searchString);
+        Map<String, String> matchValues = getVariantValues(matcher.matches() ?
+                matcher.group(1) : (matcher2.matches() ? matcher2.group(1) : null));
         for (int i = 0; i < getComponentCount(); ++i) {
             if (getComponent(i) instanceof CollapsibleSection collapsibleSection) {
                 if (collapsibleSection.getContent() instanceof VariantEditPane variantEditPane) {

@@ -50,7 +50,9 @@ public class ResourcePackUtils {
     private static final String[] MODEL_DIR_PATH = new String[] { "assets", "minecraft", "models" };
     private static final String[] TEXTURES_DIR_PATH = new String[] { "assets", "minecraft", "textures" };
     private static final Pattern BLOCK_STATE_NAME_PATTERN =
-            Pattern.compile("^(?:" + Pattern.quote(MINECRAFT_PREFIX) + ")?([^\\[]+)(?:\\[[^]]+])?$");
+            Pattern.compile("^(?:" + Pattern.quote(MINECRAFT_PREFIX) + ")?([^\\[#]+)(?:\\[[^]]+])?$");
+    private static final Pattern BLOCK_STATE_NAME_PATTERN2 =
+            Pattern.compile("^(?:" + Pattern.quote(MINECRAFT_PREFIX) + ")?([^#]+)#(?:.*)?$");
 
     private ResourcePackUtils() {}
 
@@ -119,8 +121,15 @@ public class ResourcePackUtils {
             throws IOException {
         List<LayerRelatedFiles> result = new LinkedList<>();
         Matcher matcher = BLOCK_STATE_NAME_PATTERN.matcher(blockState);
+        Matcher matcher2 = BLOCK_STATE_NAME_PATTERN2.matcher(blockState);
+        Matcher matching = null;
         if (matcher.matches()) {
-            String name = matcher.group(1);
+            matching = matcher;
+        } else if (matcher2.matches()) {
+            matching = matcher2;
+        }
+        if (matching != null) {
+            String name = matching.group(1);
             Object[] path = Stream.concat(Stream.of(BLOCK_STATE_DIR_PATH), Stream.of((name + ".json").split("/")))
                     .toArray();
             for (Layer layer : project.getLayers()) {
