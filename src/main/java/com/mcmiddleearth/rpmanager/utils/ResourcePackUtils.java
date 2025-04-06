@@ -17,8 +17,6 @@
 
 package com.mcmiddleearth.rpmanager.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mcmiddleearth.rpmanager.model.*;
 import com.mcmiddleearth.rpmanager.model.internal.LayerRelatedFiles;
 import com.mcmiddleearth.rpmanager.model.internal.RelatedFiles;
@@ -43,8 +41,6 @@ import java.util.zip.ZipOutputStream;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class ResourcePackUtils {
-    private static final Gson GSON =
-            new GsonBuilder().setPrettyPrinting().setLenient().enableComplexMapKeySerialization().create();
     private static final String MINECRAFT_PREFIX = "minecraft:";
     private static final String[] BLOCK_STATE_DIR_PATH = new String[] { "assets", "minecraft", "blockstates" };
     private static final String[] MODEL_DIR_PATH = new String[] { "assets", "minecraft", "models" };
@@ -58,7 +54,7 @@ public class ResourcePackUtils {
 
     public static void saveFile(Object data, File target) throws IOException {
         try (FileOutputStream fileOutputStream = new FileOutputStream(target)) {
-            fileOutputStream.write(GSON.toJson(data).getBytes(StandardCharsets.UTF_8));
+            fileOutputStream.write(GsonProvider.getGson().toJson(data).getBytes(StandardCharsets.UTF_8));
         }
     }
 

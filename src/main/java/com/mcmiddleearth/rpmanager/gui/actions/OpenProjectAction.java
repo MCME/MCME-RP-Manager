@@ -17,11 +17,10 @@
 
 package com.mcmiddleearth.rpmanager.gui.actions;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.constants.Icons;
 import com.mcmiddleearth.rpmanager.model.project.Project;
+import com.mcmiddleearth.rpmanager.utils.GsonProvider;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -32,7 +31,6 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class OpenProjectAction extends Action {
-    private static final Gson GSON = new GsonBuilder().setLenient().create();
     private final JFileChooser fileChooser;
 
     protected OpenProjectAction() {
@@ -54,7 +52,7 @@ public class OpenProjectAction extends Action {
 
     public static void doOpenProject(File projectFile) {
         try (FileReader fileReader = new FileReader(projectFile)) {
-            Project project = GSON.fromJson(fileReader, Project.class);
+            Project project = GsonProvider.getGson().fromJson(fileReader, Project.class);
             project.setProjectFile(projectFile);
             project.setLocation(projectFile.getParentFile());
             project.setName(projectFile.getName().substring(0, projectFile.getName().length() - 10));

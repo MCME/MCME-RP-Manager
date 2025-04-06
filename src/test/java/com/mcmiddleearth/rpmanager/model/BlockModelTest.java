@@ -18,6 +18,7 @@
 package com.mcmiddleearth.rpmanager.model;
 
 import com.google.gson.Gson;
+import com.mcmiddleearth.rpmanager.utils.GsonProvider;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStreamReader;
@@ -28,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class BlockModelTest {
     @Test
     public void testParseBlockModel() {
-        Gson gson = new Gson();
+        Gson gson = GsonProvider.getGson();
         Reader reader = new InputStreamReader(
                 BlockModelTest.class.getResourceAsStream("/models/block/stone.json"));
         BlockModel stone = gson.fromJson(reader, BlockModel.class);
