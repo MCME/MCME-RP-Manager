@@ -24,6 +24,7 @@ import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
 import com.mcmiddleearth.rpmanager.gui.modals.FileEditModal;
 import com.mcmiddleearth.rpmanager.model.BlockModel;
 import com.mcmiddleearth.rpmanager.model.BlockState;
+import com.mcmiddleearth.rpmanager.model.Item;
 import com.mcmiddleearth.rpmanager.model.ItemModel;
 import com.mcmiddleearth.rpmanager.model.internal.SelectedFileData;
 import com.mcmiddleearth.rpmanager.utils.Action;
@@ -124,6 +125,12 @@ public class FileEditPane extends JPanel {
             BlockstateFileEditPane blockstateFileEditPane = new BlockstateFileEditPane(data.getName(), blockState);
             blockstateFileEditPane.addChangeListener(this::onChange);
             JScrollPane scrollPane = new FastScrollPane(blockstateFileEditPane);
+            editPane.add(scrollPane, BorderLayout.CENTER);
+        } else if (data.getData() instanceof Item item) {
+            updatePreview(GsonProvider.getGson().toJson(data.getData()), Item.class);
+            ItemFileEditPane itemFileEditPane = new ItemFileEditPane(item);
+            itemFileEditPane.addChangeListener(this::onChange);
+            JScrollPane scrollPane = new FastScrollPane(itemFileEditPane);
             editPane.add(scrollPane, BorderLayout.CENTER);
         } else if (data.getData() instanceof BlockModel blockModel) {
             updatePreview(GsonProvider.getGson().toJson(data.getData()), BlockModel.class);

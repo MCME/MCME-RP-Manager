@@ -25,6 +25,7 @@ import com.mcmiddleearth.rpmanager.gui.utils.FormButtonEnabledListener;
 import com.mcmiddleearth.rpmanager.gui.utils.TreeUtils;
 import com.mcmiddleearth.rpmanager.utils.loaders.BlockModelFileLoader;
 import com.mcmiddleearth.rpmanager.utils.loaders.BlockstateFileLoader;
+import com.mcmiddleearth.rpmanager.utils.loaders.ItemFileLoader;
 import com.mcmiddleearth.rpmanager.utils.loaders.ItemModelFileLoader;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
@@ -53,6 +54,15 @@ public class NewFileModal extends JDialog {
                 "textures": {
                 }
             }""";
+    private static final String NEW_ITEM_CONTENT = """
+            {
+                "model": {
+                    "type": "minecraft:range_dispatch",
+                    "property": "minecraft:custom_model_data",
+                    "entries": []
+                }
+            }
+            """;
 
     public NewFileModal(Frame parent, JTree tree, StaticTreeNode node) {
         super(parent, "New file", true);
@@ -86,6 +96,8 @@ public class NewFileModal extends JDialog {
                     String content = "";
                     if (isBlockstate(newNode)) {
                         content = NEW_BLOCKSTATE_CONTENT;
+                    } else if (isItem(newNode)) {
+                        content = NEW_ITEM_CONTENT;
                     } else if (isModel(newNode)) {
                         content = NEW_MODEL_CONTENT;
                     }
@@ -125,6 +137,10 @@ public class NewFileModal extends JDialog {
 
     private static boolean isBlockstate(StaticTreeNode node) {
         return new BlockstateFileLoader().canLoad(node.getFile());
+    }
+
+    private static boolean isItem(StaticTreeNode node) {
+        return new ItemFileLoader().canLoad(node.getFile());
     }
 
     private static boolean isModel(StaticTreeNode node) {
