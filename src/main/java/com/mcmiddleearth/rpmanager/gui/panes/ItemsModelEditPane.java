@@ -52,7 +52,7 @@ public class ItemsModelEditPane extends VerticalBox {
         typePanel.add(new JLabel("Type: "));
         typePanel.add(Box.createHorizontalGlue());
         typePanel.add(new JLabel(ItemsModelType.byItemsModel(itemsModel).getId()));
-        typePanel.add(new JButton(new Action("Edit", "Change model type") {
+        typePanel.add(new IconButton(new Action("Edit", Icons.EDIT_ICON, "Change model type") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 new ChooseItemsModelTypeModal(MainWindow.getInstance(), ItemsModelType.byItemsModel(itemsModel),
@@ -115,9 +115,9 @@ public class ItemsModelEditPane extends VerticalBox {
 
             this.add(new JLabel("Tints are not supported."));
         } else if (itemsModel instanceof EmptyItemsModel || itemsModel instanceof BundleSelectedItemItemsModel) {
-            this.add(new JLabel("This item model type does not contain any additional properties"));
+            this.add(new JLabel("No additional properties."));
         } else {
-            this.add(new JLabel("This item model type is not supported."));
+            this.add(new JLabel("Model type not supported."));
         }
     }
 
