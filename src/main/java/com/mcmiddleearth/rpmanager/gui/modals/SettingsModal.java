@@ -17,14 +17,13 @@
 
 package com.mcmiddleearth.rpmanager.gui.modals;
 
-import com.google.gson.GsonBuilder;
 import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.Form;
-import com.mcmiddleearth.rpmanager.gui.components.NumberInput;
 import com.mcmiddleearth.rpmanager.gui.components.NumericStepper;
 import com.mcmiddleearth.rpmanager.gui.components.TextInput;
 import com.mcmiddleearth.rpmanager.model.internal.Settings;
+import com.mcmiddleearth.rpmanager.utils.GsonProvider;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,7 +51,7 @@ public class SettingsModal extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try (FileWriter writer = new FileWriter(Settings.FILE)) {
-                    writer.write(new GsonBuilder().create().toJson(settings));
+                    writer.write(GsonProvider.getGson().toJson(settings));
                 } catch (IOException ex) {
                     //TODO error dialog
                     throw new RuntimeException(ex);

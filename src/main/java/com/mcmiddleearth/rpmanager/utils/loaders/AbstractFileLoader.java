@@ -17,9 +17,9 @@
 
 package com.mcmiddleearth.rpmanager.utils.loaders;
 
-import com.google.gson.Gson;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 import com.mcmiddleearth.rpmanager.utils.FileLoader;
+import com.mcmiddleearth.rpmanager.utils.GsonProvider;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -33,13 +33,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public abstract class AbstractFileLoader implements FileLoader {
-    private final Gson gson = new Gson();
-
     protected Object loadFile(Layer layer, Object[] path, Class<?> resultClass) throws IOException {
         byte[] content = loadBytes(layer, path);
         try (InputStream is = new ByteArrayInputStream(content);
              Reader reader = new InputStreamReader(is)) {
-            return gson.fromJson(reader, resultClass);
+            return GsonProvider.getGson().fromJson(reader, resultClass);
         }
     }
 
@@ -47,7 +45,7 @@ public abstract class AbstractFileLoader implements FileLoader {
         byte[] content = loadBytesFromFile(file, Collections.emptyList());
         try (InputStream is = new ByteArrayInputStream(content);
              Reader reader = new InputStreamReader(is)) {
-            return gson.fromJson(reader, resultClass);
+            return GsonProvider.getGson().fromJson(reader, resultClass);
         }
     }
 

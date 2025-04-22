@@ -17,7 +17,6 @@
 
 package com.mcmiddleearth.rpmanager.gui;
 
-import com.google.gson.GsonBuilder;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.actions.Actions;
 import com.mcmiddleearth.rpmanager.gui.actions.OpenProjectAction;
@@ -26,6 +25,7 @@ import com.mcmiddleearth.rpmanager.model.internal.Settings;
 import com.mcmiddleearth.rpmanager.model.project.Project;
 import com.mcmiddleearth.rpmanager.model.project.Session;
 import com.mcmiddleearth.rpmanager.utils.ActionManager;
+import com.mcmiddleearth.rpmanager.utils.GsonProvider;
 
 import javax.swing.*;
 import java.awt.*;
@@ -136,7 +136,7 @@ public class MainWindow extends JFrame {
             projects.setProjects(recentProjects.entrySet().stream()
                     .map(e -> new RecentProjects.RecentProject(e.getValue(), e.getKey())).toList());
             try (FileOutputStream outputStream = new FileOutputStream(RECENT_PROJECTS_FILE)) {
-                outputStream.write(new GsonBuilder().create().toJson(projects).getBytes(StandardCharsets.UTF_8));
+                outputStream.write(GsonProvider.getGson().toJson(projects).getBytes(StandardCharsets.UTF_8));
             } catch (IOException e) {
                 //nop
             }
@@ -151,7 +151,7 @@ public class MainWindow extends JFrame {
     private void loadRecentProjects() {
         try {
             RecentProjects projects =
-                    new GsonBuilder().create().fromJson(new FileReader(RECENT_PROJECTS_FILE), RecentProjects.class);
+                    GsonProvider.getGson().fromJson(new FileReader(RECENT_PROJECTS_FILE), RecentProjects.class);
             projects.getProjects().forEach(p -> recentProjects.put(new File(p.getPath()), p.getName()));
         } catch (FileNotFoundException e) {
             //nop

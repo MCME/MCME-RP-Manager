@@ -1,9 +1,9 @@
 package com.mcmiddleearth.rpmanager;
 
-import com.google.gson.GsonBuilder;
 import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.model.internal.Settings;
 import com.mcmiddleearth.rpmanager.utils.BlockStateUtils;
+import com.mcmiddleearth.rpmanager.utils.GsonProvider;
 import org.pushingpixels.radiance.theming.api.skin.*;
 
 import javax.swing.*;
@@ -60,7 +60,7 @@ public class ResourcePackManager {
     private static Settings loadSettings() throws FileNotFoundException {
         Settings settings = new Settings();
         if (Settings.FILE.exists()) {
-            settings = new GsonBuilder().create().fromJson(new FileReader(Settings.FILE), Settings.class);
+            settings = GsonProvider.getGson().fromJson(new FileReader(Settings.FILE), Settings.class);
         }
         return settings;
     }

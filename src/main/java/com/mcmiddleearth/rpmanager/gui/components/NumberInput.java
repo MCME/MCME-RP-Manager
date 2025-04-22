@@ -26,17 +26,33 @@ public class NumberInput extends TextInput {
     public NumberInput(Float value, Consumer<Float> setter, Consumer<TextInput> onChange) {
         super(value == null ? "" : value.toString(),
                 s -> setter.accept(s == null || s.isEmpty() ? 0.0f : Float.parseFloat(s)),
-                onChange, new Document());
+                onChange, new Document(Float::valueOf));
+    }
+
+    public NumberInput(Integer value, Consumer<Integer> setter, Consumer<TextInput> onChange) {
+        this(value, 0, setter, onChange);
+    }
+
+    public NumberInput(Integer value, Integer defaultValue, Consumer<Integer> setter, Consumer<TextInput> onChange) {
+        super(value == null ? "" : value.toString(),
+                s -> setter.accept(s == null || s.isEmpty() ? defaultValue : Integer.valueOf(s)),
+                onChange, new Document(Integer::valueOf));
     }
 
     private static class Document extends PlainDocument {
+        private final Validator validator;
+
+        private Document(Validator validator) {
+            this.validator = validator;
+        }
+
         @Override
         public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
             String text = getText(0, getLength());
             text = text.substring(0, offs) + str + text.substring(offs);
             if (!text.isEmpty()) {
                 try {
-                    Float.parseFloat(text);
+                    validator.validate(text);
                 } catch (NumberFormatException ignored) {
                     System.out.println(text);
                     return;
@@ -51,7 +67,7 @@ public class NumberInput extends TextInput {
             text = text.substring(0, offs) + text.substring(offs + len);
             if (!text.isEmpty()) {
                 try {
-                    Float.parseFloat(text);
+                    validator.validate(text);
                 } catch (NumberFormatException ignored) {
                     System.out.println(text);
                     return;
@@ -63,16 +79,23 @@ public class NumberInput extends TextInput {
         @Override
         public void replace(int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
             String t = getText(0, getLength());
-            t = t.substring(0, offset) + text + t.substring(offset + length);
+            String before = t.length() > offset ? t.substring(0, offset) : t;
+            String after = t.length() >= offset + length ? t.substring(offset + length) : "";
+            t = before + text + after;
             if (!t.isEmpty()) {
                 try {
-                    Float.parseFloat(t);
+                    validator.validate(t);
                 } catch (NumberFormatException ignored) {
                     System.out.println(t);
                     return;
                 }
             }
             super.replace(offset, length, text, attrs);
+        }
+
+        @FunctionalInterface
+        interface Validator {
+            Object validate(String input) throws NumberFormatException;
         }
     }
 }

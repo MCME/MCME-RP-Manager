@@ -17,12 +17,16 @@
 
 package com.mcmiddleearth.rpmanager.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mcmiddleearth.rpmanager.model.*;
 import com.mcmiddleearth.rpmanager.model.internal.LayerRelatedFiles;
 import com.mcmiddleearth.rpmanager.model.internal.RelatedFiles;
 import com.mcmiddleearth.rpmanager.model.internal.SelectedFileData;
+import com.mcmiddleearth.rpmanager.model.item.CompositeItemsModel;
+import com.mcmiddleearth.rpmanager.model.item.ConditionItemsModel;
+import com.mcmiddleearth.rpmanager.model.item.ItemsModel;
+import com.mcmiddleearth.rpmanager.model.item.ModelItemsModel;
+import com.mcmiddleearth.rpmanager.model.item.RangeDispatchItemsModel;
+import com.mcmiddleearth.rpmanager.model.item.SelectItemsModel;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
 import com.mcmiddleearth.rpmanager.model.project.Project;
 
@@ -43,8 +47,6 @@ import java.util.zip.ZipOutputStream;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class ResourcePackUtils {
-    private static final Gson GSON =
-            new GsonBuilder().setPrettyPrinting().setLenient().enableComplexMapKeySerialization().create();
     private static final String MINECRAFT_PREFIX = "minecraft:";
     private static final String[] BLOCK_STATE_DIR_PATH = new String[] { "assets", "minecraft", "blockstates" };
     private static final String[] MODEL_DIR_PATH = new String[] { "assets", "minecraft", "models" };
@@ -58,7 +60,7 @@ public class ResourcePackUtils {
 
     public static void saveFile(Object data, File target) throws IOException {
         try (FileOutputStream fileOutputStream = new FileOutputStream(target)) {
-            fileOutputStream.write(GSON.toJson(data).getBytes(StandardCharsets.UTF_8));
+            fileOutputStream.write(GsonProvider.getGson().toJson(data).getBytes(StandardCharsets.UTF_8));
         }
     }
 
@@ -96,6 +98,12 @@ public class ResourcePackUtils {
 
     public static RelatedFiles getRelatedFiles(BlockState blockState, Project project) throws IOException {
         List<LayerRelatedFiles> relatedModels = getRelatedModels(blockState, project);
+        List<LayerRelatedFiles> relatedTextures = getRelatedTextures(relatedModels, project);
+        return new RelatedFiles(relatedModels, relatedTextures);
+    }
+
+    public static RelatedFiles getRelatedFiles(Item item, Project project) throws IOException {
+        List<LayerRelatedFiles> relatedModels = getRelatedModels(item, project);
         List<LayerRelatedFiles> relatedTextures = getRelatedTextures(relatedModels, project);
         return new RelatedFiles(relatedModels, relatedTextures);
     }
@@ -154,6 +162,48 @@ public class ResourcePackUtils {
                 .map(s -> s.contains("/") ? s : "block/" + s)
                 .toList();
         return getModels(models, project);
+    }
+
+    private static List<LayerRelatedFiles> getRelatedModels(Item item, Project project) throws IOException {
+        List<String> models = getRelatedModelsStr(item.getModel()).stream()
+                .distinct()
+                .map(ResourcePackUtils::removePrefix)
+                .map(s -> s.contains("/") ? s : "item/" + s)
+                .toList();
+        return getModels(models, project);
+    }
+
+    private static List<String> getRelatedModelsStr(ItemsModel itemsModel) throws IOException {
+        List<String> result = new LinkedList<>();
+        if (itemsModel instanceof ModelItemsModel modelItemsModel) {
+            if (modelItemsModel.getModel() != null && !modelItemsModel.getModel().isEmpty()) {
+                result.add(modelItemsModel.getModel());
+            }
+        } else if (itemsModel instanceof CompositeItemsModel compositeItemsModel) {
+            if (compositeItemsModel.getModels() != null) {
+                for (ItemsModel model : compositeItemsModel.getModels()) {
+                    result.addAll(getRelatedModelsStr(model));
+                }
+            }
+        } else if (itemsModel instanceof ConditionItemsModel conditionItemsModel) {
+            result.addAll(getRelatedModelsStr(conditionItemsModel.getOnTrue()));
+            result.addAll(getRelatedModelsStr(conditionItemsModel.getOnFalse()));
+        } else if (itemsModel instanceof RangeDispatchItemsModel rangeDispatchItemsModel) {
+            if (rangeDispatchItemsModel.getEntries() != null) {
+                for (RangeDispatchItemsModel.Entry entry : rangeDispatchItemsModel.getEntries()) {
+                    result.addAll(getRelatedModelsStr(entry.getModel()));
+                }
+            }
+            result.addAll(getRelatedModelsStr(rangeDispatchItemsModel.getFallback()));
+        } else if (itemsModel instanceof SelectItemsModel selectItemsModel) {
+            if (selectItemsModel.getCases() != null) {
+                for (SelectItemsModel.Case c : selectItemsModel.getCases()) {
+                    result.addAll(getRelatedModelsStr(c.getModel()));
+                }
+                result.addAll(getRelatedModelsStr(selectItemsModel.getFallback()));
+            }
+        }
+        return result;
     }
 
     private static List<LayerRelatedFiles> getModels(List<String> models, Project project) throws IOException {

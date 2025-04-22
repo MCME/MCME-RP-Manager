@@ -17,10 +17,13 @@
 
 package com.mcmiddleearth.rpmanager.gui.modals;
 
-import com.google.gson.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.FastScrollPane;
+import com.mcmiddleearth.rpmanager.utils.GsonProvider;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,9 +31,6 @@ import java.awt.event.ActionEvent;
 import java.util.function.Consumer;
 
 public class FileEditModal extends JDialog {
-    private static final Gson GSON = new GsonBuilder()
-            .setLenient().setPrettyPrinting().enableComplexMapKeySerialization().create();
-
     public FileEditModal(Frame parent, String text, Class<?> type, Consumer<String> onAccept) {
         super(parent, "Edit file", true);
 
@@ -55,7 +55,8 @@ public class FileEditModal extends JDialog {
                     //TODO silly workaround to detect errors because of a critical error in GSON
                     //     which makes it accept everything regardless of the desired object type
                     if (type != String.class) {
-                        String newJson = GSON.toJson(GSON.fromJson(textArea.getText(), type));
+                        String newJson = GsonProvider.getGson().toJson(
+                                GsonProvider.getGson().fromJson(textArea.getText(), type));
                         JsonElement element1 = JsonParser.parseString(textArea.getText());
                         JsonElement element2 = JsonParser.parseString(newJson);
                         if (!element1.equals(element2)) {

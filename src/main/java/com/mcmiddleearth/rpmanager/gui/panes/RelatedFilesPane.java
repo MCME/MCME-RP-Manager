@@ -17,8 +17,6 @@
 
 package com.mcmiddleearth.rpmanager.gui.panes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mcmiddleearth.rpmanager.events.EventDispatcher;
 import com.mcmiddleearth.rpmanager.events.EventListener;
 import com.mcmiddleearth.rpmanager.events.ListDoubleClickEvent;
@@ -28,6 +26,7 @@ import com.mcmiddleearth.rpmanager.model.BlockModel;
 import com.mcmiddleearth.rpmanager.model.internal.LayerRelatedFiles;
 import com.mcmiddleearth.rpmanager.model.internal.RelatedFiles;
 import com.mcmiddleearth.rpmanager.model.internal.SelectedFileData;
+import com.mcmiddleearth.rpmanager.utils.GsonProvider;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -40,9 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RelatedFilesPane extends JPanel {
-    private static final Gson GSON = new GsonBuilder()
-            .setLenient().setPrettyPrinting().enableComplexMapKeySerialization().create();
-
     private RelatedFiles relatedFiles;
     private final JPanel previewOuterPane;
     private final VerticalBox relatedModelsPane;
@@ -169,7 +165,7 @@ public class RelatedFilesPane extends JPanel {
             previewArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
             previewArea.setEditable(false);
             ((DefaultCaret) previewArea.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
-            previewArea.setText(GSON.toJson(blockModel));
+            previewArea.setText(GsonProvider.getGson().toJson(blockModel));
             previewOuterPane.add(previewArea, BorderLayout.CENTER);
         } else if (value instanceof BufferedImage image) {
             int scale = Math.min(256 / image.getWidth(), 256 / image.getHeight());

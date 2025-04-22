@@ -17,11 +17,10 @@
 
 package com.mcmiddleearth.rpmanager.gui.actions;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.constants.Icons;
 import com.mcmiddleearth.rpmanager.model.project.Project;
+import com.mcmiddleearth.rpmanager.utils.GsonProvider;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -31,8 +30,6 @@ import java.io.IOException;
 
 //TODO disable action when no project selected
 public class SaveProjectAction extends Action {
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().setLenient().create();
-
     protected SaveProjectAction() {
         super("Save project", Icons.SAVE_PROJECT, "Save project", KeyEvent.VK_S,
                 KeyEvent.VK_S);
@@ -44,7 +41,7 @@ public class SaveProjectAction extends Action {
         if (project != null) {
             File f = new File(project.getLocation(), project.getName() + ".rpproject");
             try (FileWriter fileWriter = new FileWriter(f)) {
-                gson.toJson(project, fileWriter);
+                GsonProvider.getGson().toJson(project, fileWriter);
                 MainWindow.getInstance().updateRecentProjects(project);
             } catch (IOException e) {
                 //TODO error dialog

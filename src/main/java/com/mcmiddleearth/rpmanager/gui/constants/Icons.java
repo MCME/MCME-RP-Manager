@@ -27,6 +27,7 @@ public class Icons {
     public static final Icon OPEN_PROJECT = UIManager.getIcon("FileView.directoryIcon");
     public static final Icon SAVE_PROJECT = UIManager.getIcon("FileView.floppyDriveIcon");
     public static final Icon ADD_ICON;
+    public static final Icon EDIT_ICON;
     public static final Icon DELETE_ICON;
     public static final Icon EXPAND_ICON;
     public static final Icon RETRACT_ICON;
@@ -40,6 +41,8 @@ public class Icons {
         try {
             BufferedImage addIcon = ImageIO.read(Icons.class.getResourceAsStream("/icons/add.png"));
             ADD_ICON = new ImageIcon(addIcon);
+            BufferedImage editIcon = ImageIO.read(Icons.class.getResourceAsStream("/icons/edit.png"));
+            EDIT_ICON = new ImageIcon(editIcon);
             BufferedImage deleteIcon = ImageIO.read(Icons.class.getResourceAsStream("/icons/delete.png"));
             DELETE_ICON = new ImageIcon(deleteIcon);
             BufferedImage expandIcon = ImageIO.read(Icons.class.getResourceAsStream("/icons/expand.png"));
