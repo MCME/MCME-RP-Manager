@@ -22,11 +22,13 @@ import com.mcmiddleearth.rpmanager.model.project.Layer;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class BlockModelFileLoader extends AbstractFileLoader {
+    private static final Pattern PATH_PATTERN = Pattern.compile("^assets/[^/]+/models/block$");
+
     @Override
     public Object loadFile(Layer layer, Object[] path) throws IOException {
         return loadFile(layer, path, BlockModel.class);
@@ -40,15 +42,17 @@ public class BlockModelFileLoader extends AbstractFileLoader {
     @Override
     public boolean canLoad(Layer layer, Object[] path) {
         return path != null && path.length > 0 && path[path.length - 1].toString().endsWith(".json") &&
-                Arrays.stream(path).map(Object::toString)
+                PATH_PATTERN.matcher(Arrays.stream(path).map(Object::toString)
                         .skip(layer.getFile().getName().endsWith(".jar") ? 0L : 1L)
                         .limit(4L)
-                        .collect(Collectors.joining("/"))
-                        .equals("assets/minecraft/models/block");
+                        .collect(Collectors.joining("/")))
+                        .matches();
     }
 
     @Override
     public boolean canLoad(File file) {
-        return contains(file.toPath(), Path.of("assets", "minecraft", "models", "block"));
+        Pattern pathPattern = Pattern.compile(
+                "^.*/assets/[^/]+/models/block/(?:[^/]+/)*" + Pattern.quote(file.getName()) + "$");
+        return pathPattern.matcher(file.toPath().toUri().toString()).matches();
     }
 }

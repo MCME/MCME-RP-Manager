@@ -19,6 +19,7 @@ package com.mcmiddleearth.rpmanager.utils;
 
 import com.mcmiddleearth.rpmanager.model.*;
 import com.mcmiddleearth.rpmanager.model.internal.LayerRelatedFiles;
+import com.mcmiddleearth.rpmanager.model.internal.NamespacedPath;
 import com.mcmiddleearth.rpmanager.model.internal.RelatedFiles;
 import com.mcmiddleearth.rpmanager.model.internal.SelectedFileData;
 import com.mcmiddleearth.rpmanager.model.item.CompositeItemsModel;
@@ -37,6 +38,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -47,14 +49,19 @@ import java.util.zip.ZipOutputStream;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class ResourcePackUtils {
-    private static final String MINECRAFT_PREFIX = "minecraft:";
-    private static final String[] BLOCK_STATE_DIR_PATH = new String[] { "assets", "minecraft", "blockstates" };
-    private static final String[] MODEL_DIR_PATH = new String[] { "assets", "minecraft", "models" };
-    private static final String[] TEXTURES_DIR_PATH = new String[] { "assets", "minecraft", "textures" };
+    public static final String DEFAULT_NAMESPACE = "minecraft";
+    private static final Function<String, String[]> BLOCK_STATE_DIR_PATH =
+            namespace -> new String[] { "assets", namespace, "blockstates" };
+    private static final Function<String, String[]> MODEL_DIR_PATH =
+            namespace -> new String[] { "assets", namespace, "models" };
+    private static final Function<String, String[]> TEXTURES_DIR_PATH =
+            namespace -> new String[] { "assets", namespace, "textures" };
     private static final Pattern BLOCK_STATE_NAME_PATTERN =
-            Pattern.compile("^(?:" + Pattern.quote(MINECRAFT_PREFIX) + ")?([^\\[#]+)(?:\\[[^]]+])?$");
+            Pattern.compile("^(?:(?<namespace>[^:]+):)?(?<path>[^\\[#]+)(?:\\[[^]]+])?$");
     private static final Pattern BLOCK_STATE_NAME_PATTERN2 =
-            Pattern.compile("^(?:" + Pattern.quote(MINECRAFT_PREFIX) + ")?([^#]+)#(?:.*)?$");
+            Pattern.compile("^(?:(?<namespace>[^:]+):)?(?<path>[^#]+)#(?:.*)?$");
+    private static final Pattern NAMESPACED_PATH_PATTERN =
+            Pattern.compile("^(?:(?<namespace>[^:]+):)?(?<path>.+)");
 
     private ResourcePackUtils() {}
 
@@ -109,10 +116,13 @@ public class ResourcePackUtils {
     }
 
     public static RelatedFiles getRelatedFiles(BaseModel model, Project project) throws IOException {
-        List<String> models = model.getParent() == null ?
+        List<NamespacedPath> models = model.getParent() == null ?
                 Collections.emptyList() :
-                Stream.of(model.getParent()).map(ResourcePackUtils::removePrefix)
-                        .map(s -> s.contains("/") ? s : model instanceof BlockModel ? "block/" + s : "item/" + s)
+                Stream.of(model.getParent()).map(ResourcePackUtils::extractPrefix)
+                        .map(s -> s.path().contains("/") ?
+                                s :
+                                new NamespacedPath(s.namespace(),
+                                        model instanceof BlockModel ? "block/" + s.path() : "item/" + s.path()))
                         .toList();
         List<LayerRelatedFiles> relatedModels = getModels(models, project);
         List<LayerRelatedFiles> relatedTextures = getRelatedTextures(
@@ -137,8 +147,13 @@ public class ResourcePackUtils {
             matching = matcher2;
         }
         if (matching != null) {
-            String name = matching.group(1);
-            Object[] path = Stream.concat(Stream.of(BLOCK_STATE_DIR_PATH), Stream.of((name + ".json").split("/")))
+            String namespace = matching.group("namespace");
+            String name = matching.group("path");
+            if (namespace == null) {
+                namespace = DEFAULT_NAMESPACE;
+            }
+            Object[] path = Stream.concat(
+                    Stream.of(BLOCK_STATE_DIR_PATH.apply(namespace)), Stream.of((name + ".json").split("/")))
                     .toArray();
             for (Layer layer : project.getLayers()) {
                 if (containsFile(layer, path)) {
@@ -153,22 +168,24 @@ public class ResourcePackUtils {
     }
 
     private static List<LayerRelatedFiles> getRelatedModels(BlockState blockState, Project project) throws IOException {
-        List<String> models = Optional.ofNullable(blockState.getVariants())
+        List<NamespacedPath> models = Optional.ofNullable(blockState.getVariants())
                 .map(v -> v.values().stream().flatMap(l -> l.stream().map(Model::getModel)))
                 .orElseGet(() -> blockState.getMultipart().stream().flatMap(
                         c -> c.getApply().stream().map(Model::getModel)))
                 .distinct()
-                .map(ResourcePackUtils::removePrefix)
-                .map(s -> s.contains("/") ? s : "block/" + s)
+                .map(ResourcePackUtils::extractPrefix)
+                .map(s -> s.path().contains("/") ?
+                        s : new NamespacedPath(s.namespace(), "block/" + s.path()))
                 .toList();
         return getModels(models, project);
     }
 
     private static List<LayerRelatedFiles> getRelatedModels(Item item, Project project) throws IOException {
-        List<String> models = getRelatedModelsStr(item.getModel()).stream()
+        List<NamespacedPath> models = getRelatedModelsStr(item.getModel()).stream()
                 .distinct()
-                .map(ResourcePackUtils::removePrefix)
-                .map(s -> s.contains("/") ? s : "item/" + s)
+                .map(ResourcePackUtils::extractPrefix)
+                .map(s -> s.path().contains("/") ?
+                        s : new NamespacedPath(s.namespace(), "item/" + s.path()))
                 .toList();
         return getModels(models, project);
     }
@@ -206,12 +223,14 @@ public class ResourcePackUtils {
         return result;
     }
 
-    private static List<LayerRelatedFiles> getModels(List<String> models, Project project) throws IOException {
+    private static List<LayerRelatedFiles> getModels(List<NamespacedPath> models, Project project) throws IOException {
         List<LayerRelatedFiles> result = new LinkedList<>();
         for (com.mcmiddleearth.rpmanager.model.project.Layer layer : project.getLayers()) {
             List<SelectedFileData> layerModels = new LinkedList<>();
-            for (String model : models) {
-                Object[] path = Stream.concat(Stream.of(MODEL_DIR_PATH), Stream.of((model + ".json").split("/")))
+            for (NamespacedPath model : models) {
+                Object[] path = Stream.concat(
+                        Stream.of(MODEL_DIR_PATH.apply(model.namespace())),
+                                Stream.of((model.path() + ".json").split("/")))
                         .toArray();
                 if (containsFile(layer, path)) {
                     layerModels.add(FileLoader.load(layer, Stream.concat(
@@ -228,18 +247,20 @@ public class ResourcePackUtils {
 
     private static List<LayerRelatedFiles> getRelatedTextures(List<LayerRelatedFiles> models, Project project)
             throws IOException {
-        List<String> textures = models.stream()
+        List<NamespacedPath> textures = models.stream()
                 .flatMap(files -> files.getRelatedFiles().stream())
                 .flatMap(fileData -> Optional.ofNullable(((BaseModel) fileData.getData()).getTextures()).stream()
                         .flatMap(t -> t.values().stream()))
-                .map(ResourcePackUtils::removePrefix)
+                .map(ResourcePackUtils::extractPrefix)
                 .distinct()
                 .toList();
         List<LayerRelatedFiles> result = new LinkedList<>();
         for (com.mcmiddleearth.rpmanager.model.project.Layer layer : project.getLayers()) {
             List<SelectedFileData> layerTextures = new LinkedList<>();
-            for (String texture : textures) {
-                Object[] path = Stream.concat(Stream.of(TEXTURES_DIR_PATH), Stream.of((texture + ".png").split("/")))
+            for (NamespacedPath texture : textures) {
+                Object[] path = Stream.concat(
+                        Stream.of(TEXTURES_DIR_PATH.apply(texture.namespace())),
+                                Stream.of((texture.path() + ".png").split("/")))
                         .toArray();
                 if (containsFile(layer, path)) {
                     layerTextures.add(FileLoader.load(layer, Stream.concat(
@@ -254,8 +275,14 @@ public class ResourcePackUtils {
         return result;
     }
 
-    private static String removePrefix(String path) {
-        return path.replace(MINECRAFT_PREFIX, "");
+    public static NamespacedPath extractPrefix(String path) {
+        Matcher matcher = NAMESPACED_PATH_PATTERN.matcher(path);
+        if (matcher.matches()) {
+            return new NamespacedPath(
+                    Optional.ofNullable(matcher.group("namespace")).orElse(DEFAULT_NAMESPACE),
+                    matcher.group("path"));
+        }
+        return new NamespacedPath(DEFAULT_NAMESPACE, path);
     }
 
     private static boolean containsFile(com.mcmiddleearth.rpmanager.model.project.Layer layer, Object[] path)

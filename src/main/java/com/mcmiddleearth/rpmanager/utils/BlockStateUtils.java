@@ -33,8 +33,8 @@ public class BlockStateUtils {
 
     @SuppressWarnings("unchecked")
     public static Map<String, List<String>> getPossibleStates(String block) {
-        if (!block.startsWith("minecraft:")) {
-            block = "minecraft:" + block;
+        if (!block.startsWith(ResourcePackUtils.DEFAULT_NAMESPACE + ":")) {
+            block = ResourcePackUtils.DEFAULT_NAMESPACE + ":" + block;
         }
         return ((Map<String, List<Object>>) BLOCKSTATES.get(block)).entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey,
