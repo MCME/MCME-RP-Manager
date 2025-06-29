@@ -1,0 +1,50 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:block",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -1
+      },
+      {
+        "type": "minecraft:dye",
+        "default": -1
+      },
+      {
+        "type": "minecraft:firework",
+        "default": 1
+      },
+      {
+        "type": "minecraft:grass",
+        "temperature": 0.5,
+        "downfall": 0.5
+      },
+      {
+        "type": "minecraft:map_color",
+        "default": 127
+      },
+      {
+        "type": "minecraft:potion",
+        "default": 255
+      },
+      {
+        "type": "minecraft:team",
+        "default": 511
+      },
+      {
+        "type": "minecraft:custom_model_data",
+        "index": 0,
+        "default": 0
+      }
+    ]
+  }
+}

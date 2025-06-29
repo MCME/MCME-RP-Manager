@@ -24,6 +24,7 @@ import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
 import com.mcmiddleearth.rpmanager.gui.utils.FormButtonEnabledListener;
 import com.mcmiddleearth.rpmanager.model.BaseModel;
 import com.mcmiddleearth.rpmanager.model.BlockState;
+import com.mcmiddleearth.rpmanager.model.internal.NamespacedPath;
 import com.mcmiddleearth.rpmanager.utils.FileLoader;
 import com.mcmiddleearth.rpmanager.utils.Pair;
 import com.mcmiddleearth.rpmanager.utils.ResourcePackUtils;
@@ -49,17 +50,17 @@ public class DuplicateBlockStateStep2Modal extends JDialog {
     private final StaticTreeNode baseNode;
     private final String newName;
     private final BlockState blockState;
-    private final List<Triple<StaticTreeNode, BaseModel, String>> replacements = new LinkedList<>();
+    private final List<Triple<StaticTreeNode, BaseModel, NamespacedPath>> replacements = new LinkedList<>();
 
     public DuplicateBlockStateStep2Modal(Frame parent, JTree tree, StaticTreeNode baseNode, String newName,
-                                         BlockState blockState, List<Pair<StaticTreeNode, String>> replacements)
+                                         BlockState blockState, List<Pair<StaticTreeNode, NamespacedPath>> replacements)
             throws IOException {
         super(parent, "Select textures to duplicate");
         this.tree = tree;
         this.baseNode = baseNode;
         this.newName = newName;
         this.blockState = blockState;
-        for (Pair<StaticTreeNode, String> replacement : replacements) {
+        for (Pair<StaticTreeNode, NamespacedPath> replacement : replacements) {
             this.replacements.add(new Triple<>(replacement.getLeft(),
                     (BaseModel) FileLoader.load(replacement.getLeft()).getData(),
                     replacement.getRight()));
@@ -93,14 +94,14 @@ public class DuplicateBlockStateStep2Modal extends JDialog {
         setVisible(true);
     }
 
-    private Set<String> getTextureNames() {
-        Set<String> textureNames = new LinkedHashSet<>();
+    private Set<NamespacedPath> getTextureNames() {
+        Set<NamespacedPath> textureNames = new LinkedHashSet<>();
         replacements.forEach(replacement -> textureNames.addAll(getTextureNames(replacement.getMiddle())));
         return textureNames;
     }
 
-    private Set<String> getTextureNames(BaseModel baseModel) {
-        return baseModel.getTextures().values().stream().map(s -> s.startsWith("minecraft:") ? s.substring(10) : s)
+    private Set<NamespacedPath> getTextureNames(BaseModel baseModel) {
+        return baseModel.getTextures().values().stream().map(ResourcePackUtils::extractPrefix)
                 .collect(Collectors.toSet());
     }
 
@@ -109,8 +110,8 @@ public class DuplicateBlockStateStep2Modal extends JDialog {
         dispose();
     }
 
-    private void applyChanges(List<Triple<String, StaticTreeNode, String>> replacements) {
-        for (Triple<StaticTreeNode, BaseModel, String> model : this.replacements) {
+    private void applyChanges(List<Triple<NamespacedPath, StaticTreeNode, NamespacedPath>> replacements) {
+        for (Triple<StaticTreeNode, BaseModel, NamespacedPath> model : this.replacements) {
             replaceTextures(model.getMiddle(), replacements);
         }
         try {
@@ -123,7 +124,8 @@ public class DuplicateBlockStateStep2Modal extends JDialog {
             action = writeModels(this.replacements);
             undoAction = undoAction.butFirst(action.getLeft());
             redoAction = redoAction.then(action.getRight());
-            action = writeBlockState(this.blockState, newName + ".json");
+            action = writeBlockState(this.blockState,
+                    new NamespacedPath(ResourcePackUtils.DEFAULT_NAMESPACE, newName + ".json"));
             undoAction = undoAction.butFirst(action.getLeft());
             redoAction = redoAction.then(action.getRight());
             MainWindow.getInstance().getActionManager().submit(undoAction, redoAction);
@@ -135,10 +137,11 @@ public class DuplicateBlockStateStep2Modal extends JDialog {
         ((DefaultTreeModel) tree.getModel()).reload(baseNode);
     }
 
-    private StaticTreeNode getTextureNode(String textureName) {
-        StaticTreeNode textureNode = baseNode.getChildren().stream().filter(s -> "textures".equals(s.getName()))
+    private StaticTreeNode getTextureNode(NamespacedPath textureName) {
+        StaticTreeNode textureNode = baseNode.getChildren().stream()
+                .filter(s -> textureName.namespace().equals(s.getName()))
                 .findFirst().orElseThrow();
-        for (String child : (textureName + ".png").split("/")) {
+        for (String child : ("textures/" + textureName.path() + ".png").split("/")) {
             textureNode = textureNode.getChildren().stream().filter(s -> child.equals(s.getName())).findFirst()
                     .orElse(null);
             if (textureNode == null) {
@@ -149,14 +152,24 @@ public class DuplicateBlockStateStep2Modal extends JDialog {
     }
 
     private Pair<com.mcmiddleearth.rpmanager.utils.Action, com.mcmiddleearth.rpmanager.utils.Action> writeTextures(
-            List<Triple<String, StaticTreeNode, String>> replacements) throws IOException {
-        StaticTreeNode texturesNode = baseNode.getChildren().stream().filter(s -> "textures".equals(s.getName()))
-                .findFirst().orElseThrow();
+            List<Triple<NamespacedPath, StaticTreeNode, NamespacedPath>> replacements) throws IOException {
         com.mcmiddleearth.rpmanager.utils.Action undoAction = () -> {};
         com.mcmiddleearth.rpmanager.utils.Action redoAction = () -> {};
-        for (Triple<String, StaticTreeNode, String> replacement : replacements) {
+        for (Triple<NamespacedPath, StaticTreeNode, NamespacedPath> replacement : replacements) {
+            StaticTreeNode namespaceNode = baseNode.getChildren().stream()
+                    .filter(s -> replacement.getRight().namespace().equals(s.getName()))
+                    .findFirst().orElse(null);
+            if (namespaceNode == null) {
+                namespaceNode = attachDirectoryNode(baseNode, replacement.getRight().namespace());
+            }
+            StaticTreeNode texturesNode = namespaceNode.getChildren().stream()
+                    .filter(s -> "textures".equals(s.getName()))
+                    .findFirst().orElse(null);
+            if (texturesNode == null) {
+                texturesNode = attachDirectoryNode(namespaceNode, "textures");
+            }
             Pair<com.mcmiddleearth.rpmanager.utils.Action, com.mcmiddleearth.rpmanager.utils.Action> action =
-                    writeTexture(texturesNode, replacement.getMiddle().getFile(), replacement.getRight());
+                    writeTexture(texturesNode, replacement.getMiddle().getFile(), replacement.getRight().path());
             undoAction = undoAction.butFirst(action.getLeft());
             redoAction = redoAction.then(action.getRight());
         }
@@ -207,14 +220,23 @@ public class DuplicateBlockStateStep2Modal extends JDialog {
     }
 
     private Pair<com.mcmiddleearth.rpmanager.utils.Action, com.mcmiddleearth.rpmanager.utils.Action> writeModels(
-            List<Triple<StaticTreeNode, BaseModel, String>> replacements) throws IOException {
-        StaticTreeNode modelsNode = baseNode.getChildren().stream().filter(s -> "models".equals(s.getName()))
-                .findFirst().orElseThrow();
+            List<Triple<StaticTreeNode, BaseModel, NamespacedPath>> replacements) throws IOException {
         com.mcmiddleearth.rpmanager.utils.Action undoAction = () -> {};
         com.mcmiddleearth.rpmanager.utils.Action redoAction = () -> {};
-        for (Triple<StaticTreeNode, BaseModel, String> replacement : replacements) {
+        for (Triple<StaticTreeNode, BaseModel, NamespacedPath> replacement : replacements) {
+            StaticTreeNode namespaceNode = baseNode.getChildren().stream()
+                    .filter(s -> replacement.getRight().namespace().equals(s.getName()))
+                    .findFirst().orElse(null);
+            if (namespaceNode == null) {
+                namespaceNode = attachDirectoryNode(baseNode, replacement.getRight().namespace());
+            }
+            StaticTreeNode modelsNode = namespaceNode.getChildren().stream().filter(s -> "models".equals(s.getName()))
+                    .findFirst().orElse(null);
+            if (modelsNode == null) {
+                modelsNode = attachDirectoryNode(namespaceNode, "models");
+            }
             Pair<com.mcmiddleearth.rpmanager.utils.Action, com.mcmiddleearth.rpmanager.utils.Action> action =
-                    writeModel(modelsNode, replacement.getMiddle(), replacement.getRight());
+                    writeModel(modelsNode, replacement.getMiddle(), replacement.getRight().path());
             undoAction = undoAction.butFirst(action.getLeft());
             redoAction = redoAction.then(action.getRight());
         }
@@ -259,19 +281,43 @@ public class DuplicateBlockStateStep2Modal extends JDialog {
         return new Pair<>(undoAction, redoAction);
     }
 
+    private StaticTreeNode attachDirectoryNode(StaticTreeNode parent, String name) {
+        StaticTreeNode node = new StaticTreeNode(parent, name, new File(parent.getFile(), name), true,
+                new LinkedList<>());
+        parent.addChild(node);
+        return node;
+    }
+
     private Pair<com.mcmiddleearth.rpmanager.utils.Action, com.mcmiddleearth.rpmanager.utils.Action> writeBlockState(
-            BlockState data, String name) throws IOException {
-        StaticTreeNode newNode = baseNode.getChildren().stream().filter(s -> "blockstates".equals(s.getName()))
-                .findFirst().orElseThrow();
-        StaticTreeNode child = newNode.getChildren().stream().filter(s -> name.equals(s.getName())).findFirst()
+            BlockState data, NamespacedPath name) throws IOException {
+        StaticTreeNode namespaceNode = baseNode.getChildren().stream()
+                .filter(s -> name.namespace().equals(s.getName()))
+                .findFirst().orElse(null);
+        if (namespaceNode == null) {
+            namespaceNode = attachDirectoryNode(baseNode, name.namespace());
+        }
+        StaticTreeNode newNode = namespaceNode.getChildren().stream().filter(s -> "blockstates".equals(s.getName()))
+                .findFirst().orElse(null);
+        if (newNode == null) {
+            newNode = attachDirectoryNode(namespaceNode, "blockstates");
+        }
+        StaticTreeNode child = newNode.getChildren().stream()
+                .filter(s -> name.path().equals(s.getName())).findFirst()
                 .orElse(null);
         if (child == null) {
-            child = new StaticTreeNode(newNode, name, new File(newNode.getFile(), name), false, new LinkedList<>());
+            child = new StaticTreeNode(newNode, name.path(), new File(newNode.getFile(), name.path()), false,
+                    new LinkedList<>());
             newNode.addChild(child);
         }
         newNode = child;
         File newFile = newNode.getFile();
         com.mcmiddleearth.rpmanager.utils.Action undoAction = () -> {};
+        com.mcmiddleearth.rpmanager.utils.Action redoAction = () -> {};
+        for (File f = newFile.getParentFile(); !f.exists(); f = f.getParentFile()) {
+            File finalFile = f;
+            undoAction = undoAction.then(() -> finalFile.delete());
+        }
+        redoAction = redoAction.then(() -> newFile.getParentFile().mkdirs());
         undoAction = undoAction.butFirst(() -> newFile.delete());
         if (newFile.exists()) {
             try (FileInputStream inputStream = new FileInputStream(newFile)) {
@@ -283,26 +329,26 @@ public class DuplicateBlockStateStep2Modal extends JDialog {
                 });
             }
         }
-        return new Pair<>(undoAction, () -> ResourcePackUtils.saveFile(data, newFile));
+        redoAction = redoAction.then(() -> ResourcePackUtils.saveFile(data, newFile));
+        return new Pair<>(undoAction, redoAction);
     }
 
-    private void replaceTextures(BaseModel model, List<Triple<String, StaticTreeNode, String>> replacements) {
+    private void replaceTextures(BaseModel model, List<Triple<NamespacedPath, StaticTreeNode, NamespacedPath>> replacements) {
         replacements.forEach(r -> replaceTextures(model, r.getLeft(), r.getRight()));
     }
 
-    private void replaceTextures(BaseModel model, String oldName, String newName) {
+    private void replaceTextures(BaseModel model, NamespacedPath oldName, NamespacedPath newName) {
         for (String key : model.getTextures().keySet()) {
-            if (oldName.equals(model.getTextures().get(key))) {
-                model.getTextures().put(key, newName);
-            } else if (oldName.equals("minecraft:" + model.getTextures().get(key))) {
-                model.getTextures().put(key, newName);
+            if (oldName.equals(ResourcePackUtils.extractPrefix(model.getTextures().get(key)))) {
+                model.getTextures().put(key, newName.toString());
             }
         }
     }
 
     private class DuplicateBlockStateStep2Grid extends Grid {
         private final List<Supplier<Document>> documents = new LinkedList<>();
-        private final List<Pair<String, Supplier<Pair<StaticTreeNode, String>>>> replacements = new LinkedList<>();
+        private final List<Pair<NamespacedPath, Supplier<Pair<StaticTreeNode, NamespacedPath>>>> replacements =
+                new LinkedList<>();
         private final List<JCheckBox> checkBoxes = new LinkedList<>();
 
         private DuplicateBlockStateStep2Grid() {
@@ -315,21 +361,21 @@ public class DuplicateBlockStateStep2Modal extends JDialog {
             addLabel(1, 0, "Old name");
             addLabel(2, 0, "New name");
             int y = 1;
-            for (String textureName : getTextureNames()) {
+            for (NamespacedPath textureName : getTextureNames()) {
                 StaticTreeNode node = getTextureNode(textureName);
                 JCheckBox checkBox = new JCheckBox(null, null, false);
-                JTextField textField = new JTextField(textureName, 50);
+                JTextField textField = new JTextField(textureName.toString(), 50);
                 if (node != null) {
                     documents.add(() -> checkBox.isSelected() ? textField.getDocument() : null);
                     replacements.add(new Pair<>(textureName, () -> checkBox.isSelected() ?
-                            new Pair<>(node, textField.getText()) : null));
+                            new Pair<>(node, ResourcePackUtils.extractPrefix(textField.getText())) : null));
                     checkBoxes.add(checkBox);
                 } else {
                     checkBox.setEnabled(false);
                     textField.setEditable(false);
                 }
                 addLabel(0, y, checkBox);
-                addLabel(1, y, textureName);
+                addLabel(1, y, textureName.toString());
                 addInput(2, y, textField);
                 y++;
             }
@@ -343,7 +389,7 @@ public class DuplicateBlockStateStep2Modal extends JDialog {
             return documents.stream().map(Supplier::get).filter(Objects::nonNull).toList();
         }
 
-        public List<Triple<String, StaticTreeNode, String>> getReplacements() {
+        public List<Triple<NamespacedPath, StaticTreeNode, NamespacedPath>> getReplacements() {
             return replacements.stream()
                     .filter(r -> r.getRight().get() != null)
                     .map(r -> new Triple<>(r.getLeft(), r.getRight().get().getLeft(), r.getRight().get().getRight()))

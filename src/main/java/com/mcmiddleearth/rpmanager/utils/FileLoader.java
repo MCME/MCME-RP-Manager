@@ -31,8 +31,8 @@ import java.util.stream.Stream;
 
 public interface FileLoader {
     List<FileLoader> LOADERS = Arrays.asList(
-            new BlockstateFileLoader(), new BlockModelFileLoader(), new ItemModelFileLoader(), new TextureFileLoader(),
-            new TextFileLoader());
+            new BlockstateFileLoader(), new ItemFileLoader(), new BlockModelFileLoader(), new ItemModelFileLoader(),
+            new TextureFileLoader(), new TextFileLoader());
 
     Object loadFile(Layer layer, Object[] path) throws IOException;
     Object loadFile(File file) throws IOException;

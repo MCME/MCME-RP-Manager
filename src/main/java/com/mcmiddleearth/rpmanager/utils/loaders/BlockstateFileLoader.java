@@ -23,9 +23,12 @@ import com.mcmiddleearth.rpmanager.model.project.Layer;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class BlockstateFileLoader extends AbstractFileLoader {
+    private static final Pattern PATH_PATTERN = Pattern.compile("^assets/[^/]+/blockstates$");
+
     @Override
     public Object loadFile(Layer layer, Object[] path) throws IOException {
         return loadFile(layer, path, BlockState.class);
@@ -39,15 +42,17 @@ public class BlockstateFileLoader extends AbstractFileLoader {
     @Override
     public boolean canLoad(Layer layer, Object[] path) {
         return path != null && path.length > 0 && path[path.length - 1].toString().endsWith(".json") &&
-                Arrays.stream(path).map(Object::toString)
+                PATH_PATTERN.matcher(Arrays.stream(path).map(Object::toString)
                         .skip(layer.getFile().getName().endsWith(".jar") ? 0L : 1L)
                         .limit(3L)
-                        .collect(Collectors.joining("/"))
-                        .equals("assets/minecraft/blockstates");
+                        .collect(Collectors.joining("/")))
+                        .matches();
     }
 
     @Override
     public boolean canLoad(File file) {
-        return file.toPath().endsWith(Path.of("assets", "minecraft", "blockstates", file.getName()));
+        Pattern pathPattern = Pattern.compile(
+                "^.*/assets/[^/]+/blockstates/(?:[^/]+/)*" + Pattern.quote(file.getName()) + "$");
+        return pathPattern.matcher(file.toPath().toUri().toString()).matches();
     }
 }

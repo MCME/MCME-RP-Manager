@@ -27,8 +27,10 @@ import com.mcmiddleearth.rpmanager.gui.utils.FormButtonEnabledListener;
 import com.mcmiddleearth.rpmanager.model.BlockState;
 import com.mcmiddleearth.rpmanager.model.Case;
 import com.mcmiddleearth.rpmanager.model.Model;
+import com.mcmiddleearth.rpmanager.model.internal.NamespacedPath;
 import com.mcmiddleearth.rpmanager.utils.FileLoader;
 import com.mcmiddleearth.rpmanager.utils.Pair;
+import com.mcmiddleearth.rpmanager.utils.ResourcePackUtils;
 import com.mcmiddleearth.rpmanager.utils.Triple;
 
 import javax.swing.*;
@@ -93,8 +95,8 @@ public class DuplicateBlockStateModal extends JDialog {
         setVisible(true);
     }
 
-    private Set<String> getModelNames() {
-        Set<String> modelNames = new LinkedHashSet<>();
+    private Set<NamespacedPath> getModelNames() {
+        Set<NamespacedPath> modelNames = new LinkedHashSet<>();
         if (blockState.getVariants() != null) {
             for (List<Model> models : blockState.getVariants().values()) {
                 modelNames.addAll(getModelNames(models));
@@ -107,15 +109,12 @@ public class DuplicateBlockStateModal extends JDialog {
         return modelNames;
     }
 
-    private Set<String> getModelNames(List<Model> models) {
+    private Set<NamespacedPath> getModelNames(List<Model> models) {
         if (models != null) {
             return models.stream().map(model -> {
-                String modelName = model.getModel();
-                if (modelName.startsWith("minecraft:")) {
-                    modelName = modelName.substring(10);
-                }
-                if (!modelName.contains("/")) {
-                    modelName = "block/" + modelName;
+                NamespacedPath modelName = ResourcePackUtils.extractPrefix(model.getModel());
+                if (!modelName.path().contains("/")) {
+                    modelName = new NamespacedPath(modelName.namespace(), "block/" + modelName.path());
                 }
                 return modelName;
             }).collect(Collectors.toSet());
@@ -129,14 +128,15 @@ public class DuplicateBlockStateModal extends JDialog {
         dispose();
     }
 
-    private void nextStep(String newName, List<Triple<String, StaticTreeNode, String>> replacements) {
-        List<Pair<StaticTreeNode, String>> models = new LinkedList<>();
-        for (Triple<String, StaticTreeNode, String> replacement : replacements) {
+    private void nextStep(String newName, List<Triple<NamespacedPath, StaticTreeNode, NamespacedPath>> replacements) {
+        List<Pair<StaticTreeNode, NamespacedPath>> models = new LinkedList<>();
+        for (Triple<NamespacedPath, StaticTreeNode, NamespacedPath> replacement : replacements) {
             models.add(new Pair<>(replacement.getMiddle(), replacement.getRight()));
             replaceModel(blockState, replacement.getLeft(), replacement.getRight());
         }
         try {
-            new DuplicateBlockStateStep2Modal((Frame) getParent(), tree, (StaticTreeNode) node.getParent().getParent(),
+            new DuplicateBlockStateStep2Modal((Frame) getParent(), tree,
+                    (StaticTreeNode) node.getParent().getParent().getParent(),
                     newName, blockState, models);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(getParent(), "Unknown error!", "Error",
@@ -144,11 +144,11 @@ public class DuplicateBlockStateModal extends JDialog {
         }
     }
 
-    private StaticTreeNode getModelNode(String model) {
-        StaticTreeNode baseNode = (StaticTreeNode) node.getParent().getParent();
+    private StaticTreeNode getModelNode(NamespacedPath model) {
+        StaticTreeNode baseNode = (StaticTreeNode) node.getParent().getParent().getParent();
         StaticTreeNode modelNode = baseNode.getChildren().stream()
-                .filter(c -> "models".equals(c.getName())).findFirst().orElseThrow();
-        for (String child : (model + ".json").split("/")) {
+                .filter(c -> model.namespace().equals(c.getName())).findFirst().orElseThrow();
+        for (String child : ("models/" + model.path() + ".json").split("/")) {
             modelNode = modelNode.getChildren().stream().filter(s -> child.equals(s.getName())).findFirst()
                     .orElse(null);
             if (modelNode == null) {
@@ -158,7 +158,7 @@ public class DuplicateBlockStateModal extends JDialog {
         return modelNode;
     }
 
-    private static void replaceModel(BlockState blockState, String oldName, String newName) {
+    private static void replaceModel(BlockState blockState, NamespacedPath oldName, NamespacedPath newName) {
         if (blockState.getVariants() != null) {
             for (List<Model> models : blockState.getVariants().values()) {
                 replaceModel(models, oldName, newName);
@@ -170,18 +170,15 @@ public class DuplicateBlockStateModal extends JDialog {
         }
     }
 
-    private static void replaceModel(List<Model> models, String oldName, String newName) {
+    private static void replaceModel(List<Model> models, NamespacedPath oldName, NamespacedPath newName) {
         if (models != null) {
             for (Model model : models) {
-                String currentName = model.getModel();
-                if (currentName.startsWith("minecraft:")) {
-                    currentName = currentName.substring(10);
-                }
-                if (!currentName.contains("/")) {
-                    currentName = "block/" + currentName;
+                NamespacedPath currentName = ResourcePackUtils.extractPrefix(model.getModel());
+                if (!currentName.path().contains("/")) {
+                    currentName = new NamespacedPath(currentName.namespace(), "block/" + currentName.path());
                 }
                 if (currentName.equals(oldName)) {
-                    model.setModel(newName);
+                    model.setModel(newName.toString());
                 }
             }
         }
@@ -209,7 +206,8 @@ public class DuplicateBlockStateModal extends JDialog {
 
     private class DuplicateBlockStateGrid extends Grid {
         private final List<Supplier<Document>> documents = new LinkedList<>();
-        private final List<Pair<String, Supplier<Pair<StaticTreeNode, String>>>> replacements = new LinkedList<>();
+        private final List<Pair<NamespacedPath, Supplier<Pair<StaticTreeNode, NamespacedPath>>>> replacements =
+                new LinkedList<>();
         private final List<JCheckBox> checkBoxes = new LinkedList<>();
 
         private DuplicateBlockStateGrid() {
@@ -222,21 +220,21 @@ public class DuplicateBlockStateModal extends JDialog {
             addLabel(1, 0, "Old name");
             addLabel(2, 0, "New name");
             int y = 1;
-            for (String modelName : getModelNames()) {
+            for (NamespacedPath modelName : getModelNames()) {
                 StaticTreeNode node = getModelNode(modelName);
                 JCheckBox checkBox = new JCheckBox(null, null, false);
-                JTextField textField = new JTextField(modelName, 50);
+                JTextField textField = new JTextField(modelName.toString(), 50);
                 if (node != null) {
                     documents.add(() -> checkBox.isSelected() ? textField.getDocument() : null);
                     replacements.add(new Pair<>(modelName, () -> checkBox.isSelected() ?
-                            new Pair<>(node, textField.getText()) : null));
+                            new Pair<>(node, ResourcePackUtils.extractPrefix(textField.getText())) : null));
                     checkBoxes.add(checkBox);
                 } else {
                     checkBox.setEnabled(false);
                     textField.setEditable(false);
                 }
                 addLabel(0, y, checkBox);
-                addLabel(1, y, modelName);
+                addLabel(1, y, modelName.toString());
                 addInput(2, y, textField);
                 y++;
             }
@@ -250,7 +248,7 @@ public class DuplicateBlockStateModal extends JDialog {
             return documents.stream().map(Supplier::get).filter(Objects::nonNull).toList();
         }
 
-        public List<Triple<String, StaticTreeNode, String>> getReplacements() {
+        public List<Triple<NamespacedPath, StaticTreeNode, NamespacedPath>> getReplacements() {
             return replacements.stream()
                     .filter(r -> r.getRight().get() != null)
                     .map(r -> new Triple<>(r.getLeft(), r.getRight().get().getLeft(), r.getRight().get().getRight()))

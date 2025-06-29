@@ -23,12 +23,14 @@ import javax.imageio.ImageIO;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class TextureFileLoader extends AbstractFileLoader {
+    private static final Pattern PATH_PATTERN = Pattern.compile("^assets/[^/]+/textures$");
+
     @Override
     public Object loadFile(Layer layer, Object[] path) throws IOException {
         byte[] content = loadBytes(layer, path);
@@ -46,15 +48,18 @@ public class TextureFileLoader extends AbstractFileLoader {
         return path != null && path.length > 0 && path[path.length - 1].toString().endsWith(".png") &&
                 isTexturePath(Arrays.stream(path).map(Object::toString)
                         .skip(layer.getFile().getName().endsWith(".jar") ? 0L : 1L)
+                        .limit(3L)
                         .collect(Collectors.joining("/")));
     }
 
     @Override
     public boolean canLoad(File file) {
-        return contains(file.toPath(), Path.of("assets", "minecraft", "textures"));
+        Pattern pathPattern = Pattern.compile(
+                "^.*/assets/[^/]+/textures/(?:[^/]+/)*" + Pattern.quote(file.getName()) + "$");
+        return pathPattern.matcher(file.toPath().toUri().toString()).matches();
     }
 
     private static boolean isTexturePath(String path) {
-        return path.startsWith("assets/minecraft/textures/");
+        return PATH_PATTERN.matcher(path).matches();
     }
 }

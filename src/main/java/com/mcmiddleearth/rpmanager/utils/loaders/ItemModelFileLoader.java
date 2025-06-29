@@ -22,11 +22,14 @@ import com.mcmiddleearth.rpmanager.model.project.Layer;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ItemModelFileLoader extends AbstractFileLoader {
+    private static final Pattern PATH_PATTERN = Pattern.compile("^assets/[^/]+/models/.*$");
+    private static final Pattern BLOCK_PATH_PATTERN = Pattern.compile("^assets/[^/]+/models/block$");
+
     @Override
     public Object loadFile(Layer layer, Object[] path) throws IOException {
         return loadFile(layer, path, ItemModel.class);
@@ -48,11 +51,15 @@ public class ItemModelFileLoader extends AbstractFileLoader {
 
     @Override
     public boolean canLoad(File file) {
-        return contains(file.toPath(), Path.of("assets", "minecraft", "models")) &&
-                !contains(file.toPath(), Path.of("assets", "minecraft", "models", "block"));
+        Pattern pathPattern = Pattern.compile(
+                "^.*/assets/[^/]+/models/(?:[^/]+/)*" + Pattern.quote(file.getName()) + "$");
+        Pattern blockPathPattern = Pattern.compile(
+                "^.*/assets/[^/]+/models/block/(?:[^/]+/)*" + Pattern.quote(file.getName()) + "$");
+        String filePath = file.toURI().toString();
+        return pathPattern.matcher(filePath).matches() && !blockPathPattern.matcher(filePath).matches();
     }
 
     private static boolean isItemModelPath(String path) {
-        return path.startsWith("assets/minecraft/models/") && !path.equals("assets/minecraft/models/block");
+        return PATH_PATTERN.matcher(path).matches() && !BLOCK_PATH_PATTERN.matcher(path).matches();
     }
 }

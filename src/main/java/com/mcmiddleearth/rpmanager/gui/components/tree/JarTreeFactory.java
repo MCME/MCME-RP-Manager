@@ -24,26 +24,28 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class JarTreeFactory {
+    private static final Pattern ASSETS_INNER_DIR_PATTERN = Pattern.compile("^assets/[^/]+$");
+    private static final Pattern ASSETS_INNER_DIR_CONTENTS_PATTERN = Pattern.compile("^assets/[^/]+/.*");
+
     private JarTreeFactory() {}
 
     public static StaticTreeNode createRootNode(File jarFile) throws IOException {
-        String filter = "assets/minecraft/";
         File f = Files.createTempDirectory("mcme-rp-manager-vanilla-rp").toFile();
         f.deleteOnExit();
         File assets = new File(f, "assets");
         assets.mkdir();
-        File minecraft = new File(assets, "minecraft");
-        minecraft.mkdir();
         StaticTreeNode staticTreeNode = new StaticTreeNode(null, "assets", assets, true, new LinkedList<>());
-        staticTreeNode.getChildren().add(new StaticTreeNode(staticTreeNode, "minecraft", minecraft, true, new LinkedList<>()));
         ZipFile zipFile = new ZipFile(jarFile);
         zipFile.stream()
-                .filter(entry -> entry.getName().startsWith(filter))
-                .forEach(entry -> addEntry(staticTreeNode, zipFile, entry, minecraft, entry.isDirectory()));
+                .filter(entry ->
+                        (ASSETS_INNER_DIR_PATTERN.matcher(entry.getName()).matches() && entry.isDirectory()) ||
+                                ASSETS_INNER_DIR_CONTENTS_PATTERN.matcher(entry.getName()).matches())
+                .forEach(entry -> addEntry(staticTreeNode, zipFile, entry, assets, entry.isDirectory()));
         sortNodes(staticTreeNode);
         return staticTreeNode;
     }

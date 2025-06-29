@@ -17,8 +17,6 @@
 
 package com.mcmiddleearth.rpmanager.gui.panes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mcmiddleearth.rpmanager.events.ChangeEvent;
 import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.components.FastScrollPane;
@@ -26,10 +24,12 @@ import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
 import com.mcmiddleearth.rpmanager.gui.modals.FileEditModal;
 import com.mcmiddleearth.rpmanager.model.BlockModel;
 import com.mcmiddleearth.rpmanager.model.BlockState;
+import com.mcmiddleearth.rpmanager.model.Item;
 import com.mcmiddleearth.rpmanager.model.ItemModel;
 import com.mcmiddleearth.rpmanager.model.internal.SelectedFileData;
 import com.mcmiddleearth.rpmanager.utils.Action;
 import com.mcmiddleearth.rpmanager.utils.ActionManager;
+import com.mcmiddleearth.rpmanager.utils.GsonProvider;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import javax.swing.*;
@@ -44,8 +44,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class FileEditPane extends JPanel {
-    private static final Gson GSON = new GsonBuilder()
-            .setLenient().setPrettyPrinting().enableComplexMapKeySerialization().disableHtmlEscaping().create();
     private final JPanel editPane;
     private final JTextArea previewArea;
     private final JButton previewEditButton;
@@ -123,19 +121,25 @@ public class FileEditPane extends JPanel {
             JLabel label = new JLabel("No file selected, or no editor available for selected file.");
             editPane.add(label, BorderLayout.CENTER);
         } else if (data.getData() instanceof BlockState blockState) {
-            updatePreview(GSON.toJson(data.getData()), BlockState.class);
+            updatePreview(GsonProvider.getGson().toJson(data.getData()), BlockState.class);
             BlockstateFileEditPane blockstateFileEditPane = new BlockstateFileEditPane(data.getName(), blockState);
             blockstateFileEditPane.addChangeListener(this::onChange);
             JScrollPane scrollPane = new FastScrollPane(blockstateFileEditPane);
             editPane.add(scrollPane, BorderLayout.CENTER);
+        } else if (data.getData() instanceof Item item) {
+            updatePreview(GsonProvider.getGson().toJson(data.getData()), Item.class);
+            ItemFileEditPane itemFileEditPane = new ItemFileEditPane(item);
+            itemFileEditPane.addChangeListener(this::onChange);
+            JScrollPane scrollPane = new FastScrollPane(itemFileEditPane);
+            editPane.add(scrollPane, BorderLayout.CENTER);
         } else if (data.getData() instanceof BlockModel blockModel) {
-            updatePreview(GSON.toJson(data.getData()), BlockModel.class);
+            updatePreview(GsonProvider.getGson().toJson(data.getData()), BlockModel.class);
             BlockModelFileEditPane blockModelFileEditPane = new BlockModelFileEditPane(data.getName(), blockModel);
             blockModelFileEditPane.addChangeListener(this::onChange);
             JScrollPane scrollPane = new FastScrollPane(blockModelFileEditPane);
             editPane.add(scrollPane, BorderLayout.CENTER);
         } else if (data.getData() instanceof ItemModel itemModel) {
-            updatePreview(GSON.toJson(data.getData()), ItemModel.class);
+            updatePreview(GsonProvider.getGson().toJson(data.getData()), ItemModel.class);
             ItemModelFileEditPane itemModelFileEditPane = new ItemModelFileEditPane(data.getName(), itemModel);
             itemModelFileEditPane.addChangeListener(this::onChange);
             JScrollPane scrollPane = new FastScrollPane(itemModelFileEditPane);
@@ -159,7 +163,7 @@ public class FileEditPane extends JPanel {
     }
 
     private void onChange(ChangeEvent changeEvent) {
-        String newContent = GSON.toJson(changeEvent.getObject());
+        String newContent = GsonProvider.getGson().toJson(changeEvent.getObject());
         updatePreview(newContent);
         updateFile(newContent);
     }

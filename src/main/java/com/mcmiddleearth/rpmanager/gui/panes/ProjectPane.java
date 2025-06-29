@@ -24,6 +24,7 @@ import com.mcmiddleearth.rpmanager.gui.components.FastScrollPane;
 import com.mcmiddleearth.rpmanager.gui.components.tree.StaticTreeNode;
 import com.mcmiddleearth.rpmanager.model.BaseModel;
 import com.mcmiddleearth.rpmanager.model.BlockState;
+import com.mcmiddleearth.rpmanager.model.Item;
 import com.mcmiddleearth.rpmanager.model.internal.RelatedFiles;
 import com.mcmiddleearth.rpmanager.model.internal.SelectedFileData;
 import com.mcmiddleearth.rpmanager.model.project.Layer;
@@ -114,6 +115,9 @@ public class ProjectPane extends JPanel {
             if (fileData != null && fileData.getData() != null) {
                 if (fileData.getData() instanceof BlockState blockState) {
                     RelatedFiles relatedFiles = ResourcePackUtils.getRelatedFiles(blockState, project);
+                    relatedFilesPane.setRelatedFiles(relatedFiles);
+                } else if (fileData.getData() instanceof Item item) {
+                    RelatedFiles relatedFiles = ResourcePackUtils.getRelatedFiles(item, project);
                     relatedFilesPane.setRelatedFiles(relatedFiles);
                 } else if (fileData.getData() instanceof BaseModel model) {
                     RelatedFiles relatedFiles = ResourcePackUtils.getRelatedFiles(model, project);

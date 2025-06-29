@@ -17,8 +17,6 @@
 
 package com.mcmiddleearth.rpmanager.gui.modals;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mcmiddleearth.rpmanager.gui.MainWindow;
 import com.mcmiddleearth.rpmanager.gui.actions.Action;
 import com.mcmiddleearth.rpmanager.gui.components.FastScrollPane;
@@ -28,6 +26,7 @@ import com.mcmiddleearth.rpmanager.gui.components.VerticalBox;
 import com.mcmiddleearth.rpmanager.gui.constants.Icons;
 import com.mcmiddleearth.rpmanager.model.internal.LayerRelatedFiles;
 import com.mcmiddleearth.rpmanager.model.internal.SelectedFileData;
+import com.mcmiddleearth.rpmanager.utils.GsonProvider;
 import com.mcmiddleearth.rpmanager.utils.ResourcePackUtils;
 
 import javax.swing.*;
@@ -40,9 +39,6 @@ import java.io.IOException;
 import java.util.List;
 
 public class FindBlockStateModal extends JDialog {
-
-    private static final Gson GSON = new GsonBuilder()
-            .setLenient().setPrettyPrinting().enableComplexMapKeySerialization().disableHtmlEscaping().create();
     private final JButton search;
     private final VerticalBox verticalBox;
     private final JTextArea preview;
@@ -156,7 +152,7 @@ public class FindBlockStateModal extends JDialog {
     }
 
     private void setPreview(SelectedFileData selectedFileData) {
-        setPreview(selectedFileData == null ? "" : GSON.toJson(selectedFileData.getData()));
+        setPreview(selectedFileData == null ? "" : GsonProvider.getGson().toJson(selectedFileData.getData()));
     }
 
     private void setPreview(String text) {
